@@ -420,12 +420,23 @@ class IVRForm {
             currentStepElement.style.display = 'block';
             currentStepElement.classList.add('active');
             
+            // Scroll to top of form on mobile devices
+            if (window.innerWidth <= 768) {
+                // Using smoother scrolling for better UX
+                setTimeout(() => {
+                    this.form.closest('.card-body').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start'
+                    });
+                }, 100);
+            }
+            
             // Focus on the first input in the step for better accessibility
             const firstInput = currentStepElement.querySelector('input, select, textarea');
             if (firstInput) {
                 setTimeout(() => {
                     firstInput.focus();
-                }, 100);
+                }, 200);
             }
         } else {
             console.error(`Step ${step} not found in the form`);
