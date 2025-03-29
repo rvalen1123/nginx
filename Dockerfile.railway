@@ -10,7 +10,7 @@ RUN npm ci
 COPY prisma ./prisma/
 
 # Generate Prisma client
-RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Copy application code
 COPY index.js ./
