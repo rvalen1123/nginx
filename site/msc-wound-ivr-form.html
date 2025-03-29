@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSC Wound Care Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="/css/form-styles.css" rel="stylesheet">
+    <link href="css/form-styles.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <header class="bg-white border-b border-gray-200 shadow-sm">
@@ -72,7 +72,7 @@
                         </div>
                     </div>
 
-                    <form id="ivrForm" action="/api/submit-ivr" method="POST" enctype="multipart/form-data">
+                    <form id="ivrForm" action="api/submit-ivr" method="POST" enctype="multipart/form-data">
                         <!-- Step 1: Form Setup -->
                         <div id="step1" class="form-step active">
                             <div class="form-section mb-6">
@@ -282,12 +282,17 @@
         </div>
     </footer>
 
+    <!-- Load required scripts -->
+    <script src="components/form-utils.js"></script>
+    <script src="components/form-validation.js"></script>
+    <script src="components/multi-step-form.js"></script>
+    <script src="components/signature-pad.js"></script>
+    <script src="js/ivr-form.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Set default date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('request_date').value = today;
-            document.getElementById('signatureDate').value = today;
+            // Initialize the IVR form
+            initIVRForm();
             
             // Tab navigation
             const tabs = [
@@ -396,7 +401,7 @@
                 const formData = new FormData(this);
                 
                 // Send to server
-                fetch('/api/submit-ivr', {
+                fetch('api/submit-ivr', {
                     method: 'POST',
                     body: formData
                 })
@@ -416,7 +421,7 @@
             });
             
             // Fetch manufacturers for dropdown (example)
-            fetch('/api/manufacturers')
+            fetch('api/manufacturers')
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('manufacturer');
@@ -430,7 +435,7 @@
                 .catch(error => console.error('Error loading manufacturers:', error));
                 
             // Fetch sales reps for dropdown (example)
-            fetch('/api/users?role=REP')
+            fetch('api/users?role=REP')
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('sales_rep');

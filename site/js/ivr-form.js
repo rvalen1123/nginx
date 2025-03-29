@@ -32,9 +32,17 @@ function initIVRForm() {
     
     const multiStepForm = initMultiStepForm({
         formId: 'ivrForm',
-        steps: formSteps,
+        stepClass: 'form-step',
+        nextBtnId: 'nextToStep2', // First step's next button
+        prevBtnId: 'backToStep4', // Last step's back button
+        submitBtnId: 'submitForm',
+        stepIndicatorId: 'stepIndicator',
         onStepChange: handleStepChange,
-        onSubmit: handleFormSubmit
+        onSubmit: handleFormSubmit,
+        validateStep: (stepIndex) => {
+            // Use the appropriate validation function based on step index
+            return formSteps[stepIndex].validate();
+        }
     });
     
     // Initialize conditional fields
@@ -50,8 +58,11 @@ function initIVRForm() {
     
     // Set default dates
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('request_date').value = today;
-    document.getElementById('signatureDate').value = today;
+    const requestDateEl = document.getElementById('request_date');
+    const signatureDateEl = document.getElementById('signatureDate');
+    
+    if (requestDateEl) requestDateEl.value = today;
+    if (signatureDateEl) signatureDateEl.value = today;
     
     // Load data from APIs for dropdowns
     async function loadFormData() {
@@ -250,17 +261,26 @@ function initIVRForm() {
         return isValid;
     }
     
+    // Sanitize HTML to prevent XSS attacks
+    function sanitizeHTML(str) {
+        if (!str) return 'N/A';
+        
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+    }
+    
     // Update review section content
     function updateReviewSection() {
         // Patient Information Review
         const patientInfoReview = document.getElementById('patientInfoReview');
         if (patientInfoReview) {
             patientInfoReview.innerHTML = `
-                <p><strong>Name:</strong> ${document.getElementById('patientName')?.value || 'N/A'}</p>
-                <p><strong>DOB:</strong> ${document.getElementById('patientDob')?.value || 'N/A'}</p>
-                <p><strong>Phone:</strong> ${document.getElementById('patientPhone')?.value || 'N/A'}</p>
-                <p><strong>Contact Permission:</strong> ${getRadioValue('contactPermission')}</p>
-                <p><strong>In Nursing Facility:</strong> ${getRadioValue('nursingFacility')}</p>
+                <p><strong>Name:</strong> ${sanitizeHTML(document.getElementById('patientName')?.value)}</p>
+                <p><strong>DOB:</strong> ${sanitizeHTML(document.getElementById('patientDob')?.value)}</p>
+                <p><strong>Phone:</strong> ${sanitizeHTML(document.getElementById('patientPhone')?.value)}</p>
+                <p><strong>Contact Permission:</strong> ${sanitizeHTML(getRadioValue('contactPermission'))}</p>
+                <p><strong>In Nursing Facility:</strong> ${sanitizeHTML(getRadioValue('nursingFacility'))}</p>
             `;
         }
         

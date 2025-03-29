@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSC Wound Care Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="/css/form-styles.css" rel="stylesheet">
+    <link href="css/form-styles.css" rel="stylesheet">
     <!-- SignaturePad library -->
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
 </head>
@@ -71,11 +71,11 @@
     </footer>
 
     <!-- Form Scripts -->
-    <script src="/js/common.js"></script>
-    <script src="/js/ivr-form.js"></script>
-    <script src="/js/product-education-form.js"></script>
-    <script src="/js/order-form.js"></script>
-    <script src="/js/onboarding-form.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/ivr-form.js"></script>
+    <script src="js/product-education-form.js"></script>
+    <script src="js/order-form.js"></script>
+    <script src="js/onboarding-form.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -125,22 +125,39 @@
                     </div>
                 `;
                 
+                // Map form types to their HTML files
+                const formFiles = {
+                    'ivr': 'msc-wound-ivr-form.html',
+                    'product-education': 'msc-portal.html',
+                    'order': 'msc-wound-order-form.html',
+                    'onboarding': 'msc-wound-onboarding-form.html'
+                };
+                
                 // Fetch the form HTML
-                fetch(`/forms/${formType}`)
+                fetch(formFiles[formType])
                     .then(response => response.text())
                     .then(html => {
-                        formContainer.innerHTML = html;
-                        formContainer.dataset.loaded = 'true';
+                        // Extract the form content from the HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        const formContent = tempDiv.querySelector('.form-section');
                         
-                        // Initialize the form
-                        if (formType === 'ivr') {
-                            initIVRForm();
-                        } else if (formType === 'product-education') {
-                            initProductEducationForm();
-                        } else if (formType === 'order') {
-                            initOrderForm();
-                        } else if (formType === 'onboarding') {
-                            initOnboardingForm();
+                        if (formContent) {
+                            formContainer.innerHTML = formContent.innerHTML;
+                            formContainer.dataset.loaded = 'true';
+                            
+                            // Initialize the form
+                            if (formType === 'ivr') {
+                                initIVRForm();
+                            } else if (formType === 'product-education') {
+                                initProductEducationForm();
+                            } else if (formType === 'order') {
+                                initOrderForm();
+                            } else if (formType === 'onboarding') {
+                                initOnboardingForm();
+                            }
+                        } else {
+                            throw new Error('Form content not found in HTML');
                         }
                     })
                     .catch(error => {
