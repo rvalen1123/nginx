@@ -79,7 +79,28 @@
     <script src="js/onboarding-form.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Global configuration object
+        window.MSC_CONFIG = {};
+        
+        // Fetch configuration from server
+        async function fetchConfig() {
+            try {
+                const response = await fetch('/api/config');
+                if (response.ok) {
+                    window.MSC_CONFIG = await response.json();
+                    console.log('Configuration loaded:', window.MSC_CONFIG);
+                } else {
+                    console.error('Failed to load configuration');
+                }
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load configuration first
+            await fetchConfig();
+            
             // Load the IVR form by default
             loadForm('ivr');
             

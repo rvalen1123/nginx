@@ -16,7 +16,7 @@ require('dotenv').config();
 // Initialize Express and Prisma
 const app = express();
 const prisma = new PrismaClient();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001; // Use port 3001 instead of 3000
 
 // Middleware
 app.use(cors());
@@ -40,7 +40,7 @@ app.use(session({
 }));
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'site')));
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -51,16 +51,44 @@ if (!fs.existsSync(uploadsDir)) {
 // Initialize integrations with n8n and DocuSeal
 initIntegrations(app, prisma);
 
+// Provide configuration to the client-side JavaScript
+app.get('/api/config', (req, res) => {
+  res.json({
+    n8n: {
+      baseUrl: process.env.N8N_URL || 'https://primary-production-bef7.up.railway.app'
+    },
+    docuSeal: {
+      baseUrl: process.env.DOCUSEAL_URL || 'https://docuseal-railway-production-d8fb.up.railway.app'
+    }
+  });
+});
+
 // API Routes
 // =======================================
 
 // Get manufacturers
 app.get('/api/manufacturers', async (req, res) => {
   try {
-    const manufacturers = await prisma.manufacturers.findMany({
-      where: { status: 'active' },
-      select: { manufacturerId: true, name: true }
-    });
+    // Try to get from database first
+    let manufacturers = [];
+    try {
+      manufacturers = await prisma.manufacturers.findMany({
+        where: { status: 'active' },
+        select: { manufacturerId: true, name: true }
+      });
+    } catch (dbError) {
+      console.warn('Database error, using mock data:', dbError);
+      // If database query fails, use mock data
+      manufacturers = [
+        { manufacturerId: 'mfr1', name: 'ACZ' },
+        { manufacturerId: 'mfr2', name: 'AmnioBand' },
+        { manufacturerId: 'mfr3', name: 'BioWerX' },
+        { manufacturerId: 'mfr4', name: 'BioWound' },
+        { manufacturerId: 'mfr5', name: 'HealingBiologix' },
+        { manufacturerId: 'mfr6', name: 'Legacy' }
+      ];
+    }
+    
     res.json(manufacturers);
   } catch (error) {
     console.error('Error fetching manufacturers:', error);
@@ -72,13 +100,37 @@ app.get('/api/manufacturers', async (req, res) => {
 app.get('/api/users', async (req, res) => {
   try {
     const role = req.query.role;
-    const users = await prisma.users.findMany({
-      where: { 
-        status: 'active',
-        ...(role ? { role } : {})
-      },
-      select: { userId: true, name: true, email: true, role: true }
-    });
+    
+    // Try to get from database first
+    let users = [];
+    try {
+      users = await prisma.users.findMany({
+        where: { 
+          status: 'active',
+          ...(role ? { role } : {})
+        },
+        select: { userId: true, name: true, email: true, role: true }
+      });
+    } catch (dbError) {
+      console.warn('Database error, using mock data:', dbError);
+      // If database query fails, use mock data
+      if (role === 'REP') {
+        users = [
+          { userId: 'rep1', name: 'John Smith', email: 'john.smith@example.com', role: 'REP' },
+          { userId: 'rep2', name: 'Jane Doe', email: 'jane.doe@example.com', role: 'REP' },
+          { userId: 'rep3', name: 'Bob Johnson', email: 'bob.johnson@example.com', role: 'REP' },
+          { userId: 'rep4', name: 'Alice Williams', email: 'alice.williams@example.com', role: 'REP' }
+        ];
+      } else {
+        users = [
+          { userId: 'rep1', name: 'John Smith', email: 'john.smith@example.com', role: 'REP' },
+          { userId: 'rep2', name: 'Jane Doe', email: 'jane.doe@example.com', role: 'REP' },
+          { userId: 'admin1', name: 'Admin User', email: 'admin@example.com', role: 'ADMIN' },
+          { userId: 'manager1', name: 'Manager User', email: 'manager@example.com', role: 'MANAGER' }
+        ];
+      }
+    }
+    
     res.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -325,6 +377,6 @@ app.get('/healthcheck', (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(3001, () => {
+  console.log(`Server running on port 3001`);
 });

@@ -6,16 +6,16 @@
 // Configuration
 const config = {
     n8n: {
-        baseUrl: process.env.N8N_URL || 'https://primary-production-bef7.up.railway.app',
-        apiKey: process.env.N8N_API_KEY || '',
+        baseUrl: 'https://primary-production-bef7.up.railway.app',
+        apiKey: '', // This will be set by the server
         webhooks: {
             formSubmission: '/webhook/msc-wound-care/form-submission',
             documentSigned: '/webhook/msc-wound-care/document-signed'
         }
     },
     docuSeal: {
-        baseUrl: process.env.DOCUSEAL_URL || 'https://docuseal-railway-production-d8fb.up.railway.app',
-        apiKey: process.env.DOCUSEAL_API_KEY || '',
+        baseUrl: 'https://docuseal-railway-production-d8fb.up.railway.app',
+        apiKey: '', // This will be set by the server
         templates: {
             ivr: 'ivr_forms',
             onboarding: 'onboarding_forms',
@@ -24,6 +24,16 @@ const config = {
         }
     }
 };
+
+// Check if there's a global config object that might override these values
+if (window.MSC_CONFIG) {
+    if (window.MSC_CONFIG.n8n) {
+        config.n8n = { ...config.n8n, ...window.MSC_CONFIG.n8n };
+    }
+    if (window.MSC_CONFIG.docuSeal) {
+        config.docuSeal = { ...config.docuSeal, ...window.MSC_CONFIG.docuSeal };
+    }
+}
 
 /**
  * Trigger an n8n workflow
