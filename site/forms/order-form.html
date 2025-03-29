@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSC Wound Care Order Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/css/form-styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white py-3">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold">MSC Wound Care Order Form</h1>
+                <nav>
+                    <ul class="flex space-x-4">
+                        <li>
+                            <a href="/ivr-form.html" class="hover:border-b-2 hover:border-white pb-1 transition">
+                                Insurance Verification Request
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/" class="font-bold border-b-2 border-white pb-1 transition">
+                                Order Form
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/onboarding-form.html" class="hover:border-b-2 hover:border-white pb-1 transition">
+                                Onboarding
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Step Indicator -->
+            <div class="step-indicator flex items-center justify-between mb-8">
+                <div class="step active">
+                    <div class="step-circle bg-blue-600 text-white">1</div>
+                    <div class="step-label font-medium">Order Info</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle bg-gray-200 text-gray-700">2</div>
+                    <div class="step-label">Facility</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle bg-gray-200 text-gray-700">3</div>
+                    <div class="step-label">Shipping</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle bg-gray-200 text-gray-700">4</div>
+                    <div class="step-label">Products</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-circle bg-gray-200 text-gray-700">5</div>
+                    <div class="step-label">Review</div>
+                </div>
+            </div>
+
+            <form id="orderForm" action="/api/submit-order" method="POST">
+                <!-- Step 1: Order Information -->
+                <div id="step1" class="form-step">
+                    <div class="form-section mb-6">
+                        <h3 class="text-xl font-semibold mb-2">Order Information</h3>
+                        <p class="text-gray-600 mb-4">Please provide the order details</p>
+                        
+                        <div class="form-section-content border p-4 rounded-md bg-white shadow-sm">
+                            <div class="form-group mb-4">
+                                <label for="orderNumber" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Order Number <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="orderNumber" name="orderNumber" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="WC-YYYY-NNNN" required>
+                                <p class="mt-1 text-xs text-gray-500">Unique identifier for this order</p>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="orderDate" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Order Date <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="orderDate" name="orderDate" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                <p class="mt-1 text-xs text-gray-500">Date the order was placed</p>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="poNumber" class="block text-sm font-medium text-gray-700 mb-1">
+                                    PO Number
+                                </label>
+                                <input type="text" id="poNumber" name="poNumber" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Purchase order number if applicable">
+                                <p class="mt-1 text-xs text-gray-500">Purchase order number if applicable</p>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="requestedDeliveryDate" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Requested Delivery Date
+                                </label>
+                                <input type="date" id="requestedDeliveryDate" name="requestedDeliveryDate" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <p class="mt-1 text-xs text-gray-500">When the order should be delivered</p>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Status <span class="text-red-500">*</span>
+                                </label>
+                                <select id="status" name="status" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                    <option value="draft">Draft</option>
+                                    <option value="submitted">Submitted</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Navigation -->
+                <div class="form-navigation flex justify-between mt-8">
+                    <div></div>
+                    <button type="button" id="nextStep" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        Next: Facility Information
+                    </button>
+                </div>
+
+                <!-- Hidden Steps (2-5) would be here in the full implementation -->
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-gray-100 py-4 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    &copy; 2025 MSC Wound Care. All rights reserved.
+                </div>
+                <div class="mt-2 md:mt-0">
+                    <ul class="flex space-x-4 text-sm">
+                        <li><a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Terms of Service</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/components/form-utils.js"></script>
+    <script src="/components/form-validation.js"></script>
+    <script src="/components/multi-step-form.js"></script>
+    <script>
+        // Initialize the form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('orderDate').value = today;
+            
+            // Initialize the form validation and submission handlers
+            // For demonstration, we're just logging form data
+            const validateStep = (stepIndex) => {
+                // Validation logic for the current step would go here
+                console.log(`Validating step ${stepIndex + 1}`);
+                return true; // Return true if validation passes
+            };
+            
+            const submitForm = async (formData) => {
+                // Form submission logic would go here
+                console.log('Form submitted', Object.fromEntries(formData));
+                alert('Form submitted successfully!');
+            };
+            
+            // Initialize multi-step form
+            // This is a simplified version - in a real implementation you would
+            // include all the needed functionality from multi-step-form.js
+            document.getElementById('nextStep').addEventListener('click', function() {
+                alert('In a complete implementation, this would navigate to the next step');
+            });
+        });
+    </script>
+</body>
+</html>

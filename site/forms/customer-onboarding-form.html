@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSC Wound Care Onboarding Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/css/form-styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white py-3">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold">MSC Wound Care Onboarding</h1>
+                <nav>
+                    <ul class="flex space-x-4">
+                        <li>
+                            <a href="/ivr-form.html" class="hover:border-b-2 hover:border-white pb-1 transition">
+                                Insurance Verification Request
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/order-form.html" class="hover:border-b-2 hover:border-white pb-1 transition">
+                                Order Form
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/" class="font-bold border-b-2 border-white pb-1 transition">
+                                Onboarding
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold mb-6">Universal Customer Onboarding</h2>
+            <p class="text-gray-600 mb-6">Complete this single form to establish accounts with multiple wound care product manufacturers</p>
+            
+            <form id="onboardingForm" action="/api/submit-onboarding" method="POST">
+                <!-- Distributor Information Section -->
+                <div class="section mb-8">
+                    <div class="section-header p-4 bg-blue-50 border-b border-gray-200 flex justify-between items-center cursor-pointer">
+                        <h3 class="text-lg font-semibold text-blue-600">Distributor Information</h3>
+                        <span class="text-blue-600">▼</span>
+                    </div>
+                    <div class="section-content p-6 border border-t-0 border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="distributor_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Distributor Name
+                                </label>
+                                <input type="text" id="distributor_name" name="distributor_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sales_rep_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Sales Representative Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="sales_rep_name" name="sales_rep_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sales_rep_email" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Sales Representative Email
+                                </label>
+                                <input type="email" id="sales_rep_email" name="sales_rep_email" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sales_rep_phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Sales Representative Phone
+                                </label>
+                                <input type="tel" id="sales_rep_phone" name="sales_rep_phone" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="iso_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    ISO (If Applicable)
+                                </label>
+                                <input type="text" id="iso_name" name="iso_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="gpo_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    GPO Affiliation
+                                </label>
+                                <input type="text" id="gpo_name" name="gpo_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Provider Information Section -->
+                <div class="section mb-8">
+                    <div class="section-header p-4 bg-blue-50 border-b border-gray-200 flex justify-between items-center cursor-pointer">
+                        <h3 class="text-lg font-semibold text-blue-600">Provider Information</h3>
+                        <span class="text-blue-600">▼</span>
+                    </div>
+                    <div class="section-content p-6 border border-t-0 border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="provider_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Provider Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="provider_name" name="provider_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="provider_credentials" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Provider Credentials (MD, DO, DPM, etc.)
+                                </label>
+                                <input type="text" id="provider_credentials" name="provider_credentials" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tax_id" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Tax ID Number <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="tax_id" name="tax_id" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="individual_npi" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Individual NPI <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="individual_npi" name="individual_npi" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="group_npi" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Group NPI
+                                </label>
+                                <input type="text" id="group_npi" name="group_npi" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="ptan" class="block text-sm font-medium text-gray-700 mb-1">
+                                    PTAN (if applicable)
+                                </label>
+                                <input type="text" id="ptan" name="ptan" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="provider_email" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Provider Email
+                                </label>
+                                <input type="email" id="provider_email" name="provider_email" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Additional Providers
+                            </label>
+                            <div id="multi_provider_container">
+                                <!-- Initial provider repeater field will be inserted dynamically -->
+                            </div>
+                            <button type="button" class="mt-2 inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="add_provider_btn">
+                                + Add Provider
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Practice/Facility Information Section -->
+                <div class="section mb-8">
+                    <div class="section-header p-4 bg-blue-50 border-b border-gray-200 flex justify-between items-center cursor-pointer">
+                        <h3 class="text-lg font-semibold text-blue-600">Practice/Facility Information</h3>
+                        <span class="text-blue-600">▼</span>
+                    </div>
+                    <div class="section-content p-6 border border-t-0 border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="practice_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Practice/Facility Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="practice_name" name="practice_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="practice_phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Practice Phone <span class="text-red-500">*</span>
+                                </label>
+                                <input type="tel" id="practice_phone" name="practice_phone" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="practice_fax" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Practice Fax
+                                </label>
+                                <input type="tel" id="practice_fax" name="practice_fax" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="practice_email" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Practice Email
+                                </label>
+                                <input type="email" id="practice_email" name="practice_email" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="facility_type" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Facility Type <span class="text-red-500">*</span>
+                                </label>
+                                <select id="facility_type" name="facility_type" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                    <option value="">Select facility type</option>
+                                    <option value="Physician Office">Physician Office</option>
+                                    <option value="Hospital Outpatient">Hospital Outpatient</option>
+                                    <option value="Hospital Inpatient">Hospital Inpatient</option>
+                                    <option value="Ambulatory Surgery Center">Ambulatory Surgery Center</option>
+                                    <option value="Skilled Nursing Facility">Skilled Nursing Facility</option>
+                                    <option value="Wound Care Center">Wound Care Center</option>
+                                    <option value="Critical Access Hospital">Critical Access Hospital</option>
+                                    <option value="Government - VA">Government - VA</option>
+                                    <option value="Government - DOD">Government - DOD</option>
+                                    <option value="Long Term Care">Long Term Care</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Specialty
+                            </label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="Podiatry" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">Podiatry</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="General Surgery" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">General Surgery</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="Vascular Surgery" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">Vascular Surgery</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="Orthopedic Surgery" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">Orthopedic Surgery</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="Plastic Surgery" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">Plastic Surgery</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="Dermatology" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">Dermatology</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="Wound Care" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">Wound Care</span></label></div>
+                                <div><label class="inline-flex items-center"><input type="checkbox" name="specialty" value="Other" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"> <span class="ml-2">Other</span></label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shipping Information Section -->
+                <div class="section mb-8">
+                    <div class="section-header p-4 bg-blue-50 border-b border-gray-200 flex justify-between items-center cursor-pointer">
+                        <h3 class="text-lg font-semibold text-blue-600">Shipping Information</h3>
+                        <span class="text-blue-600">▼</span>
+                    </div>
+                    <div class="section-content p-6 border border-t-0 border-gray-200">
+                        <div class="form-group mb-4">
+                            <div class="inline-flex items-center">
+                                <input type="checkbox" id="shipping_same_as_billing" name="shipping_same_as_billing" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="shipping_same_as_billing" class="ml-2">
+                                    Shipping Address Same as Practice/Facility Address
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="shipping_fields" class="hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="form-group">
+                                    <label for="shipping_contact_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Shipping Contact Name <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="shipping_contact_name" name="shipping_contact_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipping_address" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Shipping Address <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="shipping_address" name="shipping_address" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipping_city" class="block text-sm font-medium text-gray-700 mb-1">
+                                        City <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="shipping_city" name="shipping_city" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipping_state" class="block text-sm font-medium text-gray-700 mb-1">
+                                        State <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="shipping_state" name="shipping_state" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipping_zip" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Zip <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="shipping_zip" name="shipping_zip" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="shipping_phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Shipping Phone
+                                    </label>
+                                    <input type="tel" id="shipping_phone" name="shipping_phone" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label for="delivery_instructions" class="block text-sm font-medium text-gray-700 mb-1">
+                                Special Delivery Instructions
+                            </label>
+                            <textarea id="delivery_instructions" name="delivery_instructions" rows="3" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Agreement Section -->
+                <div class="section mb-8">
+                    <div class="section-header p-4 bg-blue-50 border-b border-gray-200 flex justify-between items-center cursor-pointer">
+                        <h3 class="text-lg font-semibold text-blue-600">Agreement</h3>
+                        <span class="text-blue-600">▼</span>
+                    </div>
+                    <div class="section-content p-6 border border-t-0 border-gray-200">
+                        <div class="form-group mb-4">
+                            <div class="inline-flex items-center">
+                                <input type="checkbox" id="terms_agreement" name="terms_agreement" required class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="terms_agreement" class="ml-2">
+                                    I acknowledge receipt of and agree to the manufacturer's terms and conditions. I understand that my information will be shared with selected manufacturers to establish accounts. <span class="text-red-500">*</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label for="signature" class="block text-sm font-medium text-gray-700 mb-1">
+                                Authorized Signature <span class="text-red-500">*</span>
+                            </label>
+                            <div class="signature-container border border-gray-300 rounded-md p-2 bg-white">
+                                <canvas id="signature_canvas" class="signature-pad w-full h-32 border border-gray-200 rounded cursor-crosshair"></canvas>
+                                <input type="hidden" id="signature" name="signature" required>
+                                <div class="flex justify-end mt-2">
+                                    <button type="button" class="text-sm text-blue-600 hover:text-blue-800" id="clear-signature">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="signer_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Name (Printed) <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="signer_name" name="signer_name" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="signed_date" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Date <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="signed_date" name="signed_date" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between mt-8">
+                    <button type="button" id="save-draft" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        Save Draft
+                    </button>
+                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                        Submit Form
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-gray-100 py-4 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    &copy; 2025 MSC Wound Care. All rights reserved.
+                </div>
+                <div class="mt-2 md:mt-0">
+                    <ul class="flex space-x-4 text-sm">
+                        <li><a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Terms of Service</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/components/form-utils.js"></script>
+    <script src="/components/form-validation.js"></script>
+    <script>
+        // Initialize the form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('signed_date').value = today;
+            
+            // Toggle section content
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const isVisible = content.style.display !== 'none';
+                    content.style.display = isVisible ? 'none' : 'block';
+                    this.querySelector('span').textContent = isVisible ? '▶' : '▼';
+                });
+            });
+            
+            // Show/hide shipping fields based on checkbox
+            document.getElementById('shipping_same_as_billing').addEventListener('change', function() {
+                document.getElementById('shipping_fields').style.display = this.checked ? 'none' : 'block';
+            });
+            
+            // Initialize signature pad
+            if (typeof initSignaturePad === 'function') {
+                initSignaturePad('signature_canvas', 'signature');
+            }
+            
+            // Clear signature
+            document.getElementById('clear-signature').addEventListener('click', function() {
+                if (typeof clearSignature === 'function') {
+                    clearSignature('signature_canvas', 'signature');
+                }
+            });
+            
+            // Add provider button
+            document.getElementById('add_provider_btn').addEventListener('click', function() {
+                const container = document.getElementById('multi_provider_container');
+                const providerIndex = container.children.length;
+                
+                const providerHtml = `
+                    <div class="repeater-group border p-4 rounded-md mb-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="additional_provider_name_${providerIndex}" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Provider Name
+                                </label>
+                                <input type="text" id="additional_provider_name_${providerIndex}" name="additional_provider_name[]" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="form-group">
+                                <label for="additional_provider_npi_${providerIndex}" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Provider NPI
+                                </label>
+                                <input type="text" id="additional_provider_npi_${providerIndex}" name="additional_provider_npi[]" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-2">
+                            <button type="button" class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 bg-white hover:bg-gray-50 remove-provider">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = providerHtml;
+                const newProvider = tempDiv.firstElementChild;
+                
+                container.appendChild(newProvider);
+                
+                // Add remove event listener
+                newProvider.querySelector('.remove-provider').addEventListener('click', function() {
+                    newProvider.remove();
+                });
+            });
+            
+            // Form validation
+            document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // For demonstration, just showing an alert
+                alert('Form submitted successfully! In a real implementation, this would send data to your server.');
+                
+                // In a real implementation, you would send the form data to your server
+                // const formData = new FormData(this);
+                // fetch('/api/submit-onboarding', {
+                //     method: 'POST',
+                //     body: formData
+                // })
+                // .then(response => response.json())
+                // .then(data => {
+                //     if (data.success) {
+                //         // Show success message
+                //     } else {
+                //         // Show error message
+                //     }
+                // });
+            });
+        });
+    </script>
+</body>
+</html>
