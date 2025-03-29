@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --only=production
 
 # Copy prisma schema
 COPY prisma ./prisma/
@@ -16,6 +16,7 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 COPY index.js ./
 COPY server ./server/
 COPY site ./site/
+COPY .env* ./
 
 # Create uploads directory
 RUN mkdir -p uploads && chmod 755 uploads
