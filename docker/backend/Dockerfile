@@ -14,6 +14,7 @@ RUN npx prisma generate
 
 # Copy application code
 COPY index.js ./
+COPY server ./server/
 COPY .env.* ./
 
 # Multi-stage build for smaller image

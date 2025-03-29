@@ -287,9 +287,42 @@
     <script src="components/form-validation.js"></script>
     <script src="components/multi-step-form.js"></script>
     <script src="components/signature-pad.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/integrations.js"></script>
     <script src="js/ivr-form.js"></script>
     
     <script>
+        // Display an alert message
+        function showAlert(message, type = 'info') {
+            const alertsContainer = document.createElement('div');
+            alertsContainer.className = 'fixed top-4 right-4 z-50';
+            document.body.appendChild(alertsContainer);
+            
+            const alert = document.createElement('div');
+            alert.className = `p-4 mb-4 rounded shadow-md transition-all duration-300 ease-in-out transform translate-x-0 ${
+                type === 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' :
+                type === 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' :
+                type === 'warning' ? 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' :
+                'bg-blue-100 border-l-4 border-blue-500 text-blue-700'
+            }`;
+            
+            alert.textContent = message;
+            alertsContainer.appendChild(alert);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alert.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    alert.remove();
+                    if (alertsContainer.children.length === 0) {
+                        alertsContainer.remove();
+                    }
+                }, 300);
+            }, 5000);
+            
+            return alert;
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize the IVR form
             initIVRForm();
@@ -394,30 +427,74 @@
             }
             
             // Form submission
-            document.getElementById('ivrForm').addEventListener('submit', function(e) {
+            document.getElementById('ivrForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 // Create FormData
                 const formData = new FormData(this);
                 
-                // Send to server
-                fetch('api/submit-ivr', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Form submitted successfully!');
-                        // Optionally redirect or reset form
-                    } else {
-                        alert('Error submitting form: ' + data.message);
+                // Show loading state
+                const submitButton = document.getElementById('submitForm');
+                const originalButtonText = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = `
+                    <span class="loading-spinner mr-2"></span>
+                    Submitting...
+                `;
+                
+                try {
+                    // Use the integrations module if available
+                    if (window.Integrations && typeof window.Integrations.handleFormSubmissionWithIntegration === 'function') {
+                        try {
+                            const result = await window.Integrations.handleFormSubmissionWithIntegration('ivr', formData);
+                            
+                            // Show success message
+                            showAlert('Insurance verification request submitted successfully!', 'success');
+                            
+                            // Optionally redirect or reset form
+                            setTimeout(() => {
+                                window.location.href = '/dashboard';
+                            }, 2000);
+                            
+                            return;
+                        } catch (integrationError) {
+                            console.error('Integration error:', integrationError);
+                            // Fall back to standard submission if integration fails
+                        }
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
-                });
+                    
+                    // Standard form submission if integration is not available or fails
+                    const response = await fetch('/api/submit-ivr', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Show success message
+                        showAlert('Insurance verification request submitted successfully!', 'success');
+                        
+                        // Optionally redirect or reset form
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 2000);
+                    } else {
+                        // Show error message
+                        showAlert(`Error: ${result.message || 'Unknown error'}`, 'error');
+                        
+                        // Re-enable submit button
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+                    }
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                    showAlert('An error occurred. Please try again.', 'error');
+                    
+                    // Re-enable submit button
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                }
             });
             
             // Fetch manufacturers for dropdown (example)

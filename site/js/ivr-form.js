@@ -32,17 +32,9 @@ function initIVRForm() {
     
     const multiStepForm = initMultiStepForm({
         formId: 'ivrForm',
-        stepClass: 'form-step',
-        nextBtnId: 'nextToStep2', // First step's next button
-        prevBtnId: 'backToStep4', // Last step's back button
-        submitBtnId: 'submitForm',
-        stepIndicatorId: 'stepIndicator',
+        steps: formSteps,
         onStepChange: handleStepChange,
-        onSubmit: handleFormSubmit,
-        validateStep: (stepIndex) => {
-            // Use the appropriate validation function based on step index
-            return formSteps[stepIndex].validate();
-        }
+        onSubmit: handleFormSubmit
     });
     
     // Initialize conditional fields
@@ -70,7 +62,7 @@ function initIVRForm() {
             // Load manufacturers
             await populateSelectFromApi(
                 'manufacturer',
-                'api/manufacturers',
+                '/api/manufacturers',
                 'manufacturerId',
                 'name'
             );
@@ -78,7 +70,7 @@ function initIVRForm() {
             // Load sales reps
             await populateSelectFromApi(
                 'sales_rep',
-                'api/users?role=REP',
+                '/api/users?role=REP',
                 'userId',
                 'name'
             );
@@ -88,7 +80,7 @@ function initIVRForm() {
             if (practiceSelector) {
                 await populateSelectFromApi(
                     'practice',
-                    'api/practices',
+                    '/api/practices',
                     'practiceId',
                     'name'
                 );
@@ -353,8 +345,28 @@ function initIVRForm() {
                 Submitting...
             `;
             
-            // Send form data to server
-            const response = await fetch('api/submit-ivr', {
+            // Use the integrations module if available
+            if (window.Integrations && typeof window.Integrations.handleFormSubmissionWithIntegration === 'function') {
+                try {
+                    const result = await window.Integrations.handleFormSubmissionWithIntegration('ivr', formData);
+                    
+                    // Show success message
+                    showAlert('Insurance verification request submitted successfully!', 'success');
+                    
+                    // Optionally redirect or reset form
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 2000);
+                    
+                    return;
+                } catch (integrationError) {
+                    console.error('Integration error:', integrationError);
+                    // Fall back to standard submission if integration fails
+                }
+            }
+            
+            // Standard form submission if integration is not available or fails
+            const response = await fetch('/api/submit-ivr', {
                 method: 'POST',
                 body: formData
             });

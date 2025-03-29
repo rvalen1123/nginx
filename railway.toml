@@ -1,0 +1,22 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "./docker-compose.yml"
+
+[deploy]
+startCommand = "docker-compose up"
+healthcheckPath = "/healthcheck"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[env]
+NODE_ENV = "production"
+
+# n8n Configuration
+N8N_PROTOCOL = "https"
+N8N_BASIC_AUTH_ACTIVE = "true"
+EXECUTIONS_PROCESS = "main"
+GENERIC_TIMEZONE = "America/Chicago"
+
+# DocuSeal Configuration
+DOCUSEAL_ENABLE_SIGNUP = "true"

@@ -10,6 +10,7 @@ const compression = require('compression');
 const helmet = require('helmet');
 const session = require('express-session');
 const fs = require('fs');
+const { initIntegrations } = require('./server/integrations');
 require('dotenv').config();
 
 // Initialize Express and Prisma
@@ -46,6 +47,9 @@ const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
+
+// Initialize integrations with n8n and DocuSeal
+initIntegrations(app, prisma);
 
 // API Routes
 // =======================================
@@ -257,6 +261,60 @@ app.post('/api/submit-ivr', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to submit insurance verification request'
+    });
+  }
+});
+
+// Handle Product Education form submission
+app.post('/api/submit-product-education', async (req, res) => {
+  try {
+    // Extract form data
+    const formData = req.body;
+    const files = req.files;
+    
+    // Generate a unique ID for the document
+    const documentId = uuidv4();
+    
+    // Save uploaded files if present
+    const fileUrls = {};
+    if (files) {
+      for (const [key, file] of Object.entries(files)) {
+        const fileName = `${documentId}-${file.name}`;
+        const filePath = path.join(uploadsDir, fileName);
+        
+        // Move file to uploads directory
+        await file.mv(filePath);
+        fileUrls[key] = fileName;
+      }
+    }
+    
+    // Create document record in database
+    const document = await prisma.documents.create({
+      data: {
+        documentId,
+        documentType: 'EDUCATION',
+        status: 'submitted',
+        createdById: formData.repId || 'system', // Default to system if no rep ID
+        // Link to order, practice, etc. based on form data
+        ...(formData.practiceId ? { practiceId: formData.practiceId } : {}),
+        // Add additional metadata as needed
+      }
+    });
+    
+    // Log submission
+    console.log(`Product education form submitted with document ID: ${documentId}`);
+    
+    // Return success response
+    res.json({
+      success: true,
+      message: 'Product education request submitted successfully',
+      documentId
+    });
+  } catch (error) {
+    console.error('Error submitting product education form:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to submit product education request'
     });
   }
 });

@@ -24,6 +24,16 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - SHADOW_DATABASE_URL=${SHADOW_DATABASE_URL}
       - SESSION_SECRET=${SESSION_SECRET}
+      - N8N_URL=${N8N_URL}
+      - N8N_API_KEY=${N8N_API_KEY}
+      - DOCUSEAL_URL=${DOCUSEAL_URL}
+      - DOCUSEAL_API_KEY=${DOCUSEAL_API_KEY}
+      - DOCUSEAL_IVR_TEMPLATE_ID=${DOCUSEAL_IVR_TEMPLATE_ID}
+      - DOCUSEAL_ONBOARDING_TEMPLATE_ID=${DOCUSEAL_ONBOARDING_TEMPLATE_ID}
+      - DOCUSEAL_AGREEMENT_TEMPLATE_ID=${DOCUSEAL_AGREEMENT_TEMPLATE_ID}
+      - DOCUSEAL_ORDER_TEMPLATE_ID=${DOCUSEAL_ORDER_TEMPLATE_ID}
+      - DOCUSEAL_PROJECT_ID=${DOCUSEAL_PROJECT_ID}
+      - DOCUSEAL_SERVICE_ID=${DOCUSEAL_SERVICE_ID}
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:3000/healthcheck"]
       interval: 10s
@@ -32,9 +42,42 @@ services:
       start_period: 10s
     ports:
       - "3000:3000"
+    volumes:
+      - uploads:/app/uploads
     networks:
       - msc-network
     restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n:latest
+    environment:
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_HOST=n8n
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-n8n-encryption-key}
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:-password}
+      - NODE_ENV=production
+      - WEBHOOK_URL=${WEBHOOK_URL:-http://backend:3000}
+      - EXECUTIONS_PROCESS=main
+      - GENERIC_TIMEZONE=America/Chicago
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - msc-network
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # DocuSeal is hosted on Railway at https://docuseal-railway-production-d8fb.up.railway.app
+  # No need to run it locally
+
+volumes:
+  uploads:
+  n8n_data:
 
 networks:
   msc-network:
