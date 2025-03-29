@@ -250,6 +250,7 @@
     <script src="/js/ivr-form.js"></script>
     <script src="/js/order-form.js"></script>
     <script src="/js/onboarding-form.js"></script>
+    <script src="/js/dme-kit-form.js"></script>
     
     <!-- Main integration script -->
     <script src="/js/main.js"></script>
@@ -268,6 +269,12 @@
             }
             if (typeof initMobileMenu === 'function') {
                 initMobileMenu();
+            }
+            
+            // Initialize DME Kit form if navigated to
+            const dmeKitForm = document.getElementById('dmeKitForm');
+            if (dmeKitForm && typeof DMEKitForm === 'function') {
+                new DMEKitForm(dmeKitForm);
             }
             
             // Initialize chat functionality
