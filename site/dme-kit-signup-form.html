@@ -51,6 +51,23 @@
             background-color: #f9f9f9;
         }
         
+        /* Form section styling */
+        .form-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e9ecef;
+            color: #0d6efd;
+        }
+        
+        .form-section-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+        
         /* Progress indicator styling */
         .progress-container {
             margin: 30px 0;
@@ -101,9 +118,77 @@
             left: 50%;
         }
         
+        /* Mobile specific styles */
         @media (max-width: 768px) {
             .step-indicator::after {
                 display: none;
+            }
+            
+            /* Mobile radio button fixes */
+            .form-check {
+                padding-left: 1.5rem;
+                margin-bottom: 0.75rem;
+                position: relative;
+                display: block;
+            }
+            
+            .form-check-input {
+                width: 20px;
+                height: 20px;
+                margin-top: 0.15rem;
+                margin-left: -1.5rem;
+                position: absolute;
+            }
+            
+            .form-check-label {
+                margin-left: 0.5rem;
+                font-size: 1rem;
+                line-height: 1.5;
+                padding-top: 0.1rem;
+            }
+            
+            /* Better spacing for mobile form groups */
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+            
+            .form-section-title {
+                font-size: 1.2rem;
+                margin-bottom: 1.25rem;
+            }
+            
+            .form-section-subtitle {
+                font-size: 1.1rem;
+                margin-top: 1.5rem;
+                margin-bottom: 0.75rem;
+                font-weight: 600;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #eee;
+            }
+            
+            /* Better button on mobile */
+            .form-navigation .btn {
+                width: 100%;
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+            
+            /* Form header for mobile */
+            .form-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-header .lead {
+                font-size: 1rem;
+            }
+            
+            /* Improve form container padding */
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .form-section {
+                padding: 1rem;
             }
         }
     </style>
@@ -158,7 +243,7 @@
             </div>
         </div>
         
-        <div class="form-container">
+        <div class="form-container bg-white rounded-lg shadow-sm p-4">
             <form id="dmeKitForm" class="modern-form" enctype="multipart/form-data">
                 <!-- Form Steps -->
                 
@@ -188,21 +273,21 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="practiceName">Practice Name/DBA (if different from legal name)</label>
-                                    <div class="row">
-                                        <div class="col-md-6">
+                                    <div class="row mt-2">
+                                        <div class="col-12 mb-2">
                                             <div class="form-check">
                                                 <input type="radio" id="practiceNameSame" name="office.practiceNameOption" value="same" class="form-check-input" checked>
                                                 <label for="practiceNameSame" class="form-check-label">Same as Legal Name</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12">
                                             <div class="form-check">
                                                 <input type="radio" id="practiceNameDifferent" name="office.practiceNameOption" value="different" class="form-check-input">
                                                 <label for="practiceNameDifferent" class="form-check-label">Different (specify below)</label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="mt-2 conditional-field" data-condition="practiceNameDifferent">
+                                    <div class="mt-3 conditional-field" data-condition="practiceNameDifferent">
                                         <input type="text" id="practiceName" name="office.practiceName" class="form-control">
                                     </div>
                                 </div>
@@ -274,7 +359,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="orderContactPhone">Phone <span class="text-danger">*</span></label>
-                                    <input type="tel" id="orderContactPhone" name="office.orderContact.phone" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Format: 123-456-7890" required>
+                                    <input type="tel" id="orderContactPhone" name="office.orderContact.phone" class="form-control" inputmode="tel" placeholder="Format: 123-456-7890" required>
                                 </div>
                             </div>
                         </div>
@@ -297,7 +382,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="officeManagerPhone">Phone <span class="text-danger">*</span></label>
-                                    <input type="tel" id="officeManagerPhone" name="office.officeManager.phone" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Format: 123-456-7890" required>
+                                    <input type="tel" id="officeManagerPhone" name="office.officeManager.phone" class="form-control" inputmode="tel" placeholder="Format: 123-456-7890" required>
                                 </div>
                             </div>
                         </div>
@@ -308,7 +393,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Billing is handled:</label>
-                                    <div class="form-check">
+                                    <div class="form-check mb-2">
                                         <input type="radio" id="billingInHouse" name="office.billingHandling" value="in_house" class="form-check-input" checked>
                                         <label for="billingInHouse" class="form-check-label">In-House</label>
                                     </div>
@@ -338,7 +423,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="billerPhone">Phone <span class="text-danger">*</span></label>
-                                    <input type="tel" id="billerPhone" name="office.biller.phone" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Format: 123-456-7890" required>
+                                    <input type="tel" id="billerPhone" name="office.biller.phone" class="form-control" inputmode="tel" placeholder="Format: 123-456-7890" required>
                                 </div>
                             </div>
                         </div>
@@ -361,7 +446,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="apPhone">Phone <span class="text-danger">*</span></label>
-                                    <input type="tel" id="apPhone" name="office.accountsPayable.phone" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Format: 123-456-7890" required>
+                                    <input type="tel" id="apPhone" name="office.accountsPayable.phone" class="form-control" inputmode="tel" placeholder="Format: 123-456-7890" required>
                                 </div>
                             </div>
                         </div>
@@ -372,13 +457,13 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="officePhone">Office Phone <span class="text-danger">*</span></label>
-                                    <input type="tel" id="officePhone" name="office.phone" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Format: 123-456-7890" required>
+                                    <input type="tel" id="officePhone" name="office.phone" class="form-control" inputmode="tel" placeholder="Format: 123-456-7890" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="officeFax">Office Fax</label>
-                                    <input type="tel" id="officeFax" name="office.fax" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="Format: 123-456-7890">
+                                    <input type="tel" id="officeFax" name="office.fax" class="form-control" inputmode="tel" placeholder="Format: 123-456-7890">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -425,7 +510,7 @@
                     </div>
                     
                     <div class="form-navigation">
-                        <button type="button" class="btn btn-primary" data-action="next">Continue to Physician Information</button>
+                        <button type="button" class="btn btn-primary btn-lg" data-action="next">Continue to Physician Information</button>
                     </div>
                 </div>
                 

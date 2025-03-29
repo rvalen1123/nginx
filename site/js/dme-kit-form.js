@@ -53,6 +53,22 @@ class DMEKitForm {
             });
         });
         
+        // Improve radio button experience on mobile
+        this.form.querySelectorAll('.form-check-label').forEach(label => {
+            label.addEventListener('click', (e) => {
+                const radioId = e.target.getAttribute('for');
+                if (radioId) {
+                    const radio = document.getElementById(radioId);
+                    if (radio && radio.type === 'radio') {
+                        radio.checked = true;
+                        // Trigger change event to handle conditional fields
+                        const event = new Event('change', { bubbles: true });
+                        radio.dispatchEvent(event);
+                    }
+                }
+            });
+        });
+        
         // Clear signature button
         const clearSignatureBtn = document.getElementById('clearSignature');
         if (clearSignatureBtn) {
@@ -152,7 +168,16 @@ class DMEKitForm {
             this.showFieldError(field, 'This field is required');
             isValid = false;
         } 
-        // Check pattern validation
+        // Special case for phone fields to allow different formats
+        else if (field.type === 'tel' && field.value) {
+            // Accept various phone formats: xxx-xxx-xxxx or (xxx) xxx-xxxx or xxx.xxx.xxxx
+            const phoneRegex = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+            if (!phoneRegex.test(field.value)) {
+                this.showFieldError(field, 'Please enter a valid phone number');
+                isValid = false;
+            }
+        }
+        // Check pattern validation for other fields
         else if (field.pattern && field.value && !new RegExp(field.pattern).test(field.value)) {
             this.showFieldError(field, `Please enter a valid format: ${field.placeholder || ''}`);
             isValid = false;
