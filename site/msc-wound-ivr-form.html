@@ -2,36 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#3b82f6">
-    <title>Insurance Verification Request - MSC Wound Care Portal</title>
-    <link rel="stylesheet" href="/css/modern-form.css">
-    <link rel="stylesheet" href="/css/header.css">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSC Wound Care Insurance Verification Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/modern-form.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/form-progress.css">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 </head>
-<body>
-    <header class="site-header">
-        <div class="header-container">
-            <a href="/" class="header-logo">
-                <span>MSC Wound Care</span>
-            </a>
+<body class="bg-gray-100">
+    <header class="header">
+        <div class="container header-container">
+            <div class="header-logo">
+                <a href="index.html">
+                    <img src="images/msc-logo.png" alt="MSC Wound Care" class="h-8">
+                </a>
+            </div>
+            <div class="header-title">MSC Wound Care Portal</div>
             <nav class="header-nav">
-                <div class="nav-links">
-                    <a href="/insurance-verification" class="nav-link active">Insurance Verification</a>
-                    <a href="/product-education" class="nav-link">Product Education</a>
-                    <a href="/order-form" class="nav-link">Order Form</a>
-                    <a href="/onboarding" class="nav-link">Onboarding</a>
-                </div>
-                <div class="header-actions">
-                    <button class="header-button outline">Contact Support</button>
-                    <button class="header-button primary">Sign In</button>
-                </div>
-                <button class="mobile-menu-button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 6h16M4 12h16m-16 6h16"></path>
-                    </svg>
-                </button>
+                <a href="index.html" class="header-nav-item">Home</a>
+                <a href="msc-wound-ivr-form.html" class="header-nav-item active">Insurance Verification</a>
+                <a href="msc-wound-order-form.html" class="header-nav-item">Order Products</a>
             </nav>
+            <button class="mobile-menu-button" aria-label="Toggle menu">
+                <span class="mobile-menu-icon"></span>
+            </button>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html" class="mobile-menu-item">Home</a>
+            <a href="msc-wound-ivr-form.html" class="mobile-menu-item active">Insurance Verification</a>
+            <a href="msc-wound-order-form.html" class="mobile-menu-item">Order Products</a>
         </div>
     </header>
     
@@ -40,52 +41,69 @@
             <div class="card">
                 <div class="card-header">
                     <h2>Insurance Verification Request</h2>
-                    <p>Please complete all required fields to submit your request</p>
+                    <p>Complete all required fields to submit a verification request</p>
                 </div>
                 
                 <div class="card-body">
                     <div id="alertsContainer"></div>
                     
-                    <!-- Progress bar container -->
-                    <div class="progress-container"></div>
+                    <div class="progress-container">
+                        <div class="progress-steps">
+                            <div class="progress-step active" data-step="1">
+                                <div class="progress-step-number">1</div>
+                                <div class="progress-step-label">Provider Info</div>
+                            </div>
+                            <div class="progress-step" data-step="2">
+                                <div class="progress-step-number">2</div>
+                                <div class="progress-step-label">Patient Info</div>
+                            </div>
+                            <div class="progress-step" data-step="3">
+                                <div class="progress-step-number">3</div>
+                                <div class="progress-step-label">Insurance</div>
+                            </div>
+                            <div class="progress-step" data-step="4">
+                                <div class="progress-step-number">4</div>
+                                <div class="progress-step-label">Diagnosis</div>
+                            </div>
+                            <div class="progress-step" data-step="5">
+                                <div class="progress-step-number">5</div>
+                                <div class="progress-step-label">Review</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span>Step <span id="currentStep">1</span> of 5</span>
+                            <span><span id="completionPercentage">0</span>% Complete</span>
+                        </div>
+                    </div>
 
-                    <form id="ivrForm" action="api/submit-ivr" method="POST" enctype="multipart/form-data">
-                        <!-- Step 1: Form Setup -->
-                        <div class="form-step" data-step="1">
+                    <form id="ivrForm" data-form-type="ivr" action="/api/insurance-verification" method="POST">
+                        <!-- Step 1: Provider Information -->
+                        <div class="form-step active" data-step="1">
                             <div class="form-section">
-                                <div class="form-section-title">Form Setup</div>
+                                <div class="form-section-title">Provider Information</div>
                                 
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="manufacturer">Manufacturer <span class="text-danger">*</span></label>
-                                            <select id="manufacturer" name="manufacturerId" class="form-control" required>
-                                                <option value="">Select Manufacturer</option>
+                                            <select id="manufacturer" name="manufacturer" class="form-control" required>
+                                                <option value="">Select a manufacturer</option>
+                                                <!-- Options populated by JavaScript -->
                                             </select>
-                                            <div class="form-text">Select the manufacturer for the product being requested</div>
                                             <div class="invalid-feedback">Please select a manufacturer</div>
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="request_type">Request Type <span class="text-danger">*</span></label>
-                                            <select id="request_type" name="requestType" class="form-control" required>
-                                                <option value="">Select Request Type</option>
-                                                <option value="new">New Request</option>
-                                                <option value="renewal">Renewal</option>
-                                                <option value="change">Change Request</option>
+                                            <label for="product">Product <span class="text-danger">*</span></label>
+                                            <select id="product" name="product" class="form-control" required>
+                                                <option value="">Select a product</option>
+                                                <!-- Options populated by JavaScript based on manufacturer -->
                                             </select>
-                                            <div class="invalid-feedback">Please select a request type</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="request_date">Request Date <span class="text-danger">*</span></label>
-                                            <input type="date" id="request_date" name="requestDate" class="form-control" required>
-                                            <div class="invalid-feedback">Please select a date</div>
+                                            <div class="invalid-feedback">Please select a product</div>
                                         </div>
                                     </div>
                                 </div>
@@ -94,17 +112,19 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="sales_rep">Sales Representative <span class="text-danger">*</span></label>
-                                            <select id="sales_rep" name="repId" class="form-control" required>
-                                                <option value="">Select Sales Representative</option>
+                                            <select id="sales_rep" name="salesRep" class="form-control" required>
+                                                <option value="">Select a sales representative</option>
+                                                <!-- Options populated by JavaScript -->
                                             </select>
                                             <div class="invalid-feedback">Please select a sales representative</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="additional_emails">Additional Notification Emails</label>
-                                            <input type="text" id="additional_emails" name="additionalEmails" class="form-control">
-                                            <div class="form-text">Separate multiple emails with commas</div>
+                                            <label for="notification_email">Additional Notification Email</label>
+                                            <input type="email" id="notification_email" name="notificationEmail" class="form-control" placeholder="email@example.com">
+                                            <div class="form-text">Results will also be sent to this email address</div>
+                                            <div class="invalid-feedback">Please enter a valid email address</div>
                                         </div>
                                     </div>
                                 </div>
@@ -120,25 +140,39 @@
                             </div>
                         </div>
                         
-                        <!-- Additional steps will be added dynamically by JavaScript -->
+                        <!-- Additional form steps would be added here -->
                     </form>
                 </div>
                 
                 <div class="card-footer">
-                    <p class="text-center">MSC Wound Care &copy; 2025 | Need help? Contact support at (555) 123-4567</p>
+                    <p class="text-center">Need help? Contact support at (555) 123-4567</p>
                 </div>
             </div>
         </div>
     </main>
     
-    <!-- Scripts -->
-    <script src="/js/mobile-menu.js"></script>
-    <script src="/js/ivr-form.js"></script>
+    <footer class="py-4 bg-white mt-4 border-t">
+        <div class="container">
+            <div class="text-center text-sm text-gray-600">
+                <p>&copy; 2023 MSC Wound Care. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="js/form-handler.js"></script>
+    <script src="js/mobile-menu.js"></script>
+    <script src="js/ivr-form.js"></script>
     <script>
-        // Initialize form on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Initializing from HTML');
-            initIVRForm();
+            // Initialize mobile menu
+            if (typeof initMobileMenu === 'function') {
+                initMobileMenu();
+            }
+            
+            // Initialize IVR form
+            if (typeof initIVRForm === 'function') {
+                initIVRForm();
+            }
         });
     </script>
 </body>

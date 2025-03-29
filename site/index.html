@@ -4,193 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSC Wound Care Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="css/modern-form.css" rel="stylesheet">
-    <!-- SignaturePad library -->
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+    <link rel="stylesheet" href="css/modern-form.css">
+    <link rel="stylesheet" href="css/header.css">
 </head>
 <body class="bg-gray-100">
-    <header class="bg-white border-b border-gray-200 shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center py-4">
-                <h1 class="text-2xl font-bold text-blue-800">MSC Wound Care Portal</h1>
-                <nav class="w-full md:w-auto mt-4 md:mt-0">
-                    <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">
-                        <li>
-                            <a href="msc-wound-ivr-form.html" id="ivr-tab" class="...">Insurance Verification Request</a>
-                            <a href="msc-portal.html" id="product-education-tab" class="...">Product Education</a>
-                            <a href="msc-wound-order-form.html" id="order-tab" class="...">Order Form</a>
-                            <a href="msc-wound-onboarding-form.html" id="onboarding-tab" class="...">Onboarding</a>
-                        </li>
-                    </ul>
-                </nav>
+    <header class="header">
+        <div class="container header-container">
+            <div class="header-logo">
+                <a href="index.html">
+                    <img src="images/msc-logo.png" alt="MSC Wound Care" class="h-8">
+                </a>
             </div>
+            <div class="header-title">MSC Wound Care Portal</div>
+            <nav class="header-nav">
+                <a href="index.html" class="header-nav-item active">Home</a>
+                <a href="msc-wound-ivr-form.html" class="header-nav-item">Insurance Verification</a>
+                <a href="msc-wound-order-form.html" class="header-nav-item">Order Products</a>
+            </nav>
+            <button class="mobile-menu-button" aria-label="Toggle menu">
+                <span class="mobile-menu-icon"></span>
+            </button>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html" class="mobile-menu-item active">Home</a>
+            <a href="msc-wound-ivr-form.html" class="mobile-menu-item">Insurance Verification</a>
+            <a href="msc-wound-order-form.html" class="mobile-menu-item">Order Products</a>
         </div>
     </header>
-
-    <main class="container mx-auto px-4 py-8">
-        <!-- Form Container - All forms will be within this container -->
-        <div class="form-container">
-            <!-- Insurance Verification Request Form -->
-            <div id="ivr-form" class="form-section block">
-                <!-- IVR Form Content Will Be Loaded Here -->
-            </div>
-            
-            <!-- Product Education Form -->
-            <div id="product-education-form" class="form-section hidden">
-                <!-- Product Education Form Content Will Be Loaded Here -->
-            </div>
-            
-            <!-- Order Form -->
-            <div id="order-form" class="form-section hidden">
-                <!-- Order Form Content Will Be Loaded Here -->
-            </div>
-            
-            <!-- Onboarding Form -->
-            <div id="onboarding-form" class="form-section hidden">
-                <!-- Onboarding Form Content Will Be Loaded Here -->
+    
+    <main>
+        <div class="container my-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Welcome to MSC Wound Care Portal</h2>
+                    <p>Select a form to get started</p>
+                </div>
+                
+                <div class="card-body">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="text-blue-600 text-4xl mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Provider Onboarding</h3>
+                            <p class="text-gray-600 mb-4">Complete the provider onboarding process to register with MSC Wound Care.</p>
+                            <a href="msc-wound-onboarding-form.html" class="btn btn-primary block text-center">Start Onboarding</a>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="text-green-600 text-4xl mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Insurance Verification</h3>
+                            <p class="text-gray-600 mb-4">Verify patient insurance coverage for wound care products and services.</p>
+                            <a href="msc-wound-ivr-form.html" class="btn btn-primary block text-center">Start Verification</a>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="text-purple-600 text-4xl mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Order Products</h3>
+                            <p class="text-gray-600 mb-4">Place orders for wound care products and supplies through our portal.</p>
+                            <a href="msc-wound-order-form.html" class="btn btn-primary block text-center">Start Order</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <p class="text-center">Need help? Contact support at (555) 123-4567</p>
+                </div>
             </div>
         </div>
     </main>
-
-    <footer class="bg-gray-100 py-4 mt-8">
-        <div class="container mx-auto px-4">
+    
+    <footer class="py-4 bg-white mt-4 border-t">
+        <div class="container">
             <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-sm text-gray-600">
-                    &copy; 2025 MSC Wound Care. All rights reserved.
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600">&copy; 2023 MSC Wound Care. All rights reserved.</p>
                 </div>
-                <div class="mt-2 md:mt-0">
-                    <ul class="flex space-x-4 text-sm">
-                        <li><a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></li>
-                        <li><a href="#" class="text-blue-600 hover:underline">Terms of Service</a></li>
-                        <li><a href="#" class="text-blue-600 hover:underline">Contact Us</a></li>
-                    </ul>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>
+                    <a href="#" class="text-blue-600 hover:underline">Terms of Service</a>
+                    <a href="#" class="text-blue-600 hover:underline">Contact Us</a>
                 </div>
             </div>
         </div>
     </footer>
-
-    <!-- Form Scripts -->
-    <script src="js/common.js"></script>
-    <script src="js/integrations.js"></script>
-    <script src="js/ivr-form.js"></script>
-    <script src="js/product-education-form.js"></script>
-    <script src="js/order-form.js"></script>
-    <script src="js/onboarding-form.js"></script>
     
+    <script src="js/mobile-menu.js"></script>
     <script>
-        // Global configuration object
-        window.MSC_CONFIG = {};
-        
-        // Fetch configuration from server
-        async function fetchConfig() {
-            try {
-                const response = await fetch('/api/config');
-                if (response.ok) {
-                    window.MSC_CONFIG = await response.json();
-                    console.log('Configuration loaded:', window.MSC_CONFIG);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile menu
+            if (typeof initMobileMenu === 'function') {
+                initMobileMenu();
+            }
+            
+            // Set active tab
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navItems = document.querySelectorAll('.header-nav-item, .mobile-menu-item');
+            
+            navItems.forEach(item => {
+                const itemPage = item.getAttribute('href');
+                if (itemPage === currentPage) {
+                    item.classList.add('active');
                 } else {
-                    console.error('Failed to load configuration');
+                    item.classList.remove('active');
                 }
-            } catch (error) {
-                console.error('Error loading configuration:', error);
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Load configuration first
-            await fetchConfig();
-            
-            // Load the IVR form by default
-            loadForm('ivr');
-            
-            // Tab navigation
-            const tabs = [
-                { id: 'ivr-tab', form: 'ivr' },
-                { id: 'product-education-tab', form: 'product-education' },
-                { id: 'order-tab', form: 'order' },
-                { id: 'onboarding-tab', form: 'onboarding' }
-            ];
-            
-            tabs.forEach(tab => {
-                document.getElementById(tab.id).addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Hide all forms
-                    tabs.forEach(t => {
-                        document.getElementById(t.id).classList.remove('text-blue-800', 'border-b-2', 'border-blue-800');
-                        document.getElementById(t.id).classList.add('text-gray-600');
-                        document.getElementById(`${t.form}-form`).classList.add('hidden');
-                    });
-                    
-                    // Show the selected form
-                    this.classList.add('text-blue-800', 'border-b-2', 'border-blue-800');
-                    document.getElementById(`${tab.form}-form`).classList.remove('hidden');
-                    
-                    // Load the form content
-                    loadForm(tab.form);
-                });
             });
-            
-            function loadForm(formType) {
-                const formContainer = document.getElementById(`${formType}-form`);
-                
-                // If form is already loaded, don't reload it
-                if (formContainer.dataset.loaded === 'true') {
-                    return;
-                }
-                
-                // Show loading indicator
-                formContainer.innerHTML = `
-                    <div class="flex justify-center items-center h-48">
-                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                    </div>
-                `;
-                
-                // Map form types to their HTML files
-                const formFiles = {
-                    'ivr': 'msc-wound-ivr-form.html',
-                    'product-education': 'msc-portal.html',
-                    'order': 'msc-wound-order-form.html',
-                    'onboarding': 'msc-wound-onboarding-form.html'
-                };
-                
-                // Fetch the form HTML
-                fetch(formFiles[formType])
-                    .then(response => response.text())
-                    .then(html => {
-                        // Extract the form content from the HTML
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = html;
-                        const formContent = tempDiv.querySelector('#ivrForm') || tempDiv.querySelector('form');
-                        
-                        if (formContent) {
-                            formContainer.innerHTML = formContent.outerHTML;
-                            formContainer.dataset.loaded = 'true';
-                            
-                            // Initialize the form
-                            if (formType === 'ivr') {
-                                initIVRForm();
-                            } else if (formType === 'product-education') {
-                                initProductEducationForm();
-                            } else if (formType === 'order') {
-                                initOrderForm();
-                            } else if (formType === 'onboarding') {
-                                initOnboardingForm();
-                            }
-                        } else {
-                            throw new Error('Form content not found in HTML');
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`Error loading ${formType} form:`, error);
-                        formContainer.innerHTML = `
-                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                                <p>Error loading form. Please try again later.</p>
-                            </div>
-                        `;
-                    });
-            }
         });
     </script>
 </body>

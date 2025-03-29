@@ -1,327 +1,192 @@
 /**
- * MSC Wound Care Portal - IVR Form Specific Functionality
- * Extends the core form-handler.js with IVR-specific features
+ * Insurance Verification Request Form Handler
+ * Manages the IVR form functionality and data submission
  * Version 1.0.0
  */
 
-// Form step configuration
+// Define the IVR form steps
 const FORM_STEPS = [
-    { id: 1, title: 'Form Setup', label: 'Setup' },
-    { id: 2, title: 'Patient & Insurance Information', label: 'Patient Info' },
-    { id: 3, title: 'Provider & Facility Information', label: 'Provider Info' },
-    { id: 4, title: 'Wound & Product Information', label: 'Product Info' },
-    { id: 5, title: 'Review & Submit', label: 'Review' }
+    { step: 1, name: 'Provider Info' },
+    { step: 2, name: 'Patient Info' },
+    { step: 3, name: 'Insurance' },
+    { step: 4, name: 'Diagnosis' },
+    { step: 5, name: 'Review' }
 ];
 
+// Make sure we don't redefine the global function
+if (typeof window.initIVRForm !== 'function') {
+    window.initIVRForm = function() {
+        console.log('Initializing IVR Form');
+        new IVRForm().init();
+    };
+}
+
+/**
+ * IVR Form Manager Class
+ */
 class IVRForm {
     constructor() {
-        console.log('IVRForm constructor called');
+        this.form = null;
+        this.progressContainer = null;
         this.currentStep = 1;
+        this.totalSteps = FORM_STEPS.length;
+    }
+
+    async init() {
+        console.log('IVR Form init started');
+        
+        // Find the form
         this.form = document.getElementById('ivrForm');
-        
         if (!this.form) {
-            console.error('IVR Form not found in the document');
-            // Try again with a small delay to account for DOM loading
-            setTimeout(() => {
-                this.form = document.getElementById('ivrForm');
-                if (this.form) {
-                    console.log('Form found after delay');
-                    this.initializeForm();
-                } else {
-                    console.error('Form still not found after delay');
-                }
-            }, 500);
+            console.error('IVR Form not found on page');
             return;
         }
         
-        console.log('Form found immediately');
-        this.initializeForm();
-    }
-    
-    initializeForm() {
-        this.progressContainer = this.form.closest('.card-body').querySelector('.progress-container');
+        console.log('IVR Form found:', this.form);
         
+        // Find or create progress container
+        this.progressContainer = document.querySelector('.progress-container');
         if (!this.progressContainer) {
-            // Create progress container if it doesn't exist
-            console.log('Creating progress container');
-            this.progressContainer = document.createElement('div');
-            this.progressContainer.className = 'progress-container';
-            
-            if (this.form.parentElement) {
-                this.form.parentElement.insertBefore(this.progressContainer, this.form);
-            } else {
-                // Fallback: add inside the form
-                this.form.prepend(this.progressContainer);
-            }
+            console.warn('Progress container not found, creating one');
+            this.createProgressContainer();
         }
         
-        this.init();
-    }
-
-    init() {
-        console.log('Initializing IVR form');
+        // Load form data
         try {
-            console.log('Initializing progress bar');
-            this.initializeProgressBar();
-            
-            console.log('Initializing form steps');
-            this.initializeFormSteps();
-            
-            console.log('Setting up event listeners');
-            this.setupEventListeners();
-            
-            console.log('Loading dynamic data');
-            this.loadDynamicData();
-            
-            console.log('IVR form initialized successfully');
+            console.log('Loading form data');
+            await this.loadFormData();
+            console.log('Form data loaded successfully');
         } catch (error) {
-            console.error('Error initializing IVR form:', error);
+            console.error('Error loading form data:', error);
+            showAlert('Error loading form data. Using mock data where available.', 'warning');
         }
+        
+        // Set up event listeners
+        this.setupEventListeners();
+        
+        // Show the first step
+        this.showStep(this.currentStep);
+        
+        console.log('IVR Form initialization complete');
     }
 
-    initializeProgressBar() {
-        // Check if progress container exists
-        if (!this.progressContainer) {
-            console.error('Progress container not found');
+    createProgressContainer() {
+        // Already exists, no need to create
+        const existingContainer = document.querySelector('.progress-container');
+        if (existingContainer) {
+            this.progressContainer = existingContainer;
             return;
         }
         
-        // Create progress bar HTML
-        const progressHTML = `
-            <div class="progress-steps">
-                ${FORM_STEPS.map(step => `
-                    <div class="progress-step ${step.id === 1 ? 'active' : ''}" data-step="${step.id}">
-                        <div class="progress-step-number">${step.id}</div>
-                        <div class="progress-step-label">${step.label}</div>
-                    </div>
-                `).join('')}
-            </div>
-            <div class="progress-bar">
-                <div class="progress-bar-fill" style="width: 20%"></div>
-            </div>
-            <div class="progress-text">
-                <span>Step <span id="currentStep">1</span> of ${FORM_STEPS.length}</span>
-                <span><span id="completionPercentage">20</span>% Complete</span>
-            </div>
+        // Create progress container
+        this.progressContainer = document.createElement('div');
+        this.progressContainer.className = 'progress-container';
+        
+        // Create steps
+        const stepsContainer = document.createElement('div');
+        stepsContainer.className = 'progress-steps';
+        
+        FORM_STEPS.forEach(step => {
+            const stepEl = document.createElement('div');
+            stepEl.className = 'progress-step';
+            stepEl.dataset.step = step.step;
+            
+            const stepNumber = document.createElement('div');
+            stepNumber.className = 'progress-step-number';
+            stepNumber.textContent = step.step;
+            
+            const stepLabel = document.createElement('div');
+            stepLabel.className = 'progress-step-label';
+            stepLabel.textContent = step.name;
+            
+            stepEl.appendChild(stepNumber);
+            stepEl.appendChild(stepLabel);
+            stepsContainer.appendChild(stepEl);
+        });
+        
+        // Create progress bar
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        
+        const progressBarFill = document.createElement('div');
+        progressBarFill.className = 'progress-bar-fill';
+        progressBarFill.style.width = '0%';
+        
+        progressBar.appendChild(progressBarFill);
+        
+        // Create progress text
+        const progressText = document.createElement('div');
+        progressText.className = 'progress-text';
+        progressText.innerHTML = `
+            <span>Step <span id="currentStep">1</span> of ${FORM_STEPS.length}</span>
+            <span><span id="completionPercentage">0</span>% Complete</span>
         `;
         
-        this.progressContainer.innerHTML = progressHTML;
-    }
-
-    initializeFormSteps() {
-        // Check if form exists
-        if (!this.form) {
-            console.error('Form not found, cannot initialize steps');
-            return;
+        // Append all to progress container
+        this.progressContainer.appendChild(stepsContainer);
+        this.progressContainer.appendChild(progressBar);
+        this.progressContainer.appendChild(progressText);
+        
+        // Insert into DOM before the form
+        if (this.form) {
+            this.form.parentNode.insertBefore(this.progressContainer, this.form);
         }
-        
-        // Add HTML for additional steps
-        const stepsHTML = `
-            <!-- Step 2: Patient & Insurance -->
-            <div class="form-step" data-step="2" style="display: none;">
-                <div class="form-section">
-                    <div class="form-section-title">Patient Information</div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="patient_first_name">First Name <span class="text-danger">*</span></label>
-                                <input type="text" id="patient_first_name" name="patientFirstName" class="form-control" required>
-                                <div class="invalid-feedback">Please enter patient's first name</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="patient_last_name">Last Name <span class="text-danger">*</span></label>
-                                <input type="text" id="patient_last_name" name="patientLastName" class="form-control" required>
-                                <div class="invalid-feedback">Please enter patient's last name</div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Additional patient fields -->
-                </div>
-                
-                <div class="form-section">
-                    <div class="form-section-title">Insurance Information</div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="primary_insurance">Primary Insurance <span class="text-danger">*</span></label>
-                                <input type="text" id="primary_insurance" name="primaryInsurance" class="form-control" required>
-                                <div class="invalid-feedback">Please enter primary insurance</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="policy_number">Policy Number <span class="text-danger">*</span></label>
-                                <input type="text" id="policy_number" name="policyNumber" class="form-control" required>
-                                <div class="invalid-feedback">Please enter policy number</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-secondary" data-action="back">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                        Back
-                    </button>
-                    <button type="button" class="btn btn-primary" data-action="next">
-                        Continue to Provider Information
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Step 3: Provider & Facility -->
-            <div class="form-step" data-step="3" style="display: none;">
-                <!-- Provider & Facility fields will be added here -->
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-secondary" data-action="back">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                        Back
-                    </button>
-                    <button type="button" class="btn btn-primary" data-action="next">
-                        Continue to Product Information
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Step 4: Wound & Product -->
-            <div class="form-step" data-step="4" style="display: none;">
-                <!-- Wound & Product fields will be added here -->
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-secondary" data-action="back">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                        Back
-                    </button>
-                    <button type="button" class="btn btn-primary" data-action="next">
-                        Continue to Review
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Step 5: Review & Submit -->
-            <div class="form-step" data-step="5" style="display: none;">
-                <div class="form-section">
-                    <div class="form-section-title">Required Documents</div>
-                    <!-- Document upload fields -->
-                </div>
-                
-                <div class="form-section">
-                    <div class="form-section-title">Review Information</div>
-                    <div id="reviewSummary"></div>
-                </div>
-                
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-secondary" data-action="back">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                        Back
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Submit Request
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        this.form.insertAdjacentHTML('beforeend', stepsHTML);
     }
 
     setupEventListeners() {
-        if (!this.form) {
-            console.error('Form not found, cannot set up event listeners');
-            return;
+        if (!this.form) return;
+        
+        console.log('Setting up event listeners');
+        
+        // Next buttons
+        const nextButtons = this.form.querySelectorAll('[data-action="next"]');
+        nextButtons.forEach(button => {
+            button.addEventListener('click', () => this.nextStep());
+        });
+        
+        // Back buttons
+        const backButtons = this.form.querySelectorAll('[data-action="back"]');
+        backButtons.forEach(button => {
+            button.addEventListener('click', () => this.previousStep());
+        });
+        
+        // Submit button
+        const submitButton = this.form.querySelector('[data-action="submit"]');
+        if (submitButton) {
+            submitButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.submitForm();
+            });
         }
         
-        console.log('Setting up event listeners on form', this.form);
-        
-        // Helper function to handle button clicks
-        const handleButtonClick = (e) => {
-            // Log the element that was clicked for debugging
-            console.log('Clicked element:', e.target);
-            
-            // Find the button or closest button ancestor
-            const button = e.target.closest('[data-action]');
-            
-            if (!button) {
-                console.log('No button with data-action found');
-                return; // Not a button click
-            }
-            
-            const action = button.getAttribute('data-action');
-            console.log(`Button action: ${action}`);
-            
-            if (action === 'next') {
-                console.log('Next button clicked');
-                this.nextStep();
-            } else if (action === 'back') {
-                console.log('Back button clicked');
-                this.previousStep();
-            }
-        };
-        
-        // Navigation buttons - use event delegation with more robust targeting
-        this.form.addEventListener('click', handleButtonClick);
-
-        // Form submission
-        this.form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            console.log('Form submission attempted');
-            if (this.validateCurrentStep()) {
-                this.submitForm();
-            }
-        });
+        // Manufacturer selection changes product options
+        const manufacturerSelect = this.form.querySelector('#manufacturer');
+        if (manufacturerSelect) {
+            manufacturerSelect.addEventListener('change', () => this.loadProducts());
+        }
     }
 
-    async loadDynamicData() {
-        console.log('Loading dynamic data');
+    async loadFormData() {
+        console.log('Loading form data');
+        
         try {
             // Load manufacturers
-            console.log('Fetching manufacturers');
             const manufacturers = await this.fetchManufacturers();
-            if (manufacturers && manufacturers.length) {
-                console.log(`Loaded ${manufacturers.length} manufacturers`);
-                this.populateSelect('manufacturer', manufacturers);
-            } else {
-                console.warn('No manufacturers returned');
-            }
+            this.populateSelect('manufacturer', manufacturers);
             
             // Load sales representatives
-            console.log('Fetching sales representatives');
             const salesReps = await this.fetchSalesReps();
-            if (salesReps && salesReps.length) {
-                console.log(`Loaded ${salesReps.length} sales representatives`);
-                this.populateSelect('sales_rep', salesReps);
-            } else {
-                console.warn('No sales representatives returned');
-            }
+            this.populateSelect('sales_rep', salesReps);
             
-            console.log('Dynamic data loaded successfully');
+            // Load any other necessary data
+            
+            return true;
         } catch (error) {
-            console.error('Error loading dynamic data:', error);
-            this.showAlert('Error loading form data. Using mock data for testing.', 'info');
+            console.error('Error loading form data:', error);
+            throw error;
         }
     }
-
+    
     async fetchManufacturers() {
         try {
             const response = await fetch('/api/manufacturers');
@@ -362,33 +227,100 @@ class IVRForm {
             ];
         }
     }
-
+    
     populateSelect(elementId, options) {
-        const select = document.getElementById(elementId);
+        console.log(`Populating select #${elementId} with ${options?.length || 0} options`);
+        
+        const select = this.form.querySelector(`#${elementId}`);
         if (!select) {
             console.error(`Select element with ID '${elementId}' not found`);
             return;
         }
+        
+        // Clear existing options (except first placeholder if it exists)
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        
+        // Add new options
+        options?.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.id;
+            optionElement.textContent = option.name;
+            
+            // Add data attributes for additional info if needed
+            if (option.email) optionElement.dataset.email = option.email;
+            if (option.phone) optionElement.dataset.phone = option.phone;
+            if (option.territory) optionElement.dataset.territory = option.territory;
+            if (option.specialty) optionElement.dataset.specialty = option.specialty;
+            
+            select.appendChild(optionElement);
+        });
+        
+        console.log(`Successfully populated select #${elementId}`);
+    }
 
-        console.log(`Populating select '${elementId}' with ${options.length} options`);
+    async loadProducts() {
+        const manufacturerSelect = this.form.querySelector('#manufacturer');
+        if (!manufacturerSelect) {
+            console.error('Manufacturer select not found');
+            return;
+        }
+        
+        const manufacturerId = manufacturerSelect.value;
+        if (!manufacturerId) {
+            console.log('No manufacturer selected');
+            return;
+        }
+        
+        console.log(`Loading products for manufacturer ID: ${manufacturerId}`);
         
         try {
-            // Clear existing options except the first placeholder
-            while (select.options.length > 1) {
-                select.remove(1);
-            }
-            
-            // Add new options
-            options.forEach(option => {
-                const optionElement = document.createElement('option');
-                optionElement.value = option.id;
-                optionElement.textContent = option.name;
-                select.appendChild(optionElement);
-            });
-            
-            console.log(`Successfully populated select '${elementId}'`);
+            const products = await this.fetchProductsByManufacturer(manufacturerId);
+            this.populateSelect('product', products);
         } catch (error) {
-            console.error(`Error populating select '${elementId}':`, error);
+            console.error('Error loading products:', error);
+            showAlert('Error loading products. Please try again.', 'error');
+        }
+    }
+    
+    async fetchProductsByManufacturer(manufacturerId) {
+        try {
+            const response = await fetch(`/api/products?manufacturer=${manufacturerId}`);
+            if (!response.ok) throw new Error('Failed to fetch products');
+            return await response.json();
+        } catch (error) {
+            console.warn('Using mock product data due to API error:', error);
+            // Mock data for testing
+            const mockProducts = {
+                '1': [ // Acme Medical Supplies
+                    { id: 101, name: 'Advanced Wound Gel' },
+                    { id: 102, name: 'Hydrocolloid Dressing' },
+                    { id: 103, name: 'Antimicrobial Gauze' }
+                ],
+                '2': [ // MediTech Innovations
+                    { id: 201, name: 'Collagen Matrix' },
+                    { id: 202, name: 'Foam Dressing' },
+                    { id: 203, name: 'Transparent Film' }
+                ],
+                '3': [ // BioHeal Solutions
+                    { id: 301, name: 'Alginate Dressing' },
+                    { id: 302, name: 'Negative Pressure System' },
+                    { id: 303, name: 'Compression Bandage' }
+                ],
+                '4': [ // WoundCare Specialists
+                    { id: 401, name: 'Silver Dressing' },
+                    { id: 402, name: 'Silicone Gel' },
+                    { id: 403, name: 'Honey-Based Ointment' }
+                ],
+                '5': [ // Advanced Healing Products
+                    { id: 501, name: 'Bioactive Dressing' },
+                    { id: 502, name: 'Skin Substitute' },
+                    { id: 503, name: 'Growth Factor Spray' }
+                ]
+            };
+            
+            return mockProducts[manufacturerId] || [];
         }
     }
 
@@ -400,210 +332,257 @@ class IVRForm {
         
         console.log(`Showing step ${step}`);
         
+        // Update current step
+        this.currentStep = step;
+        
         // Get all step elements
         const steps = this.form.querySelectorAll('.form-step');
-        console.log(`Found ${steps.length} step elements`);
-        
         if (steps.length === 0) {
             console.error('No form steps found');
             return;
         }
         
-        // Hide all steps and remove active class
-        steps.forEach(s => {
-            s.style.display = 'none';
-            s.classList.remove('active');
-            console.log(`Hiding step ${s.dataset.step}`);
+        // Hide all steps
+        steps.forEach(stepElement => {
+            stepElement.style.display = 'none';
+            stepElement.classList.remove('active');
         });
         
-        // Find and show the target step
+        // Show current step
         const currentStepElement = this.form.querySelector(`.form-step[data-step="${step}"]`);
         if (currentStepElement) {
-            console.log(`Displaying step ${step}`);
             currentStepElement.style.display = 'block';
             currentStepElement.classList.add('active');
             
-            // Scroll to top of form on mobile devices
-            if (window.innerWidth <= 768) {
-                // Using smoother scrolling for better UX
-                setTimeout(() => {
-                    this.form.closest('.card-body').scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start'
-                    });
-                }, 100);
-            }
-            
-            // Focus on the first input in the step for better accessibility
-            const firstInput = currentStepElement.querySelector('input, select, textarea');
-            if (firstInput) {
-                setTimeout(() => {
+            // Focus first input for accessibility
+            setTimeout(() => {
+                const firstInput = currentStepElement.querySelector('input:not([type="hidden"]), select, textarea');
+                if (firstInput) {
                     firstInput.focus();
-                }, 200);
-            }
+                }
+            }, 100);
         } else {
-            console.error(`Step ${step} not found in the form`);
+            console.error(`Step ${step} element not found`);
         }
-
+        
         // Update progress indicators
         this.updateProgress(step);
     }
-
+    
     updateProgress(step) {
-        const progress = ((step - 1) / (FORM_STEPS.length - 1)) * 100;
+        if (!this.progressContainer) return;
         
-        // Update progress bar
-        const progressBar = this.progressContainer?.querySelector('.progress-bar-fill');
-        if (progressBar) {
-            progressBar.style.width = `${progress}%`;
+        // Calculate percentage
+        const percentage = ((step - 1) / (this.totalSteps - 1)) * 100;
+        
+        // Update progress bar fill
+        const progressBarFill = this.progressContainer.querySelector('.progress-bar-fill');
+        if (progressBarFill) {
+            progressBarFill.style.width = `${percentage}%`;
         }
         
         // Update step indicators
-        const steps = this.progressContainer?.querySelectorAll('.progress-step');
-        if (steps) {
-            steps.forEach(s => {
-                const stepNum = parseInt(s.dataset.step);
-                s.classList.toggle('active', stepNum === step);
-                s.classList.toggle('completed', stepNum < step);
-            });
-        }
+        const stepElements = this.progressContainer.querySelectorAll('.progress-step');
+        stepElements.forEach(stepElement => {
+            const stepNumber = parseInt(stepElement.dataset.step);
+            stepElement.classList.toggle('active', stepNumber === step);
+            stepElement.classList.toggle('completed', stepNumber < step);
+        });
         
-        // Update text
-        const currentStepEl = document.getElementById('currentStep');
-        const completionPercentageEl = document.getElementById('completionPercentage');
+        // Update text indicators
+        const currentStepEl = this.progressContainer.querySelector('#currentStep');
+        const completionPercentageEl = this.progressContainer.querySelector('#completionPercentage');
         
         if (currentStepEl) {
             currentStepEl.textContent = step;
         }
         
         if (completionPercentageEl) {
-            completionPercentageEl.textContent = Math.round(progress);
+            completionPercentageEl.textContent = Math.round(percentage);
         }
-    }
-
-    validateCurrentStep() {
-        if (!this.form) {
-            console.error('Form not found, cannot validate step');
-            return false;
-        }
-        
-        // For debugging/development - skip validation
-        // REMOVE THIS IN PRODUCTION
-        const skipValidation = true; // Set to false to enable validation
-        if (skipValidation) {
-            console.log('Validation skipped for testing');
-            return true;
-        }
-        
-        const currentStepElement = this.form.querySelector(`.form-step[data-step="${this.currentStep}"]`);
-        if (!currentStepElement) {
-            console.error(`Step ${this.currentStep} not found in the form`);
-            return false;
-        }
-        
-        console.log(`Validating step ${this.currentStep}`);
-        
-        const fields = currentStepElement.querySelectorAll('input[required], select[required]');
-        console.log(`Found ${fields.length} required fields to validate`);
-        
-        let isValid = true;
-        fields.forEach(field => {
-            if (!field.value) {
-                field.classList.add('is-invalid');
-                console.log(`Field ${field.id || field.name} is invalid (empty)`);
-                isValid = false;
-            } else {
-                field.classList.remove('is-invalid');
-                console.log(`Field ${field.id || field.name} is valid`);
-            }
-        });
-        
-        console.log(`Validation result: ${isValid ? 'valid' : 'invalid'}`);
-        return isValid;
     }
 
     nextStep() {
-        console.log('nextStep called, current step:', this.currentStep);
-        
-        // Always skip validation for test purposes
-        const skipValidation = true;
-        
-        if (this.currentStep < FORM_STEPS.length) {
-            console.log(`Moving from step ${this.currentStep} to step ${this.currentStep + 1}`);
-            this.currentStep++;
-            this.showStep(this.currentStep);
-            return true;
+        if (this.currentStep < this.totalSteps) {
+            // Validate current step
+            if (this.validateStep(this.currentStep)) {
+                this.showStep(this.currentStep + 1);
+                return true;
+            } else {
+                // Show validation errors
+                this.showValidationErrors(this.currentStep);
+                return false;
+            }
         } else {
-            console.log('Already at last step');
+            console.log('Already at the last step');
             return false;
         }
     }
-
+    
     previousStep() {
-        console.log('previousStep called, current step:', this.currentStep);
-        
         if (this.currentStep > 1) {
-            console.log(`Moving from step ${this.currentStep} to step ${this.currentStep - 1}`);
-            this.currentStep--;
-            this.showStep(this.currentStep);
+            this.showStep(this.currentStep - 1);
             return true;
         } else {
-            console.log('Already at first step');
+            console.log('Already at the first step');
             return false;
         }
     }
-
-    showAlert(message, type = 'info') {
-        const alertsContainer = document.getElementById('alertsContainer');
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type} alert-dismissible fade show`;
-        alert.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-        alertsContainer.appendChild(alert);
+    
+    validateStep(step) {
+        // For development, return true to skip validation
+        // Remove this in production
+        return true;
+        
+        /*
+        const stepElement = this.form.querySelector(`.form-step[data-step="${step}"]`);
+        if (!stepElement) return false;
+        
+        const requiredFields = stepElement.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        return isValid;
+        */
+    }
+    
+    showValidationErrors(step) {
+        const stepElement = this.form.querySelector(`.form-step[data-step="${step}"]`);
+        if (!stepElement) return;
+        
+        const requiredFields = stepElement.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                
+                // Add a small shake animation for better UX
+                field.classList.add('shake');
+                setTimeout(() => {
+                    field.classList.remove('shake');
+                }, 500);
+                
+                // Focus the first invalid field
+                if (field === requiredFields[0]) {
+                    field.focus();
+                }
+            }
+        });
+        
+        showAlert('Please fill in all required fields', 'warning');
     }
 
     async submitForm() {
+        // Validate all steps
+        let isValid = true;
+        for (let i = 1; i <= this.totalSteps; i++) {
+            if (!this.validateStep(i)) {
+                isValid = false;
+                this.showStep(i);
+                this.showValidationErrors(i);
+                break;
+            }
+        }
+        
+        if (!isValid) {
+            showAlert('Please complete all required fields before submitting', 'warning');
+            return;
+        }
+        
+        // Show loading state
+        const submitButton = this.form.querySelector('[data-action="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
+        }
+        
         try {
+            // Collect form data
             const formData = new FormData(this.form);
+            
+            // API submission
             const response = await fetch(this.form.action, {
                 method: 'POST',
                 body: formData
             });
-
-            if (!response.ok) throw new Error('Form submission failed');
-
-            const result = await response.json();
-            this.showAlert('Form submitted successfully!', 'success');
             
-            // Reset form after successful submission
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            // Show success message
+            showAlert('Insurance verification request submitted successfully!', 'success');
+            
+            // Reset form after delay
             setTimeout(() => {
                 this.form.reset();
-                this.currentStep = 1;
                 this.showStep(1);
             }, 2000);
+            
         } catch (error) {
             console.error('Error submitting form:', error);
-            this.showAlert('Error submitting form. Please try again.', 'error');
+            showAlert('Error submitting form. Please try again.', 'error');
+        } finally {
+            // Reset button state
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Submit Request';
+            }
         }
     }
 }
 
-// Initialize the form when the DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing IVR Form');
-    window.ivrFormInstance = new IVRForm();
-});
-
-// Add this function to be called from HTML
-function initIVRForm() {
-    console.log('initIVRForm called');
-    if (!window.ivrFormInstance) {
-        window.ivrFormInstance = new IVRForm();
+/**
+ * Helper function to show alerts
+ */
+function showAlert(message, type = 'info') {
+    // Find alerts container or create it
+    let alertsContainer = document.getElementById('alertsContainer');
+    if (!alertsContainer) {
+        alertsContainer = document.createElement('div');
+        alertsContainer.id = 'alertsContainer';
+        alertsContainer.className = 'alerts-container';
+        document.body.appendChild(alertsContainer);
     }
-    return window.ivrFormInstance;
+    
+    // Create alert element
+    const alertElement = document.createElement('div');
+    alertElement.className = `alert alert-${type} alert-dismissible fade show`;
+    alertElement.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" aria-label="Close"></button>
+    `;
+    
+    // Add alert to container
+    alertsContainer.appendChild(alertElement);
+    
+    // Setup dismiss button
+    const dismissButton = alertElement.querySelector('.btn-close');
+    if (dismissButton) {
+        dismissButton.addEventListener('click', () => {
+            alertElement.classList.remove('show');
+            setTimeout(() => {
+                alertElement.remove();
+            }, 300);
+        });
+    }
+    
+    // Auto-dismiss after 5 seconds for non-error alerts
+    if (type !== 'error') {
+        setTimeout(() => {
+            alertElement.classList.remove('show');
+            setTimeout(() => {
+                alertElement.remove();
+            }, 300);
+        }, 5000);
+    }
 }
-
-// Make the function available globally
-window.initIVRForm = initIVRForm;

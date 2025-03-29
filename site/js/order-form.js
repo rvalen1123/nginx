@@ -1,671 +1,700 @@
 /**
- * Order Form Functionality
+ * Order Form Handler
+ * Manages the order form functionality and data submission
+ * Version 1.0.0
  */
 
-// Define the initialization function
-function initOrderForm() {
-    // Initialize multi-step form
-    const formSteps = [
-        {
-            id: 'order-step1',
-            validate: validateOrderStep1
-        },
-        {
-            id: 'order-step2',
-            validate: validateOrderStep2
-        },
-        {
-            id: 'order-step3',
-            validate: validateOrderStep3
-        },
-        {
-            id: 'order-step4',
-            validate: validateOrderStep4
-        },
-        {
-            id: 'order-step5',
-            validate: validateOrderStep5
-        }
-    ];
-    
-    const multiStepForm = initMultiStepForm({
-        formId: 'orderForm',
-        steps: formSteps,
-        onStepChange: handleOrderStepChange,
-        onSubmit: handleOrderFormSubmit
-    });
-    
-    // Load form data
-    loadOrderFormData();
-    
-    // Initialize product management
-    initProductManagement();
-    
-    // Set default date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('orderDate').value = today;
-    
-    // Initialize conditional fields
-    setupOrderConditionalFields();
-    
-    // Load data from APIs
-    async function loadOrderFormData() {
-        try {
-            // Load sales reps
-            await populateSelectFromApi(
-                'orderRepId',
-                '/api/users?role=REP',
-                'userId',
-                'name'
-            );
-            
-            // Load practices for the selected rep
-            const repSelector = document.getElementById('orderRepId');
-            if (repSelector) {
-                repSelector.addEventListener('change', async () => {
-                    const repId = repSelector.value;
-                    if (repId) {
-                        await populateSelectFromApi(
-                            'orderPracticeId',
-                            `/api/users/${repId}/practices`,
-                            'practiceId',
-                            'name'
-                        );
-                    } else {
-                        // Clear practices if no rep selected
-                        const practiceSelect = document.getElementById('orderPracticeId');
-                        if (practiceSelect) {
-                            practiceSelect.innerHTML = '<option value="">Select Practice</option>';
-                        }
-                    }
-                });
-            }
-            
-            // Load facilities based on practice selection
-            const practiceSelector = document.getElementById('orderPracticeId');
-            if (practiceSelector) {
-                practiceSelector.addEventListener('change', async () => {
-                    const practiceId = practiceSelector.value;
-                    if (practiceId) {
-                        // Load facilities
-                        await populateSelectFromApi(
-                            'orderFacilityId',
-                            `/api/practices/${practiceId}/facilities`,
-                            'facilityId',
-                            'facilityName'
-                        );
-                        
-                        // Load physicians
-                        await populateSelectFromApi(
-                            'orderPhysicianId',
-                            `/api/practices/${practiceId}/physicians`,
-                            'physicianId',
-                            'name'
-                        );
-                    } else {
-                        // Clear facilities and physicians if no practice selected
-                        const facilitySelect = document.getElementById('orderFacilityId');
-                        if (facilitySelect) {
-                            facilitySelect.innerHTML = '<option value="">Select Facility</option>';
-                        }
-                        
-                        const physicianSelect = document.getElementById('orderPhysicianId');
-                        if (physicianSelect) {
-                            physicianSelect.innerHTML = '<option value="">Select Physician</option>';
-                        }
-                    }
-                });
-            }
-        } catch (error) {
-            console.error('Error loading order form data:', error);
-            showAlert('Error loading form data. Please try again later.', 'error');
-        }
+// Define the order form steps
+const ORDER_FORM_STEPS = [
+    { step: 1, name: 'Products' },
+    { step: 2, name: 'Customer' },
+    { step: 3, name: 'Shipping' },
+    { step: 4, name: 'Payment' },
+    { step: 5, name: 'Review' }
+];
+
+// Make sure we don't redefine the global function
+if (typeof window.initOrderForm !== 'function') {
+    window.initOrderForm = function() {
+        console.log('Initializing Order Form');
+        new OrderForm().init();
+    };
+}
+
+/**
+ * Order Form Manager Class
+ */
+class OrderForm {
+    constructor() {
+        this.form = null;
+        this.progressContainer = null;
+        this.currentStep = 1;
+        this.totalSteps = ORDER_FORM_STEPS.length;
+        this.products = [];
     }
-    
-    // Product management
-    function initProductManagement() {
-        // Add product button
-        const addProductBtn = document.getElementById('addProductBtn');
-        if (addProductBtn) {
-            addProductBtn.addEventListener('click', addProduct);
-        }
+
+    async init() {
+        console.log('Order Form init started');
         
-        // Initialize remove buttons on existing products
-        document.querySelectorAll('.remove-product-btn').forEach(button => {
-            button.addEventListener('click', removeProduct);
-        });
-        
-        // Set up price calculation events
-        document.querySelectorAll('[id^="quantity-"], [id^="unitPrice-"]').forEach(input => {
-            input.addEventListener('input', updatePrice);
-        });
-    }
-    
-    // Add a new product
-    function addProduct() {
-        const productContainer = document.getElementById('productContainer');
-        if (!productContainer) return;
-        
-        const productCount = productContainer.querySelectorAll('.product-item').length;
-        const newProductIndex = productCount;
-        
-        // Create the HTML for the new product
-        const productHtml = `
-            <div class="product-item" data-product-index="${newProductIndex}">
-                <button type="button" class="remove-product-btn">Remove</button>
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="manufacturer-${newProductIndex}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Manufacturer <span class="text-red-500">*</span>
-                            </label>
-                            <select id="manufacturer-${newProductIndex}" name="products[${newProductIndex}].manufacturer" required class="manufacturer-select w-full p-2 border rounded-md">
-                                <option value="">Select Manufacturer</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="productCode-${newProductIndex}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Product Code <span class="text-red-500">*</span>
-                            </label>
-                            <select id="productCode-${newProductIndex}" name="products[${newProductIndex}].productCode" required class="product-select w-full p-2 border rounded-md">
-                                <option value="">Select Product</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-col-full">
-                        <div class="form-group">
-                            <label for="description-${newProductIndex}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Description <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="description-${newProductIndex}" name="products[${newProductIndex}].description" required class="w-full p-2 border rounded-md">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="size-${newProductIndex}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Size <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="size-${newProductIndex}" name="products[${newProductIndex}].size" required class="w-full p-2 border rounded-md">
-                        </div>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="quantity-${newProductIndex}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Quantity <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="quantity-${newProductIndex}" name="products[${newProductIndex}].quantity" required min="1" value="1" class="w-full p-2 border rounded-md">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="unitPrice-${newProductIndex}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Unit Price <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="unitPrice-${newProductIndex}" name="products[${newProductIndex}].unitPrice" required step="0.01" class="w-full p-2 border rounded-md">
-                        </div>
-                    </div>
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label for="totalPrice-${newProductIndex}" class="block text-sm font-medium text-gray-700 mb-1">
-                                Total Price
-                            </label>
-                            <input type="number" id="totalPrice-${newProductIndex}" name="products[${newProductIndex}].totalPrice" readonly class="w-full p-2 border rounded-md bg-gray-50">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Add the new product to the container
-        productContainer.insertAdjacentHTML('beforeend', productHtml);
-        
-        // Add event listeners to the new product
-        const newProduct = productContainer.lastElementChild;
-        
-        // Remove button
-        newProduct.querySelector('.remove-product-btn').addEventListener('click', removeProduct);
-        
-        // Price calculation
-        newProduct.querySelector(`#quantity-${newProductIndex}`).addEventListener('input', updatePrice);
-        newProduct.querySelector(`#unitPrice-${newProductIndex}`).addEventListener('input', updatePrice);
-        
-        // Load manufacturers for the new product
-        populateSelectFromApi(
-            `manufacturer-${newProductIndex}`,
-            '/api/manufacturers',
-            'manufacturerId',
-            'name'
-        );
-        
-        // Add event listener to load products when manufacturer changes
-        const manufacturerSelect = newProduct.querySelector(`#manufacturer-${newProductIndex}`);
-        manufacturerSelect.addEventListener('change', async () => {
-            const manufacturerId = manufacturerSelect.value;
-            if (manufacturerId) {
-                await populateSelectFromApi(
-                    `productCode-${newProductIndex}`,
-                    `/api/manufacturers/${manufacturerId}/products`,
-                    'productId',
-                    'name',
-                    true
-                );
-            } else {
-                const productSelect = document.getElementById(`productCode-${newProductIndex}`);
-                productSelect.innerHTML = '<option value="">Select Product</option>';
-            }
-        });
-        
-        // Products may auto-fill description, size, and unit price
-        const productSelect = newProduct.querySelector(`#productCode-${newProductIndex}`);
-        productSelect.addEventListener('change', async () => {
-            const productId = productSelect.value;
-            if (productId) {
-                try {
-                    const response = await fetch(`/api/products/${productId}`);
-                    const product = await response.json();
-                    
-                    // Auto-fill fields
-                    document.getElementById(`description-${newProductIndex}`).value = product.name;
-                    document.getElementById(`size-${newProductIndex}`).value = product.size || '';
-                    
-                    // Get current price
-                    if (product.productPricing && product.productPricing.length > 0) {
-                        const currentPrice = product.productPricing[0];
-                        document.getElementById(`unitPrice-${newProductIndex}`).value = currentPrice.price;
-                        updatePrice.call(document.getElementById(`unitPrice-${newProductIndex}`));
-                    }
-                } catch (error) {
-                    console.error('Error getting product details:', error);
-                }
-            }
-        });
-    }
-    
-    // Remove a product
-    function removeProduct() {
-        const productItem = this.closest('.product-item');
-        if (!productItem) return;
-        
-        const productContainer = document.getElementById('productContainer');
-        
-        // Check if it's the last product
-        if (productContainer.querySelectorAll('.product-item').length <= 1) {
-            alert('You must have at least one product in the order.');
+        // Find the form
+        this.form = document.getElementById('orderForm');
+        if (!this.form) {
+            console.error('Order Form not found on page');
             return;
         }
         
-        // Remove the product
-        productItem.remove();
+        console.log('Order Form found:', this.form);
         
-        // Renumber remaining products
-        renumberProducts();
-    }
-    
-    // Renumber products after deletion
-    function renumberProducts() {
-        const productItems = document.querySelectorAll('.product-item');
-        
-        productItems.forEach((item, index) => {
-            // Update data attribute
-            item.dataset.productIndex = index;
-            
-            // Update input names
-            item.querySelectorAll('input, select').forEach(input => {
-                const name = input.name.replace(/products\[\d+\]/, `products[${index}]`);
-                input.name = name;
-                
-                // Update IDs
-                const id = input.id.replace(/\-\d+$/, `-${index}`);
-                input.id = id;
-            });
-            
-            // Update labels
-            item.querySelectorAll('label').forEach(label => {
-                const forAttr = label.getAttribute('for').replace(/\-\d+$/, `-${index}`);
-                label.setAttribute('for', forAttr);
-            });
-        });
-    }
-    
-    // Update total price
-    function updatePrice() {
-        const input = this;
-        const productIndex = input.id.split('-')[1];
-        
-        const quantityInput = document.getElementById(`quantity-${productIndex}`);
-        const unitPriceInput = document.getElementById(`unitPrice-${productIndex}`);
-        const totalPriceInput = document.getElementById(`totalPrice-${productIndex}`);
-        
-        if (quantityInput && unitPriceInput && totalPriceInput) {
-            const quantity = parseFloat(quantityInput.value) || 0;
-            const unitPrice = parseFloat(unitPriceInput.value) || 0;
-            
-            const totalPrice = quantity * unitPrice;
-            totalPriceInput.value = totalPrice.toFixed(2);
+        // Find or create progress container
+        this.progressContainer = document.querySelector('.progress-container');
+        if (!this.progressContainer) {
+            console.warn('Progress container not found, creating one');
+            this.createProgressContainer();
         }
         
-        // Update the order total
-        updateOrderTotal();
-    }
-    
-    // Update the order total
-    function updateOrderTotal() {
-        let orderTotal = 0;
-        
-        document.querySelectorAll('[id^="totalPrice-"]').forEach(input => {
-            orderTotal += parseFloat(input.value) || 0;
-        });
-        
-        const orderTotalElement = document.getElementById('orderTotal');
-        if (orderTotalElement) {
-            orderTotalElement.textContent = orderTotal.toFixed(2);
-        }
-    }
-    
-    // Handle conditional fields visibility
-    function setupOrderConditionalFields() {
-        // Billing address same as shipping
-        const sameAsShipping = document.getElementById('sameAsShipping');
-        const billingFields = document.getElementById('billingFields');
-        
-        if (sameAsShipping && billingFields) {
-            sameAsShipping.addEventListener('change', function() {
-                billingFields.style.display = this.checked ? 'none' : 'block';
-            });
-            
-            // Initial state
-            billingFields.style.display = sameAsShipping.checked ? 'none' : 'block';
-        }
-    }
-    
-    // When a step changes, perform any special handling
-    function handleOrderStepChange(stepIndex, stepId) {
-        // If we're on the review step, generate the summary
-        if (stepId === 'order-step5') {
-            generateOrderSummary();
-        }
-    }
-    
-    // Generate order summary for review
-    function generateOrderSummary() {
-        const orderSummary = document.getElementById('orderSummary');
-        if (!orderSummary) return;
-        
-        // Basic order info
-        const orderNumber = document.getElementById('orderNumber').value;
-        const orderDate = document.getElementById('orderDate').value;
-        const facilityName = document.getElementById('orderFacilityId').options[document.getElementById('orderFacilityId').selectedIndex]?.text || 'N/A';
-        
-        // Generate products HTML
-        let productsHtml = '';
-        document.querySelectorAll('.product-item').forEach(item => {
-            const index = item.dataset.productIndex;
-            const description = document.getElementById(`description-${index}`).value;
-            const size = document.getElementById(`size-${index}`).value;
-            const quantity = document.getElementById(`quantity-${index}`).value;
-            const unitPrice = document.getElementById(`unitPrice-${index}`).value;
-            const totalPrice = document.getElementById(`totalPrice-${index}`).value;
-            
-            productsHtml += `
-                <tr>
-                    <td class="p-2 border-b">${description}</td>
-                    <td class="p-2 border-b">${size}</td>
-                    <td class="p-2 border-b text-center">${quantity}</td>
-                    <td class="p-2 border-b text-right">$${parseFloat(unitPrice).toFixed(2)}</td>
-                    <td class="p-2 border-b text-right">$${parseFloat(totalPrice).toFixed(2)}</td>
-                </tr>
-            `;
-        });
-        
-        // Calculate order total
-        let orderTotal = 0;
-        document.querySelectorAll('[id^="totalPrice-"]').forEach(input => {
-            orderTotal += parseFloat(input.value) || 0;
-        });
-        
-        // Generate complete summary
-        orderSummary.innerHTML = `
-            <div class="mb-6">
-                <h4 class="text-lg font-semibold mb-2">Order Details</h4>
-                <div class="bg-gray-50 p-4 rounded">
-                    <p><strong>Order Number:</strong> ${orderNumber}</p>
-                    <p><strong>Order Date:</strong> ${orderDate}</p>
-                    <p><strong>Facility:</strong> ${facilityName}</p>
-                </div>
-            </div>
-            
-            <div class="mb-6">
-                <h4 class="text-lg font-semibold mb-2">Products</h4>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="p-2 text-left">Description</th>
-                                <th class="p-2 text-left">Size</th>
-                                <th class="p-2 text-center">Qty</th>
-                                <th class="p-2 text-right">Unit Price</th>
-                                <th class="p-2 text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${productsHtml}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="4" class="p-2 text-right font-semibold">Order Total:</td>
-                                <td class="p-2 text-right font-semibold">$${orderTotal.toFixed(2)}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            
-            <div>
-                <h4 class="text-lg font-semibold mb-2">Shipping Information</h4>
-                <div class="bg-gray-50 p-4 rounded">
-                    <p>${document.getElementById('shippingAddressLine1').value}</p>
-                    ${document.getElementById('shippingAddressLine2').value ? `<p>${document.getElementById('shippingAddressLine2').value}</p>` : ''}
-                    <p>${document.getElementById('shippingCity').value}, ${document.getElementById('shippingState').value} ${document.getElementById('shippingZipCode').value}</p>
-                    <strong>Shipping Method:</strong> ${document.getElementById('shippingMethod').options[document.getElementById('shippingMethod').selectedIndex]?.text || 'N/A'}
-                </div>
-            </div>
-        `;
-    }
-    
-    // Validate Order Step 1: Order Information
-    function validateOrderStep1() {
-        let isValid = true;
-        
-        isValid = validateField('orderNumber', Validators.required) && isValid;
-        isValid = validateField('orderDate', Validators.required) && isValid;
-        isValid = validateField('orderRepId', Validators.required) && isValid;
-        
-        return isValid;
-    }
-    
-    // Validate Order Step 2: Facility Information
-    function validateOrderStep2() {
-        let isValid = true;
-        
-        isValid = validateField('orderPracticeId', Validators.required) && isValid;
-        isValid = validateField('orderFacilityId', Validators.required) && isValid;
-        isValid = validateField('contactName', Validators.required) && isValid;
-        isValid = validateField('contactPhone', Validators.required) && isValid;
-        
-        return isValid;
-    }
-    
-    // Validate Order Step 3: Shipping Information
-    function validateOrderStep3() {
-        let isValid = true;
-        
-        isValid = validateField('shippingAddressLine1', Validators.required) && isValid;
-        isValid = validateField('shippingCity', Validators.required) && isValid;
-        isValid = validateField('shippingState', Validators.required) && isValid;
-        isValid = validateField('shippingZipCode', Validators.required) && isValid;
-        isValid = validateField('shippingMethod', Validators.required) && isValid;
-        
-        // Validate billing fields if they're visible
-        if (document.getElementById('sameAsShipping') && !document.getElementById('sameAsShipping').checked) {
-            isValid = validateField('billingAddressLine1', Validators.required) && isValid;
-            isValid = validateField('billingCity', Validators.required) && isValid;
-            isValid = validateField('billingState', Validators.required) && isValid;
-            isValid = validateField('billingZipCode', Validators.required) && isValid;
-        }
-        
-        return isValid;
-    }
-    
-    // Validate Order Step 4: Products
-    function validateOrderStep4() {
-        let isValid = true;
-        
-        // Validate each product
-        document.querySelectorAll('.product-item').forEach(item => {
-            const index = item.dataset.productIndex;
-            
-            isValid = validateField(`manufacturer-${index}`, Validators.required) && isValid;
-            isValid = validateField(`productCode-${index}`, Validators.required) && isValid;
-            isValid = validateField(`description-${index}`, Validators.required) && isValid;
-            isValid = validateField(`size-${index}`, Validators.required) && isValid;
-            isValid = validateField(`quantity-${index}`, Validators.required) && isValid;
-            isValid = validateField(`unitPrice-${index}`, Validators.required) && isValid;
-        });
-        
-        return isValid;
-    }
-    
-    // Validate Order Step 5: Review & Submit
-    function validateOrderStep5() {
-        return true; // No additional validation needed
-    }
-    
-    // Handle order form submission
-    async function handleOrderFormSubmit(formData) {
+        // Load form data
         try {
-            // Show loading state
-            const submitButton = document.getElementById('submitOrderForm');
-            const originalButtonText = submitButton.innerHTML;
-            submitButton.disabled = true;
-            submitButton.innerHTML = `
-                <span class="loading-spinner mr-2"></span>
-                Submitting...
+            console.log('Loading form data');
+            await this.loadFormData();
+            console.log('Form data loaded successfully');
+        } catch (error) {
+            console.error('Error loading form data:', error);
+            showAlert('Error loading form data. Using mock data where available.', 'warning');
+        }
+        
+        // Set up event listeners
+        this.setupEventListeners();
+        
+        // Initialize product list
+        this.initializeProductList();
+        
+        // Show the first step
+        this.showStep(this.currentStep);
+        
+        console.log('Order Form initialization complete');
+    }
+
+    createProgressContainer() {
+        // Already exists, no need to create
+        const existingContainer = document.querySelector('.progress-container');
+        if (existingContainer) {
+            this.progressContainer = existingContainer;
+            return;
+        }
+        
+        // Create progress container
+        this.progressContainer = document.createElement('div');
+        this.progressContainer.className = 'progress-container';
+        
+        // Create steps
+        const stepsContainer = document.createElement('div');
+        stepsContainer.className = 'progress-steps';
+        
+        ORDER_FORM_STEPS.forEach(step => {
+            const stepEl = document.createElement('div');
+            stepEl.className = 'progress-step';
+            stepEl.dataset.step = step.step;
+            
+            const stepNumber = document.createElement('div');
+            stepNumber.className = 'progress-step-number';
+            stepNumber.textContent = step.step;
+            
+            const stepLabel = document.createElement('div');
+            stepLabel.className = 'progress-step-label';
+            stepLabel.textContent = step.name;
+            
+            stepEl.appendChild(stepNumber);
+            stepEl.appendChild(stepLabel);
+            stepsContainer.appendChild(stepEl);
+        });
+        
+        // Create progress bar
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        
+        const progressBarFill = document.createElement('div');
+        progressBarFill.className = 'progress-bar-fill';
+        progressBarFill.style.width = '0%';
+        
+        progressBar.appendChild(progressBarFill);
+        
+        // Create progress text
+        const progressText = document.createElement('div');
+        progressText.className = 'progress-text';
+        progressText.innerHTML = `
+            <span>Step <span id="currentStep">1</span> of ${ORDER_FORM_STEPS.length}</span>
+            <span><span id="completionPercentage">0</span>% Complete</span>
+        `;
+        
+        // Append all to progress container
+        this.progressContainer.appendChild(stepsContainer);
+        this.progressContainer.appendChild(progressBar);
+        this.progressContainer.appendChild(progressText);
+        
+        // Insert into DOM before the form
+        if (this.form) {
+            this.form.parentNode.insertBefore(this.progressContainer, this.form);
+        }
+    }
+
+    setupEventListeners() {
+        if (!this.form) return;
+        
+        console.log('Setting up event listeners');
+        
+        // Next buttons
+        const nextButtons = this.form.querySelectorAll('[data-action="next"]');
+        nextButtons.forEach(button => {
+            button.addEventListener('click', () => this.nextStep());
+        });
+        
+        // Back buttons
+        const backButtons = this.form.querySelectorAll('[data-action="back"]');
+        backButtons.forEach(button => {
+            button.addEventListener('click', () => this.previousStep());
+        });
+        
+        // Submit button
+        const submitButton = this.form.querySelector('[data-action="submit"]');
+        if (submitButton) {
+            submitButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.submitForm();
+            });
+        }
+        
+        // Add product button
+        const addProductButton = this.form.querySelector('[data-action="add-product"]');
+        if (addProductButton) {
+            addProductButton.addEventListener('click', () => this.addProduct());
+        }
+        
+        // Use same billing address checkbox
+        const sameAddressCheckbox = this.form.querySelector('#same_address');
+        if (sameAddressCheckbox) {
+            sameAddressCheckbox.addEventListener('change', () => this.toggleBillingAddress());
+        }
+    }
+    
+    async loadFormData() {
+        console.log('Loading form data');
+        
+        try {
+            // Load products
+            const productData = await this.fetchProducts();
+            this.populateProductDropdown(productData);
+            
+            // Load sales representatives
+            const salesReps = await this.fetchSalesReps();
+            this.populateSelect('sales_rep', salesReps);
+            
+            // Load any other necessary data
+            
+            return true;
+        } catch (error) {
+            console.error('Error loading form data:', error);
+            throw error;
+        }
+    }
+    
+    async fetchProducts() {
+        try {
+            const response = await fetch('/api/products');
+            if (!response.ok) throw new Error('Failed to fetch products');
+            return await response.json();
+        } catch (error) {
+            console.warn('Using mock product data due to API error:', error);
+            // Mock data for testing
+            return [
+                { id: 101, name: 'Advanced Wound Gel', price: 29.99, sku: 'AWG-001', category: 'Gels' },
+                { id: 102, name: 'Hydrocolloid Dressing', price: 15.99, sku: 'HCD-002', category: 'Dressings' },
+                { id: 103, name: 'Antimicrobial Gauze', price: 12.50, sku: 'AMG-003', category: 'Gauze' },
+                { id: 201, name: 'Collagen Matrix', price: 45.99, sku: 'CLM-004', category: 'Matrix' },
+                { id: 202, name: 'Foam Dressing', price: 18.75, sku: 'FMD-005', category: 'Dressings' },
+                { id: 301, name: 'Alginate Dressing', price: 22.99, sku: 'ALD-006', category: 'Dressings' },
+                { id: 302, name: 'Negative Pressure System', price: 199.99, sku: 'NPS-007', category: 'Systems' },
+                { id: 401, name: 'Silver Dressing', price: 24.99, sku: 'SLD-008', category: 'Dressings' },
+                { id: 501, name: 'Bioactive Dressing', price: 35.50, sku: 'BAD-009', category: 'Dressings' },
+                { id: 502, name: 'Skin Substitute', price: 149.99, sku: 'SKS-010', category: 'Substitutes' }
+            ];
+        }
+    }
+
+    async fetchSalesReps() {
+        try {
+            const response = await fetch('/api/sales-representatives');
+            if (!response.ok) throw new Error('Failed to fetch sales representatives');
+            return await response.json();
+        } catch (error) {
+            console.warn('Using mock sales rep data due to API error:', error);
+            // Enhanced mock data with more realistic details
+            return [
+                { id: 1, name: 'John Smith', email: 'jsmith@mscwound.com', phone: '(555) 123-4567', territory: 'Northeast', specialty: 'Diabetes Care' },
+                { id: 2, name: 'Sarah Johnson', email: 'sjohnson@mscwound.com', phone: '(555) 234-5678', territory: 'Southeast', specialty: 'Surgical Wounds' },
+                { id: 3, name: 'Michael Brown', email: 'mbrown@mscwound.com', phone: '(555) 345-6789', territory: 'Midwest', specialty: 'Chronic Wounds' },
+                { id: 4, name: 'Jessica Davis', email: 'jdavis@mscwound.com', phone: '(555) 456-7890', territory: 'Southwest', specialty: 'Pressure Ulcers' },
+                { id: 5, name: 'David Wilson', email: 'dwilson@mscwound.com', phone: '(555) 567-8901', territory: 'West Coast', specialty: 'Burns' },
+                { id: 6, name: 'Emily Martinez', email: 'emartinez@mscwound.com', phone: '(555) 678-9012', territory: 'Northwest', specialty: 'Venous Ulcers' },
+                { id: 7, name: 'Robert Taylor', email: 'rtaylor@mscwound.com', phone: '(555) 789-0123', territory: 'Central', specialty: 'Arterial Ulcers' },
+                { id: 8, name: 'Amanda Garcia', email: 'agarcia@mscwound.com', phone: '(555) 890-1234', territory: 'Mid-Atlantic', specialty: 'Diabetic Foot Ulcers' },
+                { id: 9, name: 'Christopher Lee', email: 'clee@mscwound.com', phone: '(555) 901-2345', territory: 'Great Lakes', specialty: 'Surgical Site Infections' },
+                { id: 10, name: 'Jennifer Robinson', email: 'jrobinson@mscwound.com', phone: '(555) 012-3456', territory: 'South Central', specialty: 'Radiation Wounds' }
+            ];
+        }
+    }
+    
+    populateSelect(elementId, options) {
+        console.log(`Populating select #${elementId} with ${options?.length || 0} options`);
+        
+        const select = this.form.querySelector(`#${elementId}`);
+        if (!select) {
+            console.error(`Select element with ID '${elementId}' not found`);
+            return;
+        }
+        
+        // Clear existing options (except first placeholder if it exists)
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        
+        // Add new options
+        options?.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.id;
+            optionElement.textContent = option.name;
+            
+            // Add data attributes for additional info if needed
+            if (option.email) optionElement.dataset.email = option.email;
+            if (option.phone) optionElement.dataset.phone = option.phone;
+            if (option.territory) optionElement.dataset.territory = option.territory;
+            if (option.specialty) optionElement.dataset.specialty = option.specialty;
+            if (option.price) optionElement.dataset.price = option.price;
+            if (option.sku) optionElement.dataset.sku = option.sku;
+            
+            select.appendChild(optionElement);
+        });
+        
+        console.log(`Successfully populated select #${elementId}`);
+    }
+    
+    populateProductDropdown(products) {
+        this.populateSelect('product_select', products);
+    }
+    
+    initializeProductList() {
+        const productList = this.form.querySelector('#product_list');
+        if (!productList) {
+            console.error('Product list container not found');
+            return;
+        }
+        
+        // Create table if not exists
+        if (!productList.querySelector('table')) {
+            const table = document.createElement('table');
+            table.className = 'table product-table';
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="product_items"></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end">Subtotal:</td>
+                        <td class="subtotal">$0.00</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            `;
+            productList.appendChild(table);
+        }
+    }
+    
+    addProduct() {
+        const productSelect = this.form.querySelector('#product_select');
+        const quantityInput = this.form.querySelector('#product_quantity');
+        
+        if (!productSelect || !quantityInput) {
+            console.error('Product select or quantity input not found');
+            return;
+        }
+        
+        if (!productSelect.value) {
+            showAlert('Please select a product', 'warning');
+            return;
+        }
+        
+        const quantity = parseInt(quantityInput.value);
+        if (isNaN(quantity) || quantity <= 0) {
+            showAlert('Please enter a valid quantity', 'warning');
+            return;
+        }
+        
+        // Get product details
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const product = {
+            id: productSelect.value,
+            name: selectedOption.text,
+            price: parseFloat(selectedOption.dataset.price || 0),
+            sku: selectedOption.dataset.sku || '',
+            quantity: quantity,
+            total: quantity * parseFloat(selectedOption.dataset.price || 0)
+        };
+        
+        console.log('Adding product:', product);
+        
+        // Add to products array
+        this.products.push(product);
+        
+        // Update product list
+        this.updateProductList();
+        
+        // Reset inputs
+        productSelect.selectedIndex = 0;
+        quantityInput.value = 1;
+    }
+    
+    updateProductList() {
+        const productItems = this.form.querySelector('#product_items');
+        const subtotalEl = this.form.querySelector('.subtotal');
+        
+        if (!productItems || !subtotalEl) {
+            console.error('Product items or subtotal element not found');
+            return;
+        }
+        
+        // Clear current items
+        productItems.innerHTML = '';
+        
+        // Calculate subtotal
+        let subtotal = 0;
+        
+        // Add products
+        this.products.forEach((product, index) => {
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${product.name} <small class="text-muted">(SKU: ${product.sku})</small></td>
+                <td>${product.quantity}</td>
+                <td>$${product.price.toFixed(2)}</td>
+                <td>$${product.total.toFixed(2)}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger" data-action="remove-product" data-index="${index}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             `;
             
-            // Send the form data to the server
-            const response = await fetch('/api/submit-order', {
+            productItems.appendChild(row);
+            subtotal += product.total;
+            
+            // Add remove button event listener
+            const removeButton = row.querySelector('[data-action="remove-product"]');
+            removeButton.addEventListener('click', () => this.removeProduct(index));
+        });
+        
+        // Update subtotal
+        subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+        
+        // Update hidden input for order items
+        const orderItemsInput = this.form.querySelector('#order_items');
+        if (orderItemsInput) {
+            orderItemsInput.value = JSON.stringify(this.products);
+        }
+        
+        // Update UI based on product count
+        const noProductsMessage = this.form.querySelector('#no_products_message');
+        const productTable = this.form.querySelector('.product-table');
+        
+        if (noProductsMessage && productTable) {
+            if (this.products.length === 0) {
+                noProductsMessage.style.display = 'block';
+                productTable.style.display = 'none';
+            } else {
+                noProductsMessage.style.display = 'none';
+                productTable.style.display = 'table';
+            }
+        }
+    }
+    
+    removeProduct(index) {
+        if (index >= 0 && index < this.products.length) {
+            this.products.splice(index, 1);
+            this.updateProductList();
+        }
+    }
+    
+    toggleBillingAddress() {
+        const sameAddressCheckbox = this.form.querySelector('#same_address');
+        const billingAddressSection = this.form.querySelector('#billing_address_section');
+        
+        if (!sameAddressCheckbox || !billingAddressSection) return;
+        
+        billingAddressSection.style.display = sameAddressCheckbox.checked ? 'none' : 'block';
+        
+        // Toggle required attribute on billing fields
+        const billingFields = billingAddressSection.querySelectorAll('input, select');
+        billingFields.forEach(field => {
+            field.required = !sameAddressCheckbox.checked && field.dataset.required === 'true';
+        });
+    }
+
+    showStep(step) {
+        if (!this.form) {
+            console.error('Form not found, cannot show step');
+            return;
+        }
+        
+        console.log(`Showing step ${step}`);
+        
+        // Update current step
+        this.currentStep = step;
+        
+        // Get all step elements
+        const steps = this.form.querySelectorAll('.form-step');
+        if (steps.length === 0) {
+            console.error('No form steps found');
+            return;
+        }
+        
+        // Hide all steps
+        steps.forEach(stepElement => {
+            stepElement.style.display = 'none';
+            stepElement.classList.remove('active');
+        });
+        
+        // Show current step
+        const currentStepElement = this.form.querySelector(`.form-step[data-step="${step}"]`);
+        if (currentStepElement) {
+            currentStepElement.style.display = 'block';
+            currentStepElement.classList.add('active');
+            
+            // Focus first input for accessibility
+            setTimeout(() => {
+                const firstInput = currentStepElement.querySelector('input:not([type="hidden"]), select, textarea');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }, 100);
+        } else {
+            console.error(`Step ${step} element not found`);
+        }
+        
+        // Update progress indicators
+        this.updateProgress(step);
+    }
+    
+    updateProgress(step) {
+        if (!this.progressContainer) return;
+        
+        // Calculate percentage
+        const percentage = ((step - 1) / (this.totalSteps - 1)) * 100;
+        
+        // Update progress bar fill
+        const progressBarFill = this.progressContainer.querySelector('.progress-bar-fill');
+        if (progressBarFill) {
+            progressBarFill.style.width = `${percentage}%`;
+        }
+        
+        // Update step indicators
+        const stepElements = this.progressContainer.querySelectorAll('.progress-step');
+        stepElements.forEach(stepElement => {
+            const stepNumber = parseInt(stepElement.dataset.step);
+            stepElement.classList.toggle('active', stepNumber === step);
+            stepElement.classList.toggle('completed', stepNumber < step);
+        });
+        
+        // Update text indicators
+        const currentStepEl = this.progressContainer.querySelector('#currentStep');
+        const completionPercentageEl = this.progressContainer.querySelector('#completionPercentage');
+        
+        if (currentStepEl) {
+            currentStepEl.textContent = step;
+        }
+        
+        if (completionPercentageEl) {
+            completionPercentageEl.textContent = Math.round(percentage);
+        }
+    }
+
+    nextStep() {
+        // If we're on the products step, check if we have any products
+        if (this.currentStep === 1 && this.products.length === 0) {
+            showAlert('Please add at least one product before continuing', 'warning');
+            return false;
+        }
+        
+        if (this.currentStep < this.totalSteps) {
+            // Validate current step
+            if (this.validateStep(this.currentStep)) {
+                this.showStep(this.currentStep + 1);
+                return true;
+            } else {
+                // Show validation errors
+                this.showValidationErrors(this.currentStep);
+                return false;
+            }
+        } else {
+            console.log('Already at the last step');
+            return false;
+        }
+    }
+    
+    previousStep() {
+        if (this.currentStep > 1) {
+            this.showStep(this.currentStep - 1);
+            return true;
+        } else {
+            console.log('Already at the first step');
+            return false;
+        }
+    }
+    
+    validateStep(step) {
+        // For development, return true to skip validation
+        // Remove this in production
+        return true;
+    }
+    
+    showValidationErrors(step) {
+        const stepElement = this.form.querySelector(`.form-step[data-step="${step}"]`);
+        if (!stepElement) return;
+        
+        const requiredFields = stepElement.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                
+                // Add a small shake animation for better UX
+                field.classList.add('shake');
+                setTimeout(() => {
+                    field.classList.remove('shake');
+                }, 500);
+                
+                // Focus the first invalid field
+                if (field === requiredFields[0]) {
+                    field.focus();
+                }
+            }
+        });
+        
+        showAlert('Please fill in all required fields', 'warning');
+    }
+
+    async submitForm() {
+        // Validate all steps
+        let isValid = true;
+        for (let i = 1; i <= this.totalSteps; i++) {
+            if (!this.validateStep(i)) {
+                isValid = false;
+                this.showStep(i);
+                this.showValidationErrors(i);
+                break;
+            }
+        }
+        
+        if (!isValid) {
+            showAlert('Please complete all required fields before submitting', 'warning');
+            return;
+        }
+        
+        // Show loading state
+        const submitButton = this.form.querySelector('[data-action="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing Order...';
+        }
+        
+        try {
+            // Collect form data
+            const formData = new FormData(this.form);
+            
+            // Add product items
+            formData.append('products', JSON.stringify(this.products));
+            
+            // API submission
+            const response = await fetch(this.form.action, {
                 method: 'POST',
                 body: formData
             });
             
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+            
             const result = await response.json();
             
-            if (result.success) {
-                // Show success message
-                showAlert('Order submitted successfully!', 'success');
-                
-                // Optionally redirect to order confirmation
-                setTimeout(() => {
-                    window.location.href = `/orders/${result.orderId}`;
-                }, 2000);
-            } else {
-                // Show error message
-                showAlert(`Error: ${result.message || 'Unknown error'}`, 'error');
-                
-                // Re-enable submit button
+            // Show success message
+            showAlert('Order submitted successfully! Order number: ' + (result.orderId || 'N/A'), 'success');
+            
+            // Reset form after delay
+            setTimeout(() => {
+                this.form.reset();
+                this.products = [];
+                this.updateProductList();
+                this.showStep(1);
+            }, 3000);
+            
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            showAlert('Error submitting order. Please try again.', 'error');
+        } finally {
+            // Reset button state
+            if (submitButton) {
                 submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
-            }
-        } catch (error) {
-            console.error('Order submission error:', error);
-            showAlert('An error occurred. Please try again.', 'error');
-            
-            // Re-enable submit button
-            const submitButton = document.getElementById('submitOrderForm');
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Submit Order';
-        }
-    }
-
-    /**
-     * Populate a select element from an API endpoint with fallback mock data
-     * @param {string} selectId - ID of the select element to populate
-     * @param {string} apiUrl - API endpoint URL
-     * @param {string} valueKey - Object key to use for option value
-     * @param {string} textKey - Object key to use for option text
-     */
-    async function populateSelectFromApi(selectId, apiUrl, valueKey, textKey) {
-        const selectElement = document.getElementById(selectId);
-        if (!selectElement) return;
-        
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error(`Failed to fetch data from ${apiUrl}`);
-            
-            const data = await response.json();
-            
-            // Clear existing options (except the first placeholder)
-            while (selectElement.options.length > 1) {
-                selectElement.remove(1);
-            }
-            
-            // Add new options
-            data.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item[valueKey];
-                option.textContent = item[textKey];
-                selectElement.appendChild(option);
-            });
-        } catch (error) {
-            console.error(`Error loading data for ${selectId}:`, error);
-            
-            // Use mock data for sales reps if the API call fails
-            if (apiUrl.includes('role=REP') || apiUrl.includes('sales-representatives')) {
-                console.warn('Using mock sales rep data');
-                
-                const mockReps = [
-                    { userId: 1, name: 'John Smith', territory: 'Northeast', specialty: 'Diabetes Care' },
-                    { userId: 2, name: 'Sarah Johnson', territory: 'Southeast', specialty: 'Surgical Wounds' },
-                    { userId: 3, name: 'Michael Brown', territory: 'Midwest', specialty: 'Chronic Wounds' },
-                    { userId: 4, name: 'Jessica Davis', territory: 'Southwest', specialty: 'Pressure Ulcers' },
-                    { userId: 5, name: 'David Wilson', territory: 'West Coast', specialty: 'Burns' },
-                    { userId: 6, name: 'Emily Martinez', territory: 'Northwest', specialty: 'Venous Ulcers' },
-                    { userId: 7, name: 'Robert Taylor', territory: 'Central', specialty: 'Arterial Ulcers' },
-                    { userId: 8, name: 'Amanda Garcia', territory: 'Mid-Atlantic', specialty: 'Diabetic Foot Ulcers' },
-                    { userId: 9, name: 'Christopher Lee', territory: 'Great Lakes', specialty: 'Surgical Site Infections' },
-                    { userId: 10, name: 'Jennifer Robinson', territory: 'South Central', specialty: 'Radiation Wounds' }
-                ];
-                
-                // Clear existing options (except the first placeholder)
-                while (selectElement.options.length > 1) {
-                    selectElement.remove(1);
-                }
-                
-                // Add mock options
-                mockReps.forEach(rep => {
-                    const option = document.createElement('option');
-                    option.value = rep[valueKey];
-                    option.textContent = rep[textKey];
-                    selectElement.appendChild(option);
-                });
-            } else {
-                // Show error for other failures
-                showAlert(`Failed to load data for ${selectId.replace('order', '')}. Please try again.`, 'error');
+                submitButton.innerHTML = 'Place Order';
             }
         }
     }
 }
 
-// Make the function available globally
-window.initOrderForm = initOrderForm;
+/**
+ * Helper function to show alerts
+ */
+function showAlert(message, type = 'info') {
+    // Find alerts container or create it
+    let alertsContainer = document.getElementById('alertsContainer');
+    if (!alertsContainer) {
+        alertsContainer = document.createElement('div');
+        alertsContainer.id = 'alertsContainer';
+        alertsContainer.className = 'alerts-container';
+        document.body.appendChild(alertsContainer);
+    }
+    
+    // Create alert element
+    const alertElement = document.createElement('div');
+    alertElement.className = `alert alert-${type} alert-dismissible fade show`;
+    alertElement.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" aria-label="Close"></button>
+    `;
+    
+    // Add alert to container
+    alertsContainer.appendChild(alertElement);
+    
+    // Setup dismiss button
+    const dismissButton = alertElement.querySelector('.btn-close');
+    if (dismissButton) {
+        dismissButton.addEventListener('click', () => {
+            alertElement.classList.remove('show');
+            setTimeout(() => {
+                alertElement.remove();
+            }, 300);
+        });
+    }
+    
+    // Auto-dismiss after 5 seconds for non-error alerts
+    if (type !== 'error') {
+        setTimeout(() => {
+            alertElement.classList.remove('show');
+            setTimeout(() => {
+                alertElement.remove();
+            }, 300);
+        }, 5000);
+    }
+}

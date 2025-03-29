@@ -6,6 +6,10 @@
     <title>MSC Wound Care Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="/css/modern-form.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
+    <link href="/css/form-progress.css" rel="stylesheet">
+    <!-- SignaturePad library -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
     <style>
         .chat-widget {
             transition: all 0.3s ease;
@@ -232,16 +236,31 @@
     </div>
 
     <!-- Load form-specific scripts -->
-    <script src="/components/form-utils.js"></script>
-    <script src="/components/form-validation.js"></script>
-    <script src="/components/multi-step-form.js"></script>
-    <script src="/components/signature-pad.js"></script>
+    <script src="/js/mobile-menu.js"></script>
+    <script src="/js/form-handler.js"></script>
+    <script src="/js/ivr-form.js"></script>
+    <script src="/js/order-form.js"></script>
+    <script src="/js/onboarding-form.js"></script>
     
     <!-- Main integration script -->
     <script src="/js/main.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all forms
+            if (typeof initIVRForm === 'function') {
+                initIVRForm();
+            }
+            if (typeof initOrderForm === 'function') {
+                initOrderForm();
+            }
+            if (typeof initOnboardingForm === 'function') {
+                initOnboardingForm();
+            }
+            if (typeof initMobileMenu === 'function') {
+                initMobileMenu();
+            }
+            
             // Initialize chat functionality
             // Note: Most of the chat logic is in main.js
             document.getElementById('chat-toggle').addEventListener('click', function() {

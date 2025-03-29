@@ -5,17 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSC Wound Care Universal Order Form</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/modern-form.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/form-progress.css">
 </head>
-<body>
+<body class="bg-gray-100">
     <header class="header">
-        <div class="container header-content">
-            <h1 class="header-title">MSC Wound Care Portal</h1>
+        <div class="container header-container">
+            <div class="header-logo">
+                <a href="index.html">
+                    <img src="images/msc-logo.png" alt="MSC Wound Care" class="h-8">
+                </a>
+            </div>
+            <div class="header-title">MSC Wound Care Portal</div>
             <nav class="header-nav">
-                <a href="#" class="header-nav-item">Home</a>
-                <a href="#" class="header-nav-item">Forms</a>
-                <a href="#" class="header-nav-item">Support</a>
+                <a href="index.html" class="header-nav-item">Home</a>
+                <a href="msc-wound-ivr-form.html" class="header-nav-item">Insurance Verification</a>
+                <a href="msc-wound-order-form.html" class="header-nav-item active">Order Products</a>
             </nav>
+            <button class="mobile-menu-button" aria-label="Toggle menu">
+                <span class="mobile-menu-icon"></span>
+            </button>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html" class="mobile-menu-item">Home</a>
+            <a href="msc-wound-ivr-form.html" class="mobile-menu-item">Insurance Verification</a>
+            <a href="msc-wound-order-form.html" class="mobile-menu-item active">Order Products</a>
         </div>
     </header>
     
@@ -62,7 +78,7 @@
                         </div>
                     </div>
 
-                    <form id="universalOrderForm">
+                    <form id="orderForm" data-form-type="order" action="/api/orders" method="POST">
                         <!-- Step 1: Order Information -->
                         <div class="form-step active" data-step="1">
                             <div class="form-section">
@@ -536,6 +552,20 @@
     </footer>
     
     <script src="js/form-handler.js"></script>
+    <script src="js/mobile-menu.js"></script>
     <script src="js/order-form.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile menu
+            if (typeof initMobileMenu === 'function') {
+                initMobileMenu();
+            }
+            
+            // Initialize order form
+            if (typeof initOrderForm === 'function') {
+                initOrderForm();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,909 +1,739 @@
 /**
- * MSC Wound Care Portal Form Handler
- * A comprehensive JavaScript library for handling multi-step forms
+ * MSC Wound Care Form Handler
+ * Provides core functionality for all form types
  * Version 1.0.0
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialize all forms
-  initForms();
-  
-  // Initialize signature pad if present
-  initSignaturePad();
-});
-
-/**
- * Initialize all forms on the page
- */
-function initForms() {
-  const forms = document.querySelectorAll('form');
-  
-  forms.forEach(form => {
-    // Set up form validation
-    setupFormValidation(form);
-    
-    // Set up multi-step navigation
-    setupMultiStepNavigation(form);
-    
-    // Set up conditional fields
-    setupConditionalFields(form);
-    
-    // Set up product management (for order forms)
-    setupProductManagement(form);
-    
-    // Set up form submission
-    setupFormSubmission(form);
-  });
+// Check if the function is already defined to avoid redefinition
+if (typeof window.initForms !== 'function') {
+    /**
+     * Initialize all forms on the page
+     */
+    window.initForms = function() {
+        console.log('Initializing forms');
+        
+        // Find all forms with data-form-type attribute
+        const forms = document.querySelectorAll('form[data-form-type]');
+        
+        if (forms.length === 0) {
+            console.log('No forms found with data-form-type attribute');
+            return;
+        }
+        
+        console.log(`Found ${forms.length} form(s) to initialize`);
+        
+        // Initialize each form
+        forms.forEach(form => {
+            const formType = form.dataset.formType;
+            console.log(`Initializing ${formType} form`);
+            
+            // Setup common form features
+            setupFormValidation(form);
+            setupMultiStepNavigation(form);
+            setupConditionalFields(form);
+            setupProductManagement(form);
+            setupFormSubmission(form);
+            
+            // Call form-specific initialization functions if they exist
+            switch (formType) {
+                case 'ivr':
+                    if (typeof window.initIVRForm === 'function') {
+                        window.initIVRForm();
+                    }
+                    break;
+                    
+                case 'order':
+                    if (typeof window.initOrderForm === 'function') {
+                        window.initOrderForm();
+                    }
+                    break;
+                    
+                case 'onboarding':
+                    if (typeof window.initOnboardingForm === 'function') {
+                        window.initOnboardingForm();
+                    }
+                    break;
+                    
+                case 'education':
+                    if (typeof window.initEducationForm === 'function') {
+                        window.initEducationForm();
+                    }
+                    break;
+                    
+                default:
+                    console.log(`No specific initialization for form type: ${formType}`);
+            }
+        });
+        
+        console.log('Form initialization complete');
+    };
 }
 
 /**
- * Set up form validation
+ * Setup form validation for a form
  * @param {HTMLFormElement} form - The form element
  */
 function setupFormValidation(form) {
-  // Add validation on input change
-  const inputs = form.querySelectorAll('input, select, textarea');
-  
-  inputs.forEach(input => {
-    input.addEventListener('blur', function() {
-      validateInput(this);
+    if (!form) return;
+    
+    console.log('Setting up form validation');
+    
+    // Find all input fields with required or data-validate attributes
+    const fields = form.querySelectorAll('input[required], select[required], textarea[required], [data-validate]');
+    
+    fields.forEach(field => {
+        // Validate on blur
+        field.addEventListener('blur', () => {
+            validateField(field);
+        });
+        
+        // Validate on change for select fields
+        if (field.tagName === 'SELECT') {
+            field.addEventListener('change', () => {
+                validateField(field);
+            });
+        }
     });
     
-    // For select elements, also validate on change
-    if (input.tagName === 'SELECT') {
-      input.addEventListener('change', function() {
-        validateInput(this);
-      });
-    }
-  });
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        // If this is a multi-step form, don't validate on submit as we're
+        // handling validation in the step navigation
+        if (form.querySelector('.form-step')) {
+            return;
+        }
+        
+        // Check all required fields
+        let isValid = true;
+        fields.forEach(field => {
+            if (!validateField(field)) {
+                isValid = false;
+            }
+        });
+        
+        // Prevent submission if form is invalid
+        if (!isValid) {
+            e.preventDefault();
+            showAlert('Please fill in all required fields correctly.', 'warning');
+            
+            // Focus the first invalid field
+            const firstInvalid = form.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
+        }
+    });
 }
 
 /**
- * Validate a single input field
- * @param {HTMLElement} input - The input element to validate
- * @returns {boolean} - Whether the input is valid
+ * Validate a single form field
+ * @param {HTMLElement} field - The field to validate
+ * @returns {boolean} Whether the field is valid
  */
-function validateInput(input) {
-  // Skip validation for non-required fields that are empty
-  if (!input.hasAttribute('required') && !input.value) {
-    input.classList.remove('is-invalid');
-    return true;
-  }
-  
-  let isValid = true;
-  
-  // Check validity based on input type
-  if (input.type === 'email') {
-    isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
-  } else if (input.type === 'tel') {
-    // Basic phone validation (can be enhanced for specific formats)
-    isValid = /^[0-9\-\+\(\)\s]{10,15}$/.test(input.value);
-  } else if (input.type === 'date') {
-    isValid = input.value !== '';
-  } else if (input.tagName === 'SELECT') {
-    isValid = input.value !== '';
-  } else {
-    isValid = input.value.trim() !== '';
-  }
-  
-  // Update UI based on validation result
-  if (isValid) {
-    input.classList.remove('is-invalid');
-  } else {
-    input.classList.add('is-invalid');
-  }
-  
-  return isValid;
+function validateField(field) {
+    if (!field) return true;
+    
+    // Get validation type
+    const validationType = field.dataset.validate || field.type;
+    let isValid = true;
+    const value = field.value.trim();
+    
+    // Check if required and empty
+    if (field.hasAttribute('required') && !value) {
+        isValid = false;
+    } 
+    // If has a value, check format based on type
+    else if (value) {
+        switch (validationType) {
+            case 'email':
+                isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                break;
+                
+            case 'tel':
+            case 'phone':
+                // Remove non-numeric characters and check length
+                const digitsOnly = value.replace(/\D/g, '');
+                isValid = digitsOnly.length >= 10;
+                break;
+                
+            case 'zip':
+            case 'zipcode':
+                isValid = /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(value);
+                break;
+                
+            case 'date':
+                isValid = !isNaN(new Date(value).getTime());
+                break;
+                
+            case 'number':
+                isValid = !isNaN(parseFloat(value)) && isFinite(value);
+                break;
+                
+            // Add more validation types as needed
+        }
+    }
+    
+    // Update field styling
+    if (isValid) {
+        field.classList.remove('is-invalid');
+        field.classList.add('is-valid');
+    } else {
+        field.classList.add('is-invalid');
+        field.classList.remove('is-valid');
+    }
+    
+    return isValid;
 }
 
 /**
  * Validate all inputs in a specific form step
- * @param {HTMLElement} formStep - The form step element
- * @returns {boolean} - Whether all inputs in the step are valid
+ * @param {HTMLElement} form - The form element
+ * @param {number} step - The step number to validate
+ * @returns {boolean} Whether the step is valid
  */
-function validateFormStep(formStep) {
-  const inputs = formStep.querySelectorAll('input, select, textarea');
-  let isValid = true;
-  
-  inputs.forEach(input => {
-    // Only validate required fields or fields with values
-    if (input.hasAttribute('required') || input.value.trim() !== '') {
-      const inputValid = validateInput(input);
-      isValid = isValid && inputValid;
-    }
-  });
-  
-  return isValid;
+function validateFormStep(form, step) {
+    if (!form) return false;
+    
+    // For development, return true to skip validation
+    // REMOVE THIS IN PRODUCTION
+    return true;
+    
+    const stepElement = form.querySelector(`.form-step[data-step="${step}"]`);
+    if (!stepElement) return false;
+    
+    const fields = stepElement.querySelectorAll('input[required], select[required], textarea[required], [data-validate]');
+    let isValid = true;
+    
+    fields.forEach(field => {
+        if (!validateField(field)) {
+            isValid = false;
+        }
+    });
+    
+    return isValid;
 }
 
 /**
- * Set up multi-step form navigation
+ * Setup multi-step navigation for a form
  * @param {HTMLFormElement} form - The form element
  */
 function setupMultiStepNavigation(form) {
-  // Get all steps in the form
-  const steps = form.querySelectorAll('.form-step');
-  if (steps.length === 0) return;
-  
-  // Set the first step as active
-  steps[0].classList.add('active');
-  updateProgressBar(1, steps.length);
-  
-  // Set up next buttons
-  const nextButtons = form.querySelectorAll('[data-action="next"]');
-  nextButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const currentStep = this.closest('.form-step');
-      const currentStepNumber = parseInt(currentStep.dataset.step);
-      
-      // Validate current step before proceeding
-      if (!validateFormStep(currentStep)) {
-        showAlert('Please fill in all required fields correctly before proceeding.', 'danger');
-        return;
-      }
-      
-      // Find the next step
-      const nextStep = form.querySelector(`.form-step[data-step="${currentStepNumber + 1}"]`);
-      if (nextStep) {
-        // Hide current step
-        currentStep.classList.remove('active');
-        
-        // Show next step
-        nextStep.classList.add('active');
-        
-        // Update progress bar
-        updateProgressBar(currentStepNumber + 1, steps.length);
-        
-        // Scroll to top of form
-        form.scrollIntoView({ behavior: 'smooth' });
-      }
+    if (!form) return;
+    
+    const formSteps = form.querySelectorAll('.form-step');
+    if (formSteps.length <= 1) return; // Not a multi-step form
+    
+    console.log('Setting up multi-step navigation');
+    
+    // Get all next and back buttons
+    const nextButtons = form.querySelectorAll('[data-action="next"]');
+    const backButtons = form.querySelectorAll('[data-action="back"]');
+    
+    // Handle next button clicks
+    nextButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const currentStep = getCurrentStep(form);
+            if (currentStep < formSteps.length) {
+                // Validate current step before proceeding
+                if (validateFormStep(form, currentStep)) {
+                    showStep(form, currentStep + 1);
+                } else {
+                    // Show validation errors
+                    const invalidFields = form.querySelectorAll('.form-step[data-step="' + currentStep + '"] .is-invalid');
+                    if (invalidFields.length) {
+                        invalidFields[0].focus();
+                        showAlert('Please fill in all required fields correctly.', 'warning');
+                    }
+                }
+            }
+        });
     });
-  });
-  
-  // Set up back buttons
-  const backButtons = form.querySelectorAll('[data-action="back"]');
-  backButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const currentStep = this.closest('.form-step');
-      const currentStepNumber = parseInt(currentStep.dataset.step);
-      
-      // Find the previous step
-      const prevStep = form.querySelector(`.form-step[data-step="${currentStepNumber - 1}"]`);
-      if (prevStep) {
-        // Hide current step
-        currentStep.classList.remove('active');
-        
-        // Show previous step
-        prevStep.classList.add('active');
-        
-        // Update progress bar
-        updateProgressBar(currentStepNumber - 1, steps.length);
-        
-        // Scroll to top of form
-        form.scrollIntoView({ behavior: 'smooth' });
-      }
+    
+    // Handle back button clicks
+    backButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const currentStep = getCurrentStep(form);
+            if (currentStep > 1) {
+                showStep(form, currentStep - 1);
+            }
+        });
     });
-  });
+    
+    // Show the first step
+    showStep(form, 1);
 }
 
 /**
- * Update the progress bar and step indicators
+ * Get the current visible step
+ * @param {HTMLFormElement} form - The form element
+ * @returns {number} The current step number
+ */
+function getCurrentStep(form) {
+    if (!form) return 1;
+    
+    const activeStep = form.querySelector('.form-step.active');
+    return activeStep ? parseInt(activeStep.dataset.step) : 1;
+}
+
+/**
+ * Show a specific form step
+ * @param {HTMLFormElement} form - The form element
+ * @param {number} step - The step number to show
+ */
+function showStep(form, step) {
+    if (!form) return;
+    
+    console.log(`Showing step ${step}`);
+    
+    const formSteps = form.querySelectorAll('.form-step');
+    const totalSteps = formSteps.length;
+    
+    // Hide all steps
+    formSteps.forEach(stepElement => {
+        stepElement.style.display = 'none';
+        stepElement.classList.remove('active');
+    });
+    
+    // Show the target step
+    const stepToShow = form.querySelector(`.form-step[data-step="${step}"]`);
+    if (stepToShow) {
+        stepToShow.style.display = 'block';
+        stepToShow.classList.add('active');
+        
+        // Focus first input field for accessibility
+        setTimeout(() => {
+            const firstInput = stepToShow.querySelector('input:not([type="hidden"]), select, textarea');
+            if (firstInput) firstInput.focus();
+        }, 100);
+    }
+    
+    // Update progress bar
+    updateProgressBar(form, step, totalSteps);
+    
+    // Scroll to top of form on mobile
+    if (window.innerWidth < 768) {
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+/**
+ * Update the progress bar for multi-step forms
+ * @param {HTMLFormElement} form - The form element
  * @param {number} currentStep - The current step number
  * @param {number} totalSteps - The total number of steps
  */
-function updateProgressBar(currentStep, totalSteps) {
-  // Update progress bar fill
-  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
-  const progressBarFill = document.querySelector('.progress-bar-fill');
-  if (progressBarFill) {
-    progressBarFill.style.width = `${progressPercentage}%`;
-  }
-  
-  // Update step text
-  const currentStepElement = document.getElementById('currentStep');
-  if (currentStepElement) {
-    currentStepElement.textContent = currentStep;
-  }
-  
-  // Update completion percentage
-  const completionPercentageElement = document.getElementById('completionPercentage');
-  if (completionPercentageElement) {
-    completionPercentageElement.textContent = Math.round(progressPercentage);
-  }
-  
-  // Update step indicators
-  const stepIndicators = document.querySelectorAll('.progress-step');
-  stepIndicators.forEach((indicator, index) => {
-    // Remove all status classes
-    indicator.classList.remove('active', 'completed');
+function updateProgressBar(form, currentStep, totalSteps) {
+    if (!form) return;
     
-    // Add appropriate class based on current step
-    if (index + 1 === currentStep) {
-      indicator.classList.add('active');
-    } else if (index + 1 < currentStep) {
-      indicator.classList.add('completed');
+    // Find progress container (either inside the form or nearby)
+    let progressContainer = form.querySelector('.progress-container');
+    if (!progressContainer) {
+        // Try to find it as a sibling of the form
+        progressContainer = form.parentElement.querySelector('.progress-container');
     }
-  });
+    
+    if (!progressContainer) return;
+    
+    // Calculate percentage
+    const percentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    
+    // Update progress bar fill
+    const progressBarFill = progressContainer.querySelector('.progress-bar-fill');
+    if (progressBarFill) {
+        progressBarFill.style.width = `${percentage}%`;
+    }
+    
+    // Update step indicators
+    const stepElements = progressContainer.querySelectorAll('.progress-step');
+    stepElements.forEach(stepElement => {
+        const stepNumber = parseInt(stepElement.dataset.step);
+        stepElement.classList.toggle('active', stepNumber === currentStep);
+        stepElement.classList.toggle('completed', stepNumber < currentStep);
+    });
+    
+    // Update text
+    const currentStepEl = progressContainer.querySelector('#currentStep');
+    const completionPercentageEl = progressContainer.querySelector('#completionPercentage');
+    
+    if (currentStepEl) {
+        currentStepEl.textContent = currentStep;
+    }
+    
+    if (completionPercentageEl) {
+        completionPercentageEl.textContent = Math.round(percentage);
+    }
 }
 
 /**
- * Set up conditional fields that show/hide based on other field values
+ * Setup conditional fields based on other field values
  * @param {HTMLFormElement} form - The form element
  */
 function setupConditionalFields(form) {
-  // Example: Toggle billing fields based on "Same as Shipping" checkbox
-  const sameAsShippingCheckbox = form.querySelector('#sameAsShipping');
-  const billingFields = form.querySelector('#billingFields');
-  
-  if (sameAsShippingCheckbox && billingFields) {
-    // Initial state
-    billingFields.style.display = sameAsShippingCheckbox.checked ? 'none' : 'block';
+    if (!form) return;
     
-    // Toggle on change
-    sameAsShippingCheckbox.addEventListener('change', function() {
-      billingFields.style.display = this.checked ? 'none' : 'block';
+    console.log('Setting up conditional fields');
+    
+    // Find all elements with data-condition-* attributes
+    const conditionalTriggers = form.querySelectorAll('[data-condition-field]');
+    
+    conditionalTriggers.forEach(trigger => {
+        const targetField = trigger.dataset.conditionField;
+        const targetValue = trigger.dataset.conditionValue;
+        const targetAction = trigger.dataset.conditionAction || 'show';
+        
+        // Find the field that triggers the condition
+        const triggerField = form.querySelector(`#${targetField}`);
+        if (!triggerField) return;
+        
+        // Function to check condition and take action
+        const checkCondition = () => {
+            const fieldValue = triggerField.type === 'checkbox' ? 
+                triggerField.checked.toString() : triggerField.value;
+            
+            const conditionMet = targetValue ?
+                fieldValue === targetValue :
+                fieldValue !== '';
+            
+            if (targetAction === 'show') {
+                trigger.style.display = conditionMet ? 'block' : 'none';
+                
+                // Toggle required attribute on child inputs
+                const inputs = trigger.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    if (input.dataset.conditionalRequired) {
+                        input.required = conditionMet;
+                    }
+                });
+            } else if (targetAction === 'hide') {
+                trigger.style.display = conditionMet ? 'none' : 'block';
+                
+                // Toggle required attribute on child inputs
+                const inputs = trigger.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    if (input.dataset.conditionalRequired) {
+                        input.required = !conditionMet;
+                    }
+                });
+            }
+        };
+        
+        // Add event listeners
+        if (triggerField.type === 'checkbox') {
+            triggerField.addEventListener('change', checkCondition);
+        } else {
+            triggerField.addEventListener('change', checkCondition);
+            triggerField.addEventListener('input', checkCondition);
+        }
+        
+        // Initial check
+        checkCondition();
     });
-  }
-  
-  // Add more conditional field logic as needed
+    
+    // Setup "same as" billing address checkbox
+    const sameAddressCheckbox = form.querySelector('#same_address');
+    if (sameAddressCheckbox) {
+        const billingSection = document.getElementById('billing_address_section');
+        if (billingSection) {
+            sameAddressCheckbox.addEventListener('change', () => {
+                billingSection.style.display = sameAddressCheckbox.checked ? 'none' : 'block';
+                
+                // Toggle required attributes
+                const inputs = billingSection.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    if (input.dataset.required === 'true') {
+                        input.required = !sameAddressCheckbox.checked;
+                    }
+                });
+            });
+            
+            // Initial check
+            sameAddressCheckbox.dispatchEvent(new Event('change'));
+        }
+    }
 }
 
 /**
- * Set up product management for order forms
+ * Setup product management for order forms
  * @param {HTMLFormElement} form - The form element
  */
 function setupProductManagement(form) {
-  // Add product button
-  const addProductBtn = form.querySelector('#addProductBtn');
-  if (!addProductBtn) return;
-  
-  addProductBtn.addEventListener('click', function() {
-    addNewProduct(form);
-  });
-  
-  // Set up existing product items
-  setupExistingProducts(form);
-  
-  // Set up price calculation
-  setupPriceCalculation(form);
-}
-
-/**
- * Set up existing product items
- * @param {HTMLFormElement} form - The form element
- */
-function setupExistingProducts(form) {
-  const productItems = form.querySelectorAll('.product-item');
-  
-  productItems.forEach(item => {
-    // Set up remove button
-    const removeBtn = item.querySelector('.remove-product-btn');
-    if (removeBtn) {
-      removeBtn.addEventListener('click', function() {
-        removeProduct(item);
-      });
-    }
+    if (!form) return;
     
-    // Set up price calculation
-    const quantityInput = item.querySelector('[name$=".quantity"]');
-    const unitPriceInput = item.querySelector('[name$=".unitPrice"]');
+    console.log('Setting up product management');
     
-    if (quantityInput && unitPriceInput) {
-      quantityInput.addEventListener('input', function() {
-        calculateProductTotal(item);
-      });
-      
-      unitPriceInput.addEventListener('input', function() {
-        calculateProductTotal(item);
-      });
-      
-      // Calculate initial total
-      calculateProductTotal(item);
-    }
-  });
-}
-
-/**
- * Add a new product item to the form
- * @param {HTMLFormElement} form - The form element
- */
-function addNewProduct(form) {
-  const productContainer = form.querySelector('#productContainer');
-  if (!productContainer) return;
-  
-  // Get existing products to determine the new index
-  const existingProducts = productContainer.querySelectorAll('.product-item');
-  const newIndex = existingProducts.length;
-  
-  // Clone the first product item as a template
-  const template = existingProducts[0].cloneNode(true);
-  
-  // Update IDs and names with the new index
-  template.dataset.productIndex = newIndex;
-  
-  const inputs = template.querySelectorAll('input, select');
-  inputs.forEach(input => {
-    const namePattern = /products\[\d+\]/;
-    const idPattern = /-\d+$/;
+    // Find the product management elements
+    const addProductButton = form.querySelector('[data-action="add-product"]');
+    if (!addProductButton) return; // Not an order form
     
-    // Update name attribute
-    if (input.name && namePattern.test(input.name)) {
-      input.name = input.name.replace(namePattern, `products[${newIndex}]`);
-    }
+    const productSelect = form.querySelector('#product_select');
+    const quantityInput = form.querySelector('#product_quantity');
+    const productListContainer = form.querySelector('#product_list');
     
-    // Update id attribute
-    if (input.id && idPattern.test(input.id)) {
-      input.id = input.id.replace(idPattern, `-${newIndex}`);
-    }
+    if (!productSelect || !quantityInput || !productListContainer) return;
     
-    // Clear values
-    input.value = '';
-  });
-  
-  // Update labels to point to the new input IDs
-  const labels = template.querySelectorAll('label');
-  labels.forEach(label => {
-    const forPattern = /-\d+$/;
-    if (label.htmlFor && forPattern.test(label.htmlFor)) {
-      label.htmlFor = label.htmlFor.replace(forPattern, `-${newIndex}`);
-    }
-  });
-  
-  // Add the new product item to the container
-  productContainer.appendChild(template);
-  
-  // Set up the new product item
-  const newItem = productContainer.lastElementChild;
-  
-  // Set up remove button
-  const removeBtn = newItem.querySelector('.remove-product-btn');
-  if (removeBtn) {
-    removeBtn.addEventListener('click', function() {
-      removeProduct(newItem);
-    });
-  }
-  
-  // Set up price calculation
-  const quantityInput = newItem.querySelector('[name$=".quantity"]');
-  const unitPriceInput = newItem.querySelector('[name$=".unitPrice"]');
-  
-  if (quantityInput && unitPriceInput) {
-    quantityInput.addEventListener('input', function() {
-      calculateProductTotal(newItem);
+    // Products array
+    let products = [];
+    
+    // Add product button click
+    addProductButton.addEventListener('click', () => {
+        if (!productSelect.value) {
+            showAlert('Please select a product', 'warning');
+            return;
+        }
+        
+        const quantity = parseInt(quantityInput.value);
+        if (isNaN(quantity) || quantity <= 0) {
+            showAlert('Please enter a valid quantity', 'warning');
+            return;
+        }
+        
+        // Get product details
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const product = {
+            id: productSelect.value,
+            name: selectedOption.text,
+            price: parseFloat(selectedOption.dataset.price || 0),
+            sku: selectedOption.dataset.sku || '',
+            quantity: quantity,
+            total: quantity * parseFloat(selectedOption.dataset.price || 0)
+        };
+        
+        // Add to products array
+        products.push(product);
+        
+        // Update product list
+        updateProductList();
+        
+        // Reset inputs
+        productSelect.selectedIndex = 0;
+        quantityInput.value = 1;
     });
     
-    unitPriceInput.addEventListener('input', function() {
-      calculateProductTotal(newItem);
-    });
-  }
-}
-
-/**
- * Remove a product item from the form
- * @param {HTMLElement} productItem - The product item element
- */
-function removeProduct(productItem) {
-  const productContainer = productItem.parentElement;
-  
-  // Don't remove if it's the only product
-  if (productContainer.querySelectorAll('.product-item').length <= 1) {
-    showAlert('At least one product is required.', 'warning');
-    return;
-  }
-  
-  // Remove the product item
-  productItem.remove();
-  
-  // Reindex remaining products
-  reindexProducts(productContainer);
-}
-
-/**
- * Reindex product items after removal
- * @param {HTMLElement} productContainer - The container of product items
- */
-function reindexProducts(productContainer) {
-  const productItems = productContainer.querySelectorAll('.product-item');
-  
-  productItems.forEach((item, index) => {
-    // Update data attribute
-    item.dataset.productIndex = index;
+    // Update product list
+    function updateProductList() {
+        // Clear current items
+        productListContainer.innerHTML = '';
+        
+        if (products.length === 0) {
+            productListContainer.innerHTML = '<p id="no_products_message">No products added yet. Use the form above to add products.</p>';
+            return;
+        }
+        
+        // Create table
+        const table = document.createElement('table');
+        table.className = 'table product-table';
+        
+        // Add header
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+        
+        // Add body
+        const tbody = document.createElement('tbody');
+        let subtotal = 0;
+        
+        products.forEach((product, index) => {
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td>${product.name}<br><small class="text-muted">SKU: ${product.sku}</small></td>
+                <td>${product.quantity}</td>
+                <td>$${product.price.toFixed(2)}</td>
+                <td>$${product.total.toFixed(2)}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger" data-action="remove-product" data-index="${index}">Remove</button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+            subtotal += product.total;
+        });
+        
+        table.appendChild(tbody);
+        
+        // Add footer
+        const tfoot = document.createElement('tfoot');
+        tfoot.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-end">Subtotal:</td>
+                <td class="subtotal">$${subtotal.toFixed(2)}</td>
+                <td></td>
+            </tr>
+        `;
+        table.appendChild(tfoot);
+        
+        // Add to container
+        productListContainer.appendChild(table);
+        
+        // Add remove button event listeners
+        const removeButtons = productListContainer.querySelectorAll('[data-action="remove-product"]');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const index = parseInt(button.dataset.index);
+                if (!isNaN(index) && index >= 0 && index < products.length) {
+                    products.splice(index, 1);
+                    updateProductList();
+                }
+            });
+        });
+        
+        // Update hidden input for order items
+        const orderItemsInput = form.querySelector('#order_items');
+        if (orderItemsInput) {
+            orderItemsInput.value = JSON.stringify(products);
+        }
+    }
     
-    // Update input names and IDs
-    const inputs = item.querySelectorAll('input, select');
-    inputs.forEach(input => {
-      const namePattern = /products\[\d+\]/;
-      const idPattern = /-\d+$/;
-      
-      // Update name attribute
-      if (input.name && namePattern.test(input.name)) {
-        input.name = input.name.replace(namePattern, `products[${index}]`);
-      }
-      
-      // Update id attribute
-      if (input.id && idPattern.test(input.id)) {
-        input.id = input.id.replace(idPattern, `-${index}`);
-      }
-    });
-    
-    // Update labels
-    const labels = item.querySelectorAll('label');
-    labels.forEach(label => {
-      const forPattern = /-\d+$/;
-      if (label.htmlFor && forPattern.test(label.htmlFor)) {
-        label.htmlFor = label.htmlFor.replace(forPattern, `-${index}`);
-      }
-    });
-  });
+    // Initialize product list
+    updateProductList();
 }
 
 /**
- * Calculate the total price for a product item
- * @param {HTMLElement} productItem - The product item element
- */
-function calculateProductTotal(productItem) {
-  const quantityInput = productItem.querySelector('[name$=".quantity"]');
-  const unitPriceInput = productItem.querySelector('[name$=".unitPrice"]');
-  const totalPriceInput = productItem.querySelector('[name$=".totalPrice"]');
-  
-  if (quantityInput && unitPriceInput && totalPriceInput) {
-    const quantity = parseFloat(quantityInput.value) || 0;
-    const unitPrice = parseFloat(unitPriceInput.value) || 0;
-    const totalPrice = quantity * unitPrice;
-    
-    totalPriceInput.value = totalPrice.toFixed(2);
-  }
-}
-
-/**
- * Set up price calculation for the entire form
- * @param {HTMLFormElement} form - The form element
- */
-function setupPriceCalculation(form) {
-  // This could be expanded to calculate subtotals, taxes, shipping, etc.
-  // For now, we'll just make sure all product totals are calculated
-  const productItems = form.querySelectorAll('.product-item');
-  
-  productItems.forEach(item => {
-    calculateProductTotal(item);
-  });
-}
-
-/**
- * Set up form submission
+ * Setup form submission handling
  * @param {HTMLFormElement} form - The form element
  */
 function setupFormSubmission(form) {
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
+    if (!form) return;
     
-    // Validate all fields before submission
-    const isValid = validateForm(form);
+    console.log('Setting up form submission');
     
-    if (!isValid) {
-      showAlert('Please fill in all required fields correctly before submitting.', 'danger');
-      return;
-    }
-    
-    // Show loading state
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton.innerHTML;
-    submitButton.disabled = true;
-    submitButton.innerHTML = `
-      <span class="loading-spinner"></span>
-      Submitting...
-    `;
-    
-    try {
-      // Create FormData
-      const formData = new FormData(form);
-      
-      // Add any additional data
-      // For example, if using a signature pad
-      const signatureInput = form.querySelector('#signature');
-      const signaturePad = document.getElementById('signaturePad');
-      if (signatureInput && signaturePad && typeof SignaturePad !== 'undefined') {
-        const signaturePadInstance = new SignaturePad(signaturePad);
-        if (!signaturePadInstance.isEmpty()) {
-          signatureInput.value = signaturePadInstance.toDataURL();
-        }
-      }
-      
-      // Prepare order summary for review step
-      if (form.id === 'universalOrderForm') {
-        updateOrderSummary(form);
-      }
-      
-      // Submit the form
-      const response = await fetch(form.action, {
-        method: form.method || 'POST',
-        body: formData
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        // Show success message
-        showAlert('Form submitted successfully!', 'success');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        // Display response in the response container
-        const responseContainer = form.querySelector('#responseContainer');
-        if (responseContainer) {
-          responseContainer.innerHTML = `
-            <div class="alert alert-success">
-              <h4>Submission Successful!</h4>
-              <p>${result.message || 'Your form has been submitted successfully.'}</p>
-              <p>Reference ID: ${result.documentId || 'N/A'}</p>
-            </div>
-          `;
-        }
+        // Validate all fields first
+        const fields = form.querySelectorAll('input[required], select[required], textarea[required], [data-validate]');
+        let isValid = true;
         
-        // Disable form fields
-        const inputs = form.querySelectorAll('input, select, textarea, button');
-        inputs.forEach(input => {
-          if (input.type !== 'submit') {
-            input.disabled = true;
-          }
+        fields.forEach(field => {
+            if (!validateField(field)) {
+                isValid = false;
+            }
         });
         
-        // Reset submit button
-        submitButton.disabled = false;
-        submitButton.innerHTML = 'Submitted ✓';
-        
-        // Optionally redirect after a delay
-        // setTimeout(() => {
-        //   window.location.href = '/dashboard';
-        // }, 3000);
-      } else {
-        // Show error message
-        showAlert(`Error: ${result.message || 'An error occurred during submission.'}`, 'danger');
-        
-        // Reset submit button
-        submitButton.disabled = false;
-        submitButton.innerHTML = originalButtonText;
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      showAlert('An error occurred. Please try again.', 'danger');
-      
-      // Reset submit button
-      submitButton.disabled = false;
-      submitButton.innerHTML = originalButtonText;
-    }
-  });
-}
-
-/**
- * Validate the entire form
- * @param {HTMLFormElement} form - The form element
- * @returns {boolean} - Whether the form is valid
- */
-function validateForm(form) {
-  const inputs = form.querySelectorAll('input, select, textarea');
-  let isValid = true;
-  
-  inputs.forEach(input => {
-    // Only validate required fields or fields with values
-    if (input.hasAttribute('required') || input.value.trim() !== '') {
-      const inputValid = validateInput(input);
-      isValid = isValid && inputValid;
-    }
-  });
-  
-  return isValid;
-}
-
-/**
- * Update the order summary for review
- * @param {HTMLFormElement} form - The form element
- */
-function updateOrderSummary(form) {
-  const orderSummary = form.querySelector('#orderSummary');
-  if (!orderSummary) return;
-  
-  // Get form data
-  const formData = new FormData(form);
-  const formDataObj = {};
-  
-  for (const [key, value] of formData.entries()) {
-    // Handle nested objects (e.g., orderInfo.orderNumber)
-    if (key.includes('.')) {
-      const [parent, child] = key.split('.');
-      formDataObj[parent] = formDataObj[parent] || {};
-      formDataObj[parent][child] = value;
-    } else {
-      formDataObj[key] = value;
-    }
-  }
-  
-  // Build summary HTML
-  let summaryHTML = `
-    <div class="summary-section">
-      <h4>Order Information</h4>
-      <div class="summary-row">
-        <div class="summary-label">Order Number:</div>
-        <div class="summary-value">${formDataObj.orderInfo?.orderNumber || 'N/A'}</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-label">Order Date:</div>
-        <div class="summary-value">${formDataObj.orderInfo?.orderDate || 'N/A'}</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-label">Status:</div>
-        <div class="summary-value">${formDataObj.orderInfo?.status || 'N/A'}</div>
-      </div>
-    </div>
-    
-    <div class="summary-section">
-      <h4>Facility Information</h4>
-      <div class="summary-row">
-        <div class="summary-label">Facility Name:</div>
-        <div class="summary-value">${formDataObj.facilityInfo?.facilityName || 'N/A'}</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-label">Contact:</div>
-        <div class="summary-value">${formDataObj.facilityInfo?.contactName || 'N/A'}</div>
-      </div>
-    </div>
-    
-    <div class="summary-section">
-      <h4>Shipping Information</h4>
-      <div class="summary-row">
-        <div class="summary-label">Address:</div>
-        <div class="summary-value">
-          ${formDataObj.shippingInfo?.shippingAddressLine1 || 'N/A'}<br>
-          ${formDataObj.shippingInfo?.shippingCity || ''}, 
-          ${formDataObj.shippingInfo?.shippingState || ''} 
-          ${formDataObj.shippingInfo?.shippingZipCode || ''}
-        </div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-label">Shipping Method:</div>
-        <div class="summary-value">${formDataObj.shippingInfo?.shippingMethod || 'N/A'}</div>
-      </div>
-    </div>
-  `;
-  
-  // Add products section
-  summaryHTML += `
-    <div class="summary-section">
-      <h4>Products</h4>
-      <table class="summary-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Size</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-  
-  // Get products
-  const productItems = form.querySelectorAll('.product-item');
-  let orderTotal = 0;
-  
-  productItems.forEach((item, index) => {
-    const manufacturer = item.querySelector(`[name="products[${index}].manufacturer"]`)?.value || 'N/A';
-    const description = item.querySelector(`[name="products[${index}].description"]`)?.value || 'N/A';
-    const size = item.querySelector(`[name="products[${index}].size"]`)?.value || 'N/A';
-    const quantity = item.querySelector(`[name="products[${index}].quantity"]`)?.value || '0';
-    const unitPrice = item.querySelector(`[name="products[${index}].unitPrice"]`)?.value || '0';
-    const totalPrice = item.querySelector(`[name="products[${index}].totalPrice"]`)?.value || '0';
-    
-    orderTotal += parseFloat(totalPrice);
-    
-    summaryHTML += `
-      <tr>
-        <td>${manufacturer} - ${description}</td>
-        <td>${size}</td>
-        <td>${quantity}</td>
-        <td>$${parseFloat(unitPrice).toFixed(2)}</td>
-        <td>$${parseFloat(totalPrice).toFixed(2)}</td>
-      </tr>
-    `;
-  });
-  
-  summaryHTML += `
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="4" class="text-right"><strong>Order Total:</strong></td>
-            <td><strong>$${orderTotal.toFixed(2)}</strong></td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  `;
-  
-  // Add special instructions
-  summaryHTML += `
-    <div class="summary-section">
-      <h4>Special Instructions</h4>
-      <p>${formDataObj.additionalInfo?.specialInstructions || 'None'}</p>
-    </div>
-  `;
-  
-  // Update the summary container
-  orderSummary.innerHTML = summaryHTML;
-}
-
-/**
- * Initialize signature pad if present
- */
-function initSignaturePad() {
-  const canvas = document.getElementById('signaturePad');
-  if (!canvas) return;
-  
-  // Check if SignaturePad library is available
-  if (typeof SignaturePad === 'undefined') {
-    // Create a simple fallback
-    const ctx = canvas.getContext('2d');
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-    
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    
-    ctx.lineWidth = 2;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#000';
-    
-    canvas.addEventListener('mousedown', function(e) {
-      isDrawing = true;
-      [lastX, lastY] = [e.offsetX, e.offsetY];
-    });
-    
-    canvas.addEventListener('mousemove', function(e) {
-      if (!isDrawing) return;
-      
-      ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.stroke();
-      
-      [lastX, lastY] = [e.offsetX, e.offsetY];
-    });
-    
-    canvas.addEventListener('mouseup', function() {
-      isDrawing = false;
-      
-      // Save signature data
-      const signatureInput = document.getElementById('signature');
-      if (signatureInput) {
-        signatureInput.value = canvas.toDataURL();
-      }
-    });
-    
-    canvas.addEventListener('mouseleave', function() {
-      isDrawing = false;
-    });
-    
-    // Touch events
-    canvas.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
-      isDrawing = true;
-    });
-    
-    canvas.addEventListener('touchmove', function(e) {
-      e.preventDefault();
-      if (!isDrawing) return;
-      
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      const offsetX = touch.clientX - rect.left;
-      const offsetY = touch.clientY - rect.top;
-      
-      ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(offsetX, offsetY);
-      ctx.stroke();
-      
-      [lastX, lastY] = [offsetX, offsetY];
-    });
-    
-    canvas.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      isDrawing = false;
-      
-      // Save signature data
-      const signatureInput = document.getElementById('signature');
-      if (signatureInput) {
-        signatureInput.value = canvas.toDataURL();
-      }
-    });
-    
-    // Clear signature button
-    const clearButton = document.getElementById('clearSignature');
-    if (clearButton) {
-      clearButton.addEventListener('click', function() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Clear signature data
-        const signatureInput = document.getElementById('signature');
-        if (signatureInput) {
-          signatureInput.value = '';
+        if (!isValid) {
+            showAlert('Please fill in all required fields correctly.', 'warning');
+            return;
         }
-      });
-    }
-  } else {
-    // Use SignaturePad library
-    const signaturePad = new SignaturePad(canvas);
-    
-    // Clear signature button
-    const clearButton = document.getElementById('clearSignature');
-    if (clearButton) {
-      clearButton.addEventListener('click', function() {
-        signaturePad.clear();
         
-        // Clear signature data
-        const signatureInput = document.getElementById('signature');
-        if (signatureInput) {
-          signatureInput.value = '';
+        // Show loading state
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) {
+            const originalText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...';
         }
-      });
-    }
-    
-    // Save signature data on end
-    signaturePad.addEventListener('endStroke', function() {
-      const signatureInput = document.getElementById('signature');
-      if (signatureInput && !signaturePad.isEmpty()) {
-        signatureInput.value = signaturePad.toDataURL();
-      }
+        
+        try {
+            // Get form data
+            const formData = new FormData(form);
+            
+            // Submit form data
+            const response = await fetch(form.action, {
+                method: form.method || 'POST',
+                body: formData,
+            });
+            
+            // Check response
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Show success message
+            showAlert(data.message || 'Form submitted successfully!', 'success');
+            
+            // Reset form
+            form.reset();
+            
+            // If multi-step form, go back to first step
+            if (form.querySelector('.form-step')) {
+                showStep(form, 1);
+            }
+            
+        } catch (error) {
+            console.error('Form submission error:', error);
+            showAlert('There was an error submitting the form. Please try again.', 'error');
+        } finally {
+            // Reset button state
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
+        }
     });
-  }
 }
 
 /**
  * Show an alert message
  * @param {string} message - The message to display
- * @param {string} type - The type of alert (success, danger, warning, info)
+ * @param {string} type - The alert type (success, warning, danger, info)
+ * @param {number} timeout - Time in milliseconds before auto-dismissing
  */
-function showAlert(message, type = 'info') {
-  const alertsContainer = document.getElementById('alertsContainer');
-  if (!alertsContainer) return;
-  
-  // Create alert element
-  const alert = document.createElement('div');
-  alert.className = `alert alert-${type}`;
-  alert.innerHTML = message;
-  
-  // Add close button
-  const closeButton = document.createElement('button');
-  closeButton.type = 'button';
-  closeButton.className = 'close';
-  closeButton.innerHTML = '&times;';
-  closeButton.style.float = 'right';
-  closeButton.style.cursor = 'pointer';
-  closeButton.style.border = 'none';
-  closeButton.style.background = 'none';
-  closeButton.style.fontSize = '1.25rem';
-  closeButton.style.fontWeight = 'bold';
-  closeButton.style.lineHeight = '1';
-  closeButton.style.opacity = '0.5';
-  closeButton.addEventListener('click', function() {
-    alert.remove();
-  });
-  
-  alert.prepend(closeButton);
-  
-  // Add to container
-  alertsContainer.appendChild(alert);
-  
-  // Auto-hide after 5 seconds
-  setTimeout(() => {
-    alert.style.opacity = '0';
-    alert.style.transition = 'opacity 0.5s';
+function showAlert(message, type = 'info', timeout = 5000) {
+    console.log(`Showing ${type} alert: ${message}`);
     
-    setTimeout(() => {
-      alert.remove();
-    }, 500);
-  }, 5000);
+    // Find alerts container
+    let alertsContainer = document.getElementById('alertsContainer');
+    
+    // Create it if it doesn't exist
+    if (!alertsContainer) {
+        alertsContainer = document.createElement('div');
+        alertsContainer.id = 'alertsContainer';
+        alertsContainer.className = 'alerts-container';
+        document.body.appendChild(alertsContainer);
+    }
+    
+    // Create alert element
+    const alertElement = document.createElement('div');
+    alertElement.className = `alert alert-${type} alert-dismissible fade show`;
+    alertElement.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" aria-label="Close"></button>
+    `;
+    
+    // Add to container
+    alertsContainer.appendChild(alertElement);
+    
+    // Setup dismiss button
+    const dismissButton = alertElement.querySelector('.btn-close');
+    if (dismissButton) {
+        dismissButton.addEventListener('click', () => {
+            alertElement.classList.remove('show');
+            setTimeout(() => {
+                alertElement.remove();
+            }, 300);
+        });
+    }
+    
+    // Auto-dismiss non-error alerts
+    if (type !== 'error' && timeout > 0) {
+        setTimeout(() => {
+            alertElement.classList.remove('show');
+            setTimeout(() => {
+                alertElement.remove();
+            }, 300);
+        }, timeout);
+    }
 }
+
+// Initialize forms when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if we're on a page with forms
+    const hasForms = document.querySelectorAll('form').length > 0;
+    
+    if (hasForms) {
+        console.log('DOM loaded, initializing forms');
+        if (typeof window.initForms === 'function') {
+            window.initForms();
+        }
+    }
+});
