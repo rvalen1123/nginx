@@ -1,9 +1,8 @@
 [build]
-builder = "DOCKERFILE"
-dockerfilePath = "./docker-compose.yml"
+builder = "NIXPACKS"
 
 [deploy]
-startCommand = "docker-compose up"
+startCommand = "npm start"
 healthcheckPath = "/healthcheck"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
