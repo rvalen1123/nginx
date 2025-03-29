@@ -1,8 +1,9 @@
 [build]
-builder = "NIXPACKS"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.railway"
 
 [deploy]
-startCommand = "npm start"
+startCommand = ""
 healthcheckPath = "/healthcheck"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
@@ -12,7 +13,6 @@ restartPolicyMaxRetries = 10
 [[volumes]]
 name = "uploads"
 mountPath = "/app/uploads"
-service = "backend"
 
 [env]
 NODE_ENV = "production"
