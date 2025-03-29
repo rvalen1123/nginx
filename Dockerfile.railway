@@ -1,32 +1,22 @@
-FROM node:16
+FROM node:16-alpine
 
 WORKDIR /app
 
-# First, copy only package files to leverage Docker cache
-COPY package.json package-lock.json* ./
+# Install build dependencies needed for some npm packages
+RUN apk add --no-cache python3 make g++ git
 
-# Install dependencies with clear error reporting
-RUN npm install --no-optional --verbose || (echo "npm install failed" && cat npm-debug.log 2>/dev/null || echo "No debug log found" && exit 1)
+# Copy only package files
+COPY package*.json ./
+
+# Install with production dependencies only
+RUN npm ci --only=production || npm install --only=production
 
 # Copy application code
 COPY . .
 
-# Set environment variable for Prisma to skip browser opening
-ENV BROWSER=none
-ENV NODE_ENV=production
-
 # Generate Prisma client
-RUN npx prisma generate --schema=./prisma/schema.prisma || (echo "Prisma generate failed" && exit 1)
+RUN npx prisma generate
 
-# Create uploads directory if needed
-RUN mkdir -p uploads && chmod 755 uploads
-
-# Expose the API port
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
-  CMD wget --no-verbose --spider http://localhost:3000/healthcheck || exit 1
-
-# Start application
 CMD ["npm", "start"]
