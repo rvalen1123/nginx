@@ -1,4 +1,4 @@
-FROM node:16-alpine AS builder
+FROM node:16
 
 WORKDIR /app
 
@@ -20,16 +20,6 @@ RUN npx prisma generate --schema=prisma/schema.prisma
 
 # Create uploads directory
 RUN mkdir -p uploads && chmod 755 uploads
-
-# Create a non-root user
-RUN addgroup -g 1000 -S appuser && \
-    adduser -u 1000 -S appuser -G appuser
-
-# Set ownership
-RUN chown -R appuser:appuser /app
-
-# Switch to non-root user
-USER appuser
 
 # Expose the API port
 EXPOSE 3001
