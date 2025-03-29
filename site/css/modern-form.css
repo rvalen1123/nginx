@@ -391,6 +391,7 @@ a:hover {
   padding: var(--spacing-3) var(--spacing-4);
   font-weight: 500;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .form-navigation .btn .icon {
@@ -399,6 +400,13 @@ a:hover {
   stroke: currentColor;
   stroke-width: 2;
   fill: none;
+  pointer-events: none; /* Prevent icon from blocking clicks */
+}
+
+/* Ensure SVG icons don't block clicks */
+.form-navigation .btn svg,
+.form-navigation .btn path {
+  pointer-events: none;
 }
 
 .form-navigation .btn-secondary {

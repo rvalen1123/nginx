@@ -131,7 +131,13 @@
     </main>
     
     <!-- Scripts -->
-    <script src="/js/form-handler.js"></script>
     <script src="/js/ivr-form.js"></script>
+    <script>
+        // Initialize form on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing from HTML');
+            initIVRForm();
+        });
+    </script>
 </body>
 </html>
