@@ -70,7 +70,7 @@ function initIVRForm() {
             // Load manufacturers
             await populateSelectFromApi(
                 'manufacturer',
-                '/api/manufacturers',
+                'api/manufacturers',
                 'manufacturerId',
                 'name'
             );
@@ -78,7 +78,7 @@ function initIVRForm() {
             // Load sales reps
             await populateSelectFromApi(
                 'sales_rep',
-                '/api/users?role=REP',
+                'api/users?role=REP',
                 'userId',
                 'name'
             );
@@ -88,7 +88,7 @@ function initIVRForm() {
             if (practiceSelector) {
                 await populateSelectFromApi(
                     'practice',
-                    '/api/practices',
+                    'api/practices',
                     'practiceId',
                     'name'
                 );
@@ -288,17 +288,17 @@ function initIVRForm() {
         const insuranceInfoReview = document.getElementById('insuranceInfoReview');
         if (insuranceInfoReview) {
             let html = `
-                <p><strong>Primary Insurance:</strong> ${document.getElementById('primaryInsName')?.value || 'N/A'}</p>
-                <p><strong>Policy Number:</strong> ${document.getElementById('primaryInsPolicyNumber')?.value || 'N/A'}</p>
-                <p><strong>Phone:</strong> ${document.getElementById('primaryInsPhone')?.value || 'N/A'}</p>
+                <p><strong>Primary Insurance:</strong> ${sanitizeHTML(document.getElementById('primaryInsName')?.value)}</p>
+                <p><strong>Policy Number:</strong> ${sanitizeHTML(document.getElementById('primaryInsPolicyNumber')?.value)}</p>
+                <p><strong>Phone:</strong> ${sanitizeHTML(document.getElementById('primaryInsPhone')?.value)}</p>
             `;
             
             // Add secondary insurance if applicable
             if (getRadioValue('hasSecondaryIns') === 'yes') {
                 html += `
                     <div class="mt-3">
-                        <p><strong>Secondary Insurance:</strong> ${document.getElementById('secondaryInsName')?.value || 'N/A'}</p>
-                        <p><strong>Policy Number:</strong> ${document.getElementById('secondaryInsPolicyNumber')?.value || 'N/A'}</p>
+                        <p><strong>Secondary Insurance:</strong> ${sanitizeHTML(document.getElementById('secondaryInsName')?.value)}</p>
+                        <p><strong>Policy Number:</strong> ${sanitizeHTML(document.getElementById('secondaryInsPolicyNumber')?.value)}</p>
                     </div>
                 `;
             }
@@ -310,10 +310,10 @@ function initIVRForm() {
         const providerInfoReview = document.getElementById('providerInfoReview');
         if (providerInfoReview) {
             providerInfoReview.innerHTML = `
-                <p><strong>Physician:</strong> ${document.getElementById('physicianName')?.value || 'N/A'}</p>
-                <p><strong>NPI:</strong> ${document.getElementById('physicianNpi')?.value || 'N/A'}</p>
-                <p><strong>Facility:</strong> ${document.getElementById('facilityName')?.value || 'N/A'}</p>
-                <p><strong>Place of Service:</strong> ${document.getElementById('placeOfService')?.options[document.getElementById('placeOfService')?.selectedIndex]?.text || 'N/A'}</p>
+                <p><strong>Physician:</strong> ${sanitizeHTML(document.getElementById('physicianName')?.value)}</p>
+                <p><strong>NPI:</strong> ${sanitizeHTML(document.getElementById('physicianNpi')?.value)}</p>
+                <p><strong>Facility:</strong> ${sanitizeHTML(document.getElementById('facilityName')?.value)}</p>
+                <p><strong>Place of Service:</strong> ${sanitizeHTML(document.getElementById('placeOfService')?.options[document.getElementById('placeOfService')?.selectedIndex]?.text)}</p>
             `;
         }
         
@@ -326,11 +326,11 @@ function initIVRForm() {
                 .join(', ');
             
             woundInfoReview.innerHTML = `
-                <p><strong>Wound Type:</strong> ${selectedWoundTypes || 'N/A'}</p>
-                <p><strong>Wound Size:</strong> ${document.getElementById('woundSizeTotal')?.value || 'N/A'} sq cm</p>
-                <p><strong>Location:</strong> ${document.getElementById('woundLocation')?.value || 'N/A'}</p>
-                <p><strong>Diagnosis Codes:</strong> ${document.getElementById('diagnosisCodes')?.value || 'N/A'}</p>
-                <p><strong>Product:</strong> ${document.getElementById('productInfo')?.value || 'N/A'}</p>
+                <p><strong>Wound Type:</strong> ${sanitizeHTML(selectedWoundTypes)}</p>
+                <p><strong>Wound Size:</strong> ${sanitizeHTML(document.getElementById('woundSizeTotal')?.value)} sq cm</p>
+                <p><strong>Location:</strong> ${sanitizeHTML(document.getElementById('woundLocation')?.value)}</p>
+                <p><strong>Diagnosis Codes:</strong> ${sanitizeHTML(document.getElementById('diagnosisCodes')?.value)}</p>
+                <p><strong>Product:</strong> ${sanitizeHTML(document.getElementById('productInfo')?.value)}</p>
             `;
         }
     }
@@ -354,7 +354,7 @@ function initIVRForm() {
             `;
             
             // Send form data to server
-            const response = await fetch('/api/submit-ivr', {
+            const response = await fetch('api/submit-ivr', {
                 method: 'POST',
                 body: formData
             });

@@ -1,0 +1,399 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "sqlserver"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model CommissionAdjustments {
+  adjustmentId     String      @id
+  commissionId     String
+  adjustmentAmount Decimal     @db.Decimal(10, 2)
+  reason           String
+  appliedDate      DateTime
+  approvedById     String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @default(now())
+  Users            Users?      @relation(fields: [approvedById], references: [userId], onUpdate: NoAction)
+  Commissions      Commissions @relation(fields: [commissionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([commissionId])
+}
+
+model Commissions {
+  id                String      @id
+  orderId           String
+  repId             String
+  commissionRate    Decimal     @db.Decimal(10, 2)
+  commissionAmount  Decimal     @db.Decimal(10, 2)
+  
+  // Override tracking fields
+  isOverride        Boolean     @default(false)      // Is this an override commission
+  parentCommissionId String?                         // Link to the original commission this is an override for
+  parentRepId       String?                          // The rep getting the override
+  overrideRate      Decimal?    @db.Decimal(5, 2)    // The override percentage
+  
+  status            String      @default("pending")
+  quarter           String
+  year              Int
+  notes             String?     @db.Text
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  order             Orders      @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rep               Users       @relation(fields: [repId], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+  
+  // Self-referential relation for parent/override commissions
+  parentCommission  Commissions? @relation("CommissionOverride", fields: [parentCommissionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  overrideCommissions Commissions[] @relation("CommissionOverride")
+  parentRep         Users?       @relation("CommissionOverride", fields: [parentRepId], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+  adjustments       CommissionAdjustments[]
+
+  @@index([orderId])
+  @@index([quarter, year])
+  @@index([repId])
+  @@index([status])
+  @@index([parentCommissionId])
+  @@index([parentRepId])
+}
+
+model Documents {
+  documentId          String      @id
+  orderId            String?
+  practiceId         String?
+  documentType       String
+  status            String      @default("draft")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  createdById       String
+  createdBy         Users       @relation(fields: [createdById], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+  order             Orders?     @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  practice          Practices?  @relation(fields: [practiceId], references: [practiceId], onDelete: NoAction, onUpdate: NoAction)
+  signatures        DocumentSignatures[]
+
+  @@index([orderId])
+  @@index([practiceId])
+  @@index([createdById])
+  @@index([status])
+}
+
+model DocumentSignatures {
+  signatureId        String      @id
+  documentId         String
+  signedById         String
+  signedAt           DateTime
+  document           Documents   @relation(fields: [documentId], references: [documentId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([documentId])
+  @@index([signedById])
+}
+
+model DocumentTemplates {
+  templateId         String      @id
+  name              String
+  type              String
+  content           String      @db.Text
+  createdById       String
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  createdBy         Users       @relation(fields: [createdById], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([createdById])
+}
+
+model Facilities {
+  facilityId           String                @id
+  facilityName         String
+  facilityType         String?
+  address              String?
+  city                 String?
+  state                String?
+  zip                  String?
+  phone                String?
+  fax                  String?
+  email                String?
+  npi                  String?
+  taxId                String?
+  assignedRepId        String?
+  primaryContactName   String?
+  primaryContactPhone  String?
+  primaryContactEmail  String?
+  status               String                @default("active")
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @default(now())
+  users                Users?                @relation(fields: [assignedRepId], references: [userId], onUpdate: NoAction)
+  orders               Orders[]
+  physicianFacilities  PhysicianFacilities[]
+  practiceFacilities   PracticeFacilities[]
+
+  @@index([assignedRepId])
+}
+
+model Manufacturers {
+  manufacturerId     String      @id
+  name              String
+  status            String      @default("active")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  products          Products[]
+  physicianSetups   PhysicianManufacturerSetup[]
+
+  @@index([status])
+}
+
+model Products {
+  productId          String      @id
+  name              String
+  manufacturerId    String
+  status            String      @default("active")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  manufacturer      Manufacturers @relation(fields: [manufacturerId], references: [manufacturerId], onDelete: NoAction, onUpdate: NoAction)
+  orderItems        OrderItems[]
+  productPricing    ProductPricing[]
+
+  @@index([manufacturerId])
+  @@index([status])
+}
+
+model OrderItems {
+  orderItemId        String      @id
+  orderId           String
+  productId         String
+  pricingId         String
+  quantity          Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  order             Orders      @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product           Products    @relation(fields: [productId], references: [productId], onDelete: NoAction, onUpdate: NoAction)
+  productPricing    ProductPricing @relation(fields: [pricingId], references: [pricingId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([orderId])
+  @@index([productId])
+  @@index([pricingId])
+}
+
+model Orders {
+  id                String      @id
+  orderNumber       String      @unique
+  createdById       String
+  repId             String
+  practiceId        String
+  facilityId        String?
+  physicianId       String?
+  status            String      @default("draft")
+  orderDate         DateTime
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  commissions       Commissions[]
+  createdBy         Users       @relation("Orders_createdByToUsers", fields: [createdById], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+  facility          Facilities? @relation(fields: [facilityId], references: [facilityId], onDelete: NoAction, onUpdate: NoAction)
+  physician         Physicians? @relation(fields: [physicianId], references: [physicianId], onDelete: NoAction, onUpdate: NoAction)
+  practice          Practices   @relation(fields: [practiceId], references: [practiceId], onDelete: NoAction, onUpdate: NoAction)
+  rep               Users       @relation("Orders_repIdToUsers", fields: [repId], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+  documents         Documents[]
+  orderItems        OrderItems[]
+
+  @@index([orderNumber])
+  @@index([createdById])
+  @@index([repId])
+  @@index([practiceId])
+  @@index([facilityId])
+  @@index([physicianId])
+  @@index([status])
+}
+
+model PhysicianFacilities {
+  physicianId       String
+  facilityId        String
+  physician         Physicians  @relation(fields: [physicianId], references: [physicianId], onDelete: NoAction, onUpdate: NoAction)
+  facility          Facilities  @relation(fields: [facilityId], references: [facilityId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([physicianId, facilityId])
+  @@index([physicianId])
+  @@index([facilityId])
+}
+
+model Physicians {
+  physicianId        String      @id
+  name              String
+  practiceId        String
+  status            String      @default("active")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  facilities        PhysicianFacilities[]
+  orders            Orders[]
+  practice          Practices   @relation(fields: [practiceId], references: [practiceId], onDelete: NoAction, onUpdate: NoAction)
+  manufacturerSetups PhysicianManufacturerSetup[]
+
+  @@index([practiceId])
+  @@index([status])
+}
+
+model PhysicianManufacturerSetup {
+  setupId           String      @id
+  physicianId       String
+  manufacturerId    String
+  status            String      @default("active")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  physician         Physicians  @relation(fields: [physicianId], references: [physicianId], onDelete: NoAction, onUpdate: NoAction)
+  manufacturer      Manufacturers @relation(fields: [manufacturerId], references: [manufacturerId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([physicianId])
+  @@index([manufacturerId])
+  @@index([status])
+}
+
+model PracticeFacilities {
+  practiceId        String
+  facilityId        String
+  practice          Practices   @relation(fields: [practiceId], references: [practiceId], onDelete: NoAction, onUpdate: NoAction)
+  facility          Facilities  @relation(fields: [facilityId], references: [facilityId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([practiceId, facilityId])
+  @@index([practiceId])
+  @@index([facilityId])
+}
+
+model Practices {
+  practiceId        String      @id
+  name              String
+  repId             String
+  status            String      @default("active")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  documents         Documents[]
+  facilities        PracticeFacilities[]
+  orders            Orders[]
+  physicians        Physicians[]
+  rep               Users       @relation(fields: [repId], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([repId])
+  @@index([status])
+}
+
+model ProductPricing {
+  pricingId          String      @id
+  productId         String
+  price             Decimal     @db.Decimal(10, 2)
+  effectiveDate     DateTime
+  endDate           DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+  product           Products    @relation(fields: [productId], references: [productId], onDelete: NoAction, onUpdate: NoAction)
+  orderItems        OrderItems[]
+  approvedBy        Users[]     @relation("ProductPricingApprovers")
+
+  @@index([productId])
+  @@index([effectiveDate])
+}
+
+model Users {
+  userId                         String                  @id
+  email                           String                  @unique
+  name                            String
+  role                            String
+  status                          String                  @default("active")
+  
+  // Rep/Sub-rep relationship
+  parentRepId                     String?                
+  parentRep                       Users?                 @relation("RepSubRepRelation", fields: [parentRepId], references: [userId], onDelete: NoAction, onUpdate: NoAction)
+  subReps                         Users[]                @relation("RepSubRepRelation")
+  
+  // Commission settings
+  commissionRate                  Decimal?               @db.Decimal(5, 2)  // Base commission percentage
+  overrideRate                    Decimal?               @db.Decimal(5, 2)  // Override percentage for sub-reps
+  flatCommissionAmount            Decimal?               @db.Decimal(10, 2) // For flat-fee commissions
+  
+  createdAt                       DateTime                @default(now())
+  updatedAt                       DateTime                @default(now())
+  commissionAdjustments           CommissionAdjustments[]
+  commissions                     Commissions[]
+  overrideCommissions             Commissions[]          @relation("CommissionOverride")
+  documents                       Documents[]
+  documentTemplates               DocumentTemplates[]
+  facilities                      Facilities[]
+  orders_Orders_createdByToUsers  Orders[]                @relation("Orders_createdByToUsers")
+  orders_Orders_repIdToUsers      Orders[]                @relation("Orders_repIdToUsers")
+  practices                       Practices[]
+  approvedPricing                ProductPricing[]       @relation("ProductPricingApprovers")
+
+  @@index([parentRepId])
+}
+
+// New model for commission rules
+model CommissionRules {
+  id                String             @id @default(cuid())
+  productId         String?            // Optional specific product 
+  manufacturerId    String?            // Optional specific manufacturer
+  userRole          String?            // Optional specific role (REP/SUBREP)
+  
+  isPercentage      Boolean            @default(true)
+  percentageRate    Decimal?           @db.Decimal(5, 2)  // If percentage-based
+  flatAmount        Decimal?           @db.Decimal(10, 2) // If flat-fee based
+  
+  // Time bounds
+  effectiveFrom     DateTime           @default(now())
+  effectiveTo       DateTime?          // Null means indefinite
+  
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now())
+  
+  // Indexes for faster lookups
+  @@index([productId])
+  @@index([manufacturerId])
+  @@index([userRole, effectiveFrom, effectiveTo])
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("USER")
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
