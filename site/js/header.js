@@ -7,10 +7,7 @@ const createHeader = (activePage = '') => {
     <header class="bg-primary text-white py-3">
       <div class="container mx-auto px-4">
         <div class="flex justify-between items-center">
-          <div class="flex items-center">
-            <img src="/images/msc-logo.svg" alt="MSC Wound Care Logo" class="h-10 mr-2" />
-            <h1 class="text-2xl font-bold">MSC Wound Care</h1>
-          </div>
+          <h1 class="text-2xl font-bold">MSC Wound Care IVR Form</h1>
           <nav>
             <ul class="flex space-x-4">
               <li>

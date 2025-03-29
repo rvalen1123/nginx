@@ -597,6 +597,74 @@ function initOrderForm() {
             submitButton.innerHTML = 'Submit Order';
         }
     }
+
+    /**
+     * Populate a select element from an API endpoint with fallback mock data
+     * @param {string} selectId - ID of the select element to populate
+     * @param {string} apiUrl - API endpoint URL
+     * @param {string} valueKey - Object key to use for option value
+     * @param {string} textKey - Object key to use for option text
+     */
+    async function populateSelectFromApi(selectId, apiUrl, valueKey, textKey) {
+        const selectElement = document.getElementById(selectId);
+        if (!selectElement) return;
+        
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`Failed to fetch data from ${apiUrl}`);
+            
+            const data = await response.json();
+            
+            // Clear existing options (except the first placeholder)
+            while (selectElement.options.length > 1) {
+                selectElement.remove(1);
+            }
+            
+            // Add new options
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[valueKey];
+                option.textContent = item[textKey];
+                selectElement.appendChild(option);
+            });
+        } catch (error) {
+            console.error(`Error loading data for ${selectId}:`, error);
+            
+            // Use mock data for sales reps if the API call fails
+            if (apiUrl.includes('role=REP') || apiUrl.includes('sales-representatives')) {
+                console.warn('Using mock sales rep data');
+                
+                const mockReps = [
+                    { userId: 1, name: 'John Smith', territory: 'Northeast', specialty: 'Diabetes Care' },
+                    { userId: 2, name: 'Sarah Johnson', territory: 'Southeast', specialty: 'Surgical Wounds' },
+                    { userId: 3, name: 'Michael Brown', territory: 'Midwest', specialty: 'Chronic Wounds' },
+                    { userId: 4, name: 'Jessica Davis', territory: 'Southwest', specialty: 'Pressure Ulcers' },
+                    { userId: 5, name: 'David Wilson', territory: 'West Coast', specialty: 'Burns' },
+                    { userId: 6, name: 'Emily Martinez', territory: 'Northwest', specialty: 'Venous Ulcers' },
+                    { userId: 7, name: 'Robert Taylor', territory: 'Central', specialty: 'Arterial Ulcers' },
+                    { userId: 8, name: 'Amanda Garcia', territory: 'Mid-Atlantic', specialty: 'Diabetic Foot Ulcers' },
+                    { userId: 9, name: 'Christopher Lee', territory: 'Great Lakes', specialty: 'Surgical Site Infections' },
+                    { userId: 10, name: 'Jennifer Robinson', territory: 'South Central', specialty: 'Radiation Wounds' }
+                ];
+                
+                // Clear existing options (except the first placeholder)
+                while (selectElement.options.length > 1) {
+                    selectElement.remove(1);
+                }
+                
+                // Add mock options
+                mockReps.forEach(rep => {
+                    const option = document.createElement('option');
+                    option.value = rep[valueKey];
+                    option.textContent = rep[textKey];
+                    selectElement.appendChild(option);
+                });
+            } else {
+                // Show error for other failures
+                showAlert(`Failed to load data for ${selectId.replace('order', '')}. Please try again.`, 'error');
+            }
+        }
+    }
 }
 
 // Make the function available globally

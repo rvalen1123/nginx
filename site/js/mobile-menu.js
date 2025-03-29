@@ -1,78 +1,73 @@
 /**
- * Mobile Menu Controller for MSC Wound Care Portal
- * Handles the mobile menu toggle functionality
+ * Mobile Menu Handler
+ * Controls the mobile navigation menu functionality
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-  initMobileMenu();
+document.addEventListener('DOMContentLoaded', () => {
+    initMobileMenu();
 });
 
-/**
- * Initialize mobile menu functionality
- */
 function initMobileMenu() {
-  const mobileMenuButton = document.querySelector('.mobile-menu-button');
-  const headerNav = document.querySelector('.header-nav');
-  
-  if (!mobileMenuButton || !headerNav) {
-    console.warn('Mobile menu elements not found');
-    return;
-  }
-  
-  // Create overlay for mobile menu
-  const overlay = document.createElement('div');
-  overlay.className = 'header-nav-mobile-overlay';
-  headerNav.parentNode.insertBefore(overlay, headerNav.nextSibling);
-  
-  // Toggle menu when button is clicked
-  mobileMenuButton.addEventListener('click', function() {
-    toggleMobileMenu(headerNav, overlay);
-  });
-  
-  // Close menu when overlay is clicked
-  overlay.addEventListener('click', function() {
-    closeMobileMenu(headerNav, overlay);
-  });
-  
-  // Close menu when a navigation link is clicked
-  const navLinks = headerNav.querySelectorAll('.nav-link');
-  navLinks.forEach(link => {
-    link.addEventListener('click', function() {
-      closeMobileMenu(headerNav, overlay);
-    });
-  });
-  
-  // Close menu when pressing escape key
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && headerNav.classList.contains('active')) {
-      closeMobileMenu(headerNav, overlay);
+    // Get mobile menu elements
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    
+    if (!mobileMenuButton || !mobileMenu) {
+        console.warn('Mobile menu elements not found');
+        return;
     }
-  });
+    
+    // Toggle mobile menu when button is clicked
+    mobileMenuButton.addEventListener('click', () => {
+        const isOpen = mobileMenu.classList.contains('open');
+        
+        if (isOpen) {
+            // Close menu
+            mobileMenu.classList.remove('open');
+            mobileMenuButton.classList.remove('mobile-menu-open');
+            document.body.style.overflow = '';
+        } else {
+            // Open menu
+            mobileMenu.classList.add('open');
+            mobileMenuButton.classList.add('mobile-menu-open');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (event) => {
+        const isMenuOpen = mobileMenu.classList.contains('open');
+        
+        if (isMenuOpen && 
+            !mobileMenu.contains(event.target) && 
+            !mobileMenuButton.contains(event.target)) {
+            
+            mobileMenu.classList.remove('open');
+            mobileMenuButton.classList.remove('mobile-menu-open');
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Close menu when window is resized to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && mobileMenu.classList.contains('open')) {
+            mobileMenu.classList.remove('open');
+            mobileMenuButton.classList.remove('mobile-menu-open');
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Add click handlers to mobile menu items
+    const mobileMenuItems = document.querySelectorAll('.mobile-nav-item');
+    mobileMenuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Close menu when an item is clicked
+            mobileMenu.classList.remove('open');
+            mobileMenuButton.classList.remove('mobile-menu-open');
+            document.body.style.overflow = '';
+        });
+    });
 }
 
-/**
- * Toggle mobile menu open/closed
- */
-function toggleMobileMenu(nav, overlay) {
-  nav.classList.toggle('active');
-  
-  // Prevent body scrolling when menu is open
-  if (nav.classList.contains('active')) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-  }
-}
-
-/**
- * Close mobile menu
- */
-function closeMobileMenu(nav, overlay) {
-  nav.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-// Make functions globally available
-window.initMobileMenu = initMobileMenu;
-window.toggleMobileMenu = toggleMobileMenu;
-window.closeMobileMenu = closeMobileMenu; 
+// Make the function available globally for usage in HTML
+window.initMobileMenu = initMobileMenu; 
