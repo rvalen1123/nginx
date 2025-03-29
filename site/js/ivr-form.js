@@ -301,102 +301,126 @@ function addMissingSteps() {
         </div>
       </div>
     </div>
-            providerInfoReview.innerHTML = `
-                <p><strong>Physician:</strong> ${sanitizeHTML(document.getElementById('physicianName')?.value)}</p>
-                <p><strong>NPI:</strong> ${sanitizeHTML(document.getElementById('physicianNpi')?.value)}</p>
-                <p><strong>Facility:</strong> ${sanitizeHTML(document.getElementById('facilityName')?.value)}</p>
-                <p><strong>Place of Service:</strong> ${sanitizeHTML(document.getElementById('placeOfService')?.options[document.getElementById('placeOfService')?.selectedIndex]?.text)}</p>
-            `;
+    
+    <div class="form-section">
+      <div class="form-section-title">Product Information</div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="product_name">Product Name <span class="text-danger">*</span></label>
+            <input type="text" id="product_name" name="productInfo.productName" class="form-control" required>
+            <div class="invalid-feedback">Please enter the product name</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="product_size">Product Size <span class="text-danger">*</span></label>
+            <input type="text" id="product_size" name="productInfo.productSize" class="form-control" required>
+            <div class="invalid-feedback">Please enter the product size</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="product_quantity">Quantity <span class="text-danger">*</span></label>
+            <input type="number" id="product_quantity" name="productInfo.productQuantity" class="form-control" min="1" required>
+            <div class="invalid-feedback">Please enter the quantity</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="application_frequency">Application Frequency <span class="text-danger">*</span></label>
+            <select id="application_frequency" name="productInfo.applicationFrequency" class="form-control" required>
+              <option value="">Select Frequency</option>
+              <option value="weekly">Weekly</option>
+              <option value="biweekly">Bi-weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="invalid-feedback">Please select an application frequency</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label for="treatment_notes">Treatment Notes</label>
+            <textarea id="treatment_notes" name="productInfo.treatmentNotes" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+      </div>
+      <div class="col-md-6">
+        <button type="button" class="btn btn-primary" data-action="next">Continue to Documents</button>
+      </div>
+    </div>
+  `;
+  
+  // Insert steps after step 2
+  step2.insertAdjacentElement('afterend', step3);
+  step3.insertAdjacentElement('afterend', step4);
+  
+  // Re-initialize multi-step navigation
+  setupMultiStepNavigation(ivrForm);
+}
+
+/**
+ * Set up IVR-specific validation rules
+ */
+function setupIVRValidation() {
+  const ivrForm = document.getElementById('ivrForm');
+  if (!ivrForm) return;
+  
+  // Add validation for NPI number
+  const npiInput = ivrForm.querySelector('#provider_npi');
+  if (npiInput) {
+    npiInput.addEventListener('blur', function() {
+      // NPI is a 10-digit number
+      const isValid = /^\d{10}$/.test(this.value);
+      
+      if (isValid) {
+        this.classList.remove('is-invalid');
+      } else {
+        this.classList.add('is-invalid');
+        const feedback = this.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+          feedback.textContent = 'Please enter a valid 10-digit NPI number';
         }
+      }
+    });
+  }
+  
+  // Add validation for wound measurements
+  const woundLengthInput = ivrForm.querySelector('#wound_length');
+  const woundWidthInput = ivrForm.querySelector('#wound_width');
+  
+  if (woundLengthInput && woundWidthInput) {
+    // Calculate wound area when either dimension changes
+    const calculateArea = function() {
+      const length = parseFloat(woundLengthInput.value) || 0;
+      const width = parseFloat(woundWidthInput.value) || 0;
+      
+      if (length > 0 && width > 0) {
+        const area = length * width;
         
-        // Wound & Product Review
-        const woundInfoReview = document.getElementById('woundInfoReview');
-        if (woundInfoReview) {
-            // Get selected wound types
-            const selectedWoundTypes = Array.from(document.querySelectorAll('input[name="woundInfo.woundType"]:checked'))
-                .map(input => input.parentNode.textContent.trim())
-                .join(', ');
-            
-            woundInfoReview.innerHTML = `
-                <p><strong>Wound Type:</strong> ${sanitizeHTML(selectedWoundTypes)}</p>
-                <p><strong>Wound Size:</strong> ${sanitizeHTML(document.getElementById('woundSizeTotal')?.value)} sq cm</p>
-                <p><strong>Location:</strong> ${sanitizeHTML(document.getElementById('woundLocation')?.value)}</p>
-                <p><strong>Diagnosis Codes:</strong> ${sanitizeHTML(document.getElementById('diagnosisCodes')?.value)}</p>
-                <p><strong>Product:</strong> ${sanitizeHTML(document.getElementById('productInfo')?.value)}</p>
-            `;
-        }
-    }
+        // You could display this somewhere or use it for validation
+        console.log(`Wound area: ${area.toFixed(2)} cm²`);
+        
+        // Example: Add a data attribute with the calculated area
+        woundLengthInput.closest('.form-section').dataset.woundArea = area.toFixed(2);
+      }
+    };
     
-    // Get the value of a selected radio button
-    function getRadioValue(name) {
-        const selectedRadio = document.querySelector(`input[name="${name}"]:checked`);
-        return selectedRadio ? (selectedRadio.value === 'yes' ? 'Yes' : 'No') : 'N/A';
-    }
-    
-    // Handle form submission
-    async function handleFormSubmit(formData) {
-        try {
-            // Show loading state
-            const submitButton = document.getElementById('submitForm');
-            const originalButtonText = submitButton.innerHTML;
-            submitButton.disabled = true;
-            submitButton.innerHTML = `
-                <span class="loading-spinner mr-2"></span>
-                Submitting...
-            `;
-            
-            // Use the integrations module if available
-            if (window.Integrations && typeof window.Integrations.handleFormSubmissionWithIntegration === 'function') {
-                try {
-                    const result = await window.Integrations.handleFormSubmissionWithIntegration('ivr', formData);
-                    
-                    // Show success message
-                    showAlert('Insurance verification request submitted successfully!', 'success');
-                    
-                    // Optionally redirect or reset form
-                    setTimeout(() => {
-                        window.location.href = '/dashboard';
-                    }, 2000);
-                    
-                    return;
-                } catch (integrationError) {
-                    console.error('Integration error:', integrationError);
-                    // Fall back to standard submission if integration fails
-                }
-            }
-            
-            // Standard form submission if integration is not available or fails
-            const response = await fetch('/api/submit-ivr', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Show success message
-                showAlert('Insurance verification request submitted successfully!', 'success');
-                
-                // Optionally redirect or reset form
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 2000);
-            } else {
-                // Show error message
-                showAlert(`Error: ${result.message || 'Unknown error'}`, 'error');
-                
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
-            }
-        } catch (error) {
-            console.error('Form submission error:', error);
-            showAlert('An error occurred. Please try again.', 'error');
-            
-            // Re-enable submit button
-            const submitButton = document.getElementById('submitForm');
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Submit Request';
-        }
-    }
+    woundLengthInput.addEventListener('input', calculateArea);
+    woundWidthInput.addEventListener('input', calculateArea);
+  }
 }
