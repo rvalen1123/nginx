@@ -2,6 +2,7 @@
  * Onboarding Form Functionality
  */
 
+// Define the initialization function
 function initOnboardingForm() {
     // Get form element
     const form = document.getElementById('onboardingForm');
@@ -381,3 +382,6 @@ function initOnboardingForm() {
         return isValid;
     }
 }
+
+// Make the function available globally
+window.initOnboardingForm = initOnboardingForm;

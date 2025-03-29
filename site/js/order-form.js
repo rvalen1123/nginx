@@ -2,6 +2,7 @@
  * Order Form Functionality
  */
 
+// Define the initialization function
 function initOrderForm() {
     // Initialize multi-step form
     const formSteps = [
@@ -597,3 +598,6 @@ function initOrderForm() {
         }
     }
 }
+
+// Make the function available globally
+window.initOrderForm = initOrderForm;

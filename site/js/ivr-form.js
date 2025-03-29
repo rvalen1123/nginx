@@ -19,17 +19,56 @@ class IVRForm {
         this.form = document.getElementById('ivrForm');
         this.progressContainer = document.querySelector('.progress-container');
         
+        if (!this.form) {
+            console.error('IVR Form not found in the document');
+            return;
+        }
+        
+        if (!this.progressContainer) {
+            // Create progress container if it doesn't exist
+            console.log('Creating progress container');
+            this.progressContainer = document.createElement('div');
+            this.progressContainer.className = 'progress-container';
+            
+            if (this.form.parentElement) {
+                this.form.parentElement.insertBefore(this.progressContainer, this.form);
+            } else {
+                // Fallback: add inside the form
+                this.form.prepend(this.progressContainer);
+            }
+        }
+        
         this.init();
     }
 
     init() {
-        this.initializeProgressBar();
-        this.initializeFormSteps();
-        this.setupEventListeners();
-        this.loadDynamicData();
+        console.log('Initializing IVR form');
+        try {
+            console.log('Initializing progress bar');
+            this.initializeProgressBar();
+            
+            console.log('Initializing form steps');
+            this.initializeFormSteps();
+            
+            console.log('Setting up event listeners');
+            this.setupEventListeners();
+            
+            console.log('Loading dynamic data');
+            this.loadDynamicData();
+            
+            console.log('IVR form initialized successfully');
+        } catch (error) {
+            console.error('Error initializing IVR form:', error);
+        }
     }
 
     initializeProgressBar() {
+        // Check if progress container exists
+        if (!this.progressContainer) {
+            console.error('Progress container not found');
+            return;
+        }
+        
         // Create progress bar HTML
         const progressHTML = `
             <div class="progress-steps">
@@ -53,6 +92,12 @@ class IVRForm {
     }
 
     initializeFormSteps() {
+        // Check if form exists
+        if (!this.form) {
+            console.error('Form not found, cannot initialize steps');
+            return;
+        }
+        
         // Add HTML for additional steps
         const stepsHTML = `
             <!-- Step 2: Patient & Insurance -->
@@ -185,6 +230,11 @@ class IVRForm {
     }
 
     setupEventListeners() {
+        if (!this.form) {
+            console.error('Form not found, cannot set up event listeners');
+            return;
+        }
+        
         // Navigation buttons
         this.form.addEventListener('click', (e) => {
             if (e.target.matches('[data-action="next"]')) {
@@ -243,12 +293,19 @@ class IVRForm {
     }
 
     showStep(step) {
+        if (!this.form) {
+            console.error('Form not found, cannot show step');
+            return;
+        }
+        
         const steps = this.form.querySelectorAll('.form-step');
         steps.forEach(s => s.style.display = 'none');
         
         const currentStepElement = this.form.querySelector(`[data-step="${step}"]`);
         if (currentStepElement) {
             currentStepElement.style.display = 'block';
+        } else {
+            console.error(`Step ${step} not found in the form`);
         }
 
         // Update progress indicators
@@ -259,24 +316,46 @@ class IVRForm {
         const progress = ((step - 1) / (FORM_STEPS.length - 1)) * 100;
         
         // Update progress bar
-        const progressBar = this.progressContainer.querySelector('.progress-bar-fill');
-        progressBar.style.width = `${progress}%`;
+        const progressBar = this.progressContainer?.querySelector('.progress-bar-fill');
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+        }
         
         // Update step indicators
-        const steps = this.progressContainer.querySelectorAll('.progress-step');
-        steps.forEach(s => {
-            const stepNum = parseInt(s.dataset.step);
-            s.classList.toggle('active', stepNum === step);
-            s.classList.toggle('completed', stepNum < step);
-        });
+        const steps = this.progressContainer?.querySelectorAll('.progress-step');
+        if (steps) {
+            steps.forEach(s => {
+                const stepNum = parseInt(s.dataset.step);
+                s.classList.toggle('active', stepNum === step);
+                s.classList.toggle('completed', stepNum < step);
+            });
+        }
         
         // Update text
-        document.getElementById('currentStep').textContent = step;
-        document.getElementById('completionPercentage').textContent = Math.round(progress);
+        const currentStepEl = document.getElementById('currentStep');
+        const completionPercentageEl = document.getElementById('completionPercentage');
+        
+        if (currentStepEl) {
+            currentStepEl.textContent = step;
+        }
+        
+        if (completionPercentageEl) {
+            completionPercentageEl.textContent = Math.round(progress);
+        }
     }
 
     validateCurrentStep() {
+        if (!this.form) {
+            console.error('Form not found, cannot validate step');
+            return false;
+        }
+        
         const currentStepElement = this.form.querySelector(`[data-step="${this.currentStep}"]`);
+        if (!currentStepElement) {
+            console.error(`Step ${this.currentStep} not found in the form`);
+            return false;
+        }
+        
         const fields = currentStepElement.querySelectorAll('input[required], select[required]');
         
         let isValid = true;
@@ -347,3 +426,11 @@ class IVRForm {
 document.addEventListener('DOMContentLoaded', () => {
     new IVRForm();
 });
+
+// Add this function to be called from index.html
+function initIVRForm() {
+    new IVRForm();
+}
+
+// Make the function available globally
+window.initIVRForm = initIVRForm;

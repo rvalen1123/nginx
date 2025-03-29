@@ -162,10 +162,10 @@
                         // Extract the form content from the HTML
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = html;
-                        const formContent = tempDiv.querySelector('.form-section');
+                        const formContent = tempDiv.querySelector('#ivrForm') || tempDiv.querySelector('form');
                         
                         if (formContent) {
-                            formContainer.innerHTML = formContent.innerHTML;
+                            formContainer.innerHTML = formContent.outerHTML;
                             formContainer.dataset.loaded = 'true';
                             
                             // Initialize the form

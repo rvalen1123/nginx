@@ -214,3 +214,6 @@ function initProductEducationForm() {
         }
     }
 }
+
+// Make the function available globally
+window.initProductEducationForm = initProductEducationForm;
