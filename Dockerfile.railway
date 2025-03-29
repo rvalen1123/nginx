@@ -2,26 +2,23 @@ FROM node:16
 
 WORKDIR /app
 
-# Copy package.json first
-COPY package.json ./
+# Copy package files
+COPY package*.json ./
 
-# Remove postinstall script to prevent circular dependency
-RUN npm pkg delete scripts.postinstall
-
-# Install dependencies 
-COPY package-lock.json* ./
-RUN npm ci || npm install
+# Install dependencies with fallback
+# First try regular install, then fallback to production-only if needed
+RUN npm install || npm install --production
 
 # Copy application code
 COPY . .
 
-# Now manually run Prisma generate
+# Generate Prisma client
 RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Create any needed directories
 RUN mkdir -p uploads && chmod 755 uploads
 
-# Expose the API port (adjust if needed)
+# Expose the API port
 EXPOSE 3000
 
 # Start application
