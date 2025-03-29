@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSC Wound Care Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/css/form-styles.css" rel="stylesheet">
+    <style>
+        .chat-widget {
+            transition: all 0.3s ease;
+        }
+        
+        .typing-indicator div {
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .section-content {
+            display: block;
+        }
+        
+        .section-content.collapsed {
+            display: none;
+        }
+        
+        .step-indicator {
+            position: relative;
+        }
+        
+        .step-line {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
+        }
+        
+        .step-line-progress {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background-color: #2563eb;
+            z-index: 1;
+            transition: width 0.5s ease;
+        }
+        
+        .step {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 150px;
+        }
+        
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            background-color: #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active .step-circle {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        .step.completed .step-circle {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .signature-pad {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center py-4">
+                <div class="flex items-center">
+                    <img src="/images/msc-logo.png" alt="MSC Wound Care Logo" class="h-10 mr-4">
+                    <h1 class="text-2xl font-bold text-blue-800">MSC Wound Care Portal</h1>
+                </div>
+                <nav class="w-full md:w-auto mt-4 md:mt-0">
+                    <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">
+                        <li>
+                            <a href="/onboarding.html" id="onboarding-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Onboarding</a>
+                        </li>
+                        <li>
+                            <a href="/insurance-verification.html" id="ivr-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Insurance Verification</a>
+                        </li>
+                        <li>
+                            <a href="/order-form.html" id="order-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Order Form</a>
+                        </li>
+                        <li>
+                            <a href="/product-education.html" id="product-education-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Product Education</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="hidden md:block">
+                    <button id="user-menu-button" class="flex items-center text-gray-600 hover:text-blue-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>Account</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8" id="main-content">
+        <!-- Dynamic content will be loaded here based on navigation -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold mb-6">Welcome to MSC Wound Care Portal</h2>
+            <p class="text-gray-600 mb-6">Please select an option from the navigation menu to get started.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <a href="/onboarding.html" class="block p-6 bg-blue-50 rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-2">Provider Onboarding</h3>
+                    <p class="text-gray-600">Complete a single form to establish accounts with multiple wound care product manufacturers.</p>
+                    <span class="text-blue-600 mt-4 inline-block">Get Started →</span>
+                </a>
+                
+                <a href="/insurance-verification.html" class="block p-6 bg-green-50 rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                    <h3 class="text-xl font-semibold text-green-800 mb-2">Insurance Verification</h3>
+                    <p class="text-gray-600">Submit patient information for insurance coverage verification of wound care products.</p>
+                    <span class="text-green-600 mt-4 inline-block">Verify Coverage →</span>
+                </a>
+                
+                <a href="/order-form.html" class="block p-6 bg-purple-50 rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                    <h3 class="text-xl font-semibold text-purple-800 mb-2">Order Products</h3>
+                    <p class="text-gray-600">Place orders for wound care products from multiple manufacturers in a single form.</p>
+                    <span class="text-purple-600 mt-4 inline-block">Place Order →</span>
+                </a>
+            </div>
+            
+            <div class="mt-12 border-t pt-8">
+                <h3 class="text-xl font-semibold mb-4">Recent Updates</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded mr-2 mt-0.5">New</span>
+                        <div>
+                            <p class="font-medium">AI Assistant Now Available</p>
+                            <p class="text-sm text-gray-600">Our AI chat assistant can now help you complete forms and answer wound care questions.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded mr-2 mt-0.5">Update</span>
+                        <div>
+                            <p class="font-medium">Expanded Product Catalog</p>
+                            <p class="text-sm text-gray-600">We've added 15 new advanced wound care products to our catalog.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded mr-2 mt-0.5">Info</span>
+                        <div>
+                            <p class="font-medium">Medicare Coverage Updates</p>
+                            <p class="text-sm text-gray-600">New Medicare guidelines for cellular and tissue-based products are now in effect.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-100 py-4 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    &copy; 2025 MSC Wound Care. All rights reserved.
+                </div>
+                <div class="mt-2 md:mt-0">
+                    <ul class="flex space-x-4 text-sm">
+                        <li><a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Terms of Service</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Assistant Widget (Initially Hidden) -->
+    <button id="chat-toggle" class="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+    </button>
+    
+    <div id="chat-widget" class="fixed bottom-20 right-4 w-80 h-96 bg-white rounded-lg shadow-xl z-50 flex flex-col hidden chat-widget">
+        <div class="bg-blue-600 text-white px-4 py-2 rounded-t-lg flex justify-between items-center">
+            <h3 class="font-medium">MSC Wound Care Assistant</h3>
+            <button id="close-chat" class="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto"></div>
+        <form id="chat-form" class="p-2 border-t border-gray-200">
+            <div class="flex">
+                <input id="chat-input" type="text" class="flex-1 border rounded-l-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ask about forms or wound care...">
+                <button type="submit" class="bg-blue-600 text-white px-4 rounded-r-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Load form-specific scripts -->
+    <script src="/components/form-utils.js"></script>
+    <script src="/components/form-validation.js"></script>
+    <script src="/components/multi-step-form.js"></script>
+    <script src="/components/signature-pad.js"></script>
+    
+    <!-- Main integration script -->
+    <script src="/js/main.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize chat functionality
+            // Note: Most of the chat logic is in main.js
+            document.getElementById('chat-toggle').addEventListener('click', function() {
+                const chatWidget = document.getElementById('chat-widget');
+                chatWidget.classList.toggle('hidden');
+                if (!chatWidget.classList.contains('hidden')) {
+                    document.getElementById('chat-input').focus();
+                    // Add welcome message if it's the first time opening
+                    if (document.getElementById('chat-messages').children.length === 0) {
+                        addChatMessage('assistant', 'Hello! I\'m your MSC Wound Care assistant. How can I help you with your forms today?');
+                    }
+                }
+            });
+            
+            document.getElementById('close-chat').addEventListener('click', function() {
+                document.getElementById('chat-widget').classList.add('hidden');
+            });
+            
+            // Simple chat message function for initial message
+            function addChatMessage(sender, message) {
+                const chatMessages = document.getElementById('chat-messages');
+                const messageEl = document.createElement('div');
+                messageEl.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} mb-3`;
+                
+                messageEl.innerHTML = `
+                    <div class="${sender === 'user' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'} rounded-lg py-2 px-4 max-w-3/4">
+                        ${message}
+                    </div>
+                `;
+                
+                chatMessages.appendChild(messageEl);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Highlight active tab based on current page
+            const currentPath = window.location.pathname;
+            const tabs = document.querySelectorAll('nav a');
+            
+            tabs.forEach(tab => {
+                if (tab.getAttribute('href') === currentPath) {
+                    tab.classList.add('text-blue-800', 'border-b-2', 'border-blue-800');
+                    tab.classList.remove('text-gray-600');
+                }
+            });
+            
+            // Handle basic form submission for demo purposes
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                if (form.id !== 'chat-form') {  // Skip chat form
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        // Show loading indicator
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = `
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Submitting...
+                        `;
+                        
+                        // For demo purposes, just show a success message after a delay
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalText;
+                            showNotification('success', 'Form submitted successfully!');
+                            
+                            // Also show in chat if it's open
+                            const chatWidget = document.getElementById('chat-widget');
+                            if (!chatWidget.classList.contains('hidden')) {
+                                addChatMessage('assistant', 'Great! Your form has been submitted successfully. Is there anything else you need help with?');
+                            }
+                        }, 2000);
+                    });
+                }
+            });
+            
+            // Notification function
+            window.showNotification = function(type, message) {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
+                    type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                } transition-opacity duration-500 opacity-0 z-50`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                setTimeout(() => notification.classList.replace('opacity-0', 'opacity-100'), 10);
+                
+                setTimeout(() => {
+                    notification.classList.replace('opacity-100', 'opacity-0');
+                    setTimeout(() => notification.remove(), 500);
+                }, 5000);
+            };
+        });
+    </script>
+</body>
+</html>
