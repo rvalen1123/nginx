@@ -124,19 +124,30 @@
                 display: none;
             }
             
+            /* Improve progress indicators */
+            .step-indicators {
+                margin-bottom: 1.25rem;
+            }
+            
+            .step-indicator {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            
             /* Mobile radio button fixes */
             .form-check {
-                padding-left: 1.5rem;
-                margin-bottom: 0.75rem;
+                padding-left: 2rem;
+                margin-bottom: 1rem;
                 position: relative;
                 display: block;
             }
             
             .form-check-input {
-                width: 20px;
-                height: 20px;
+                width: 24px;
+                height: 24px;
                 margin-top: 0.15rem;
-                margin-left: -1.5rem;
+                margin-left: -2rem;
                 position: absolute;
             }
             
@@ -144,51 +155,111 @@
                 margin-left: 0.5rem;
                 font-size: 1rem;
                 line-height: 1.5;
-                padding-top: 0.1rem;
+                padding-top: 0.25rem;
+                min-height: 36px;
+                display: flex;
+                align-items: center;
             }
             
             /* Better spacing for mobile form groups */
             .form-group {
-                margin-bottom: 1.25rem;
+                margin-bottom: 1.5rem;
             }
             
             .form-section-title {
-                font-size: 1.2rem;
-                margin-bottom: 1.25rem;
+                font-size: 1.25rem;
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.75rem;
             }
             
             .form-section-subtitle {
-                font-size: 1.1rem;
-                margin-top: 1.5rem;
-                margin-bottom: 0.75rem;
+                font-size: 1.125rem;
+                margin-top: 1.75rem;
+                margin-bottom: 1rem;
                 font-weight: 600;
                 padding-bottom: 0.5rem;
                 border-bottom: 1px solid #eee;
             }
             
-            /* Better button on mobile */
+            /* Better buttons on mobile */
             .form-navigation .btn {
                 width: 100%;
-                padding: 0.75rem;
-                font-size: 1rem;
+                padding: 0.875rem;
+                font-size: 1.125rem;
+                min-height: 3.5rem;
+                margin-top: 0.5rem;
             }
             
             /* Form header for mobile */
             .form-header h1 {
                 font-size: 1.5rem;
+                line-height: 1.2;
+                margin-bottom: 0.75rem;
             }
             
             .form-header .lead {
                 font-size: 1rem;
+                line-height: 1.4;
             }
             
             /* Improve form container padding */
             .form-container {
-                padding: 1rem;
+                padding: 1.25rem;
+                margin-bottom: 2rem;
             }
             
             .form-section {
+                padding: 1.25rem;
+            }
+            
+            /* Enhanced inputs for mobile */
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="date"],
+            select,
+            textarea {
+                font-size: 16px !important;
+                padding: 0.875rem;
+                min-height: 3.25rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            /* Better signature pad for mobile */
+            .signature-container {
+                margin-bottom: 1.5rem;
+            }
+            
+            .signature-pad {
+                height: 180px;
+            }
+            
+            /* Improved terms container for mobile */
+            .terms-container {
+                max-height: 250px;
                 padding: 1rem;
+                margin-bottom: 1.5rem;
+                line-height: 1.5;
+                font-size: 0.9375rem;
+            }
+            
+            /* Stack columns on mobile */
+            .row {
+                flex-direction: column;
+            }
+            
+            .col-md-6, .col-md-4, .col-md-8 {
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+            
+            /* Improve alert messages for mobile */
+            .alert {
+                padding: 0.875rem;
+                margin-bottom: 1rem;
+                font-size: 0.9375rem;
             }
         }
     </style>

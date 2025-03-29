@@ -10,6 +10,71 @@
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/form-progress.css">
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
+        /* Additional mobile-specific styles */
+        @media (max-width: 768px) {
+            .card {
+                margin: 0.5rem;
+                padding: 0;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .progress-steps {
+                margin-bottom: 1rem;
+            }
+            
+            .progress-step-number {
+                width: 2.25rem;
+                height: 2.25rem;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+            
+            .card-header h2 {
+                font-size: 1.25rem;
+                line-height: 1.3;
+            }
+            
+            .card-header p {
+                font-size: 0.9375rem;
+            }
+            
+            /* Improve form controls for touch */
+            select {
+                background-position: right 0.75rem center;
+                padding-right: 2.5rem;
+            }
+            
+            .form-navigation .btn {
+                padding: 1rem;
+                font-size: 1.125rem;
+                margin-top: 0.5rem;
+                height: auto;
+                min-height: 3.5rem;
+            }
+            
+            /* Improve spacing for better readability */
+            .form-section-title {
+                margin-bottom: 1.25rem;
+                font-size: 1.25rem;
+            }
+            
+            /* Better alerts on mobile */
+            #alertsContainer {
+                margin-bottom: 1rem;
+            }
+            
+            /* Footer improvements */
+            footer {
+                padding: 1.25rem 0;
+                margin-top: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <header class="header">

@@ -278,17 +278,135 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                max-width: 100%;
+                margin: 0;
+                border-radius: 5px;
+            }
+            
+            .form-header {
+                padding: 15px;
+            }
+            
+            .form-header h1 {
+                font-size: 20px;
+            }
+            
+            .form-header p {
+                font-size: 14px;
+            }
+            
+            .form-content {
+                padding: 15px;
+            }
+            
+            .section {
+                margin-bottom: 20px;
+            }
+            
+            .section-header {
+                padding: 12px 15px;
+            }
+            
+            .section-header h2 {
+                font-size: 16px;
+            }
+            
             .section-content,
             .repeater-content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
                 grid-template-columns: 1fr;
             }
             
             .field-group,
             .field-group.full-width {
+                margin-bottom: 15px;
+                width: 100%;
                 grid-column: span 1;
             }
             
+            /* Improved form controls for mobile */
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="date"],
+            select,
+            textarea {
+                padding: 12px;
+                font-size: 16px; /* Prevents zoom on iOS */
+                min-height: 48px;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+            
+            /* Better touch targets */
+            .checkbox-group,
+            .radio-group {
+                margin-bottom: 15px;
+            }
+            
+            .checkbox-group label,
+            .radio-group label {
+                padding: 8px 0;
+                min-height: 44px;
+            }
+            
+            .checkbox-group input,
+            .radio-group input {
+                width: 22px;
+                height: 22px;
+                margin-right: 10px;
+            }
+            
+            /* Improved nested repeater */
+            .repeater-group {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .repeater-control {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            /* Bigger buttons for touch */
+            .btn {
+                padding: 14px;
+                font-size: 16px;
+                min-height: 48px;
+                width: 100%;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Better form navigation */
+            .form-navigation {
+                position: sticky;
+                bottom: 0;
+                background-color: white;
+                padding: 15px;
+                border-top: 1px solid var(--border-color);
+                margin: 0 -15px -15px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            /* Form footer */
             .form-footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                border-top: 1px solid var(--border-color);
+                font-size: 14px;
                 flex-direction: column;
                 gap: 15px;
             }
@@ -780,4 +898,34 @@
                 `;
             } else if (fieldType === 'location') {
                 repeaterHTML = `
-                    <div class="repeater-group"
+                    <div class="repeater-group" id="${repeaterId}">
+                        <div class="repeater-content">
+                            <div class="field-group">
+                                <label for="${repeaterId}_address">Address</label>
+                                <input type="text" id="${repeaterId}_address" name="additional_location_address[]">
+                            </div>
+                            <div class="field-group">
+                                <label for="${repeaterId}_city">City</label>
+                                <input type="text" id="${repeaterId}_city" name="additional_location_city[]">
+                            </div>
+                            <div class="field-group">
+                                <label for="${repeaterId}_state">State</label>
+                                <input type="text" id="${repeaterId}_state" name="additional_location_state[]">
+                            </div>
+                            <div class="field-group">
+                                <label for="${repeaterId}_zip">Zip</label>
+                                <input type="text" id="${repeaterId}_zip" name="additional_location_zip[]">
+                            </div>
+                        </div>
+                        <div class="repeater-actions">
+                            <button type="button" class="btn-small btn-secondary remove-repeater" data-id="${repeaterId}">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.insertAdjacentHTML('beforeend', repeaterHTML);
+        }
+    </script>
+</body>
+</html>
