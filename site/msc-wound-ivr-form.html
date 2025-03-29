@@ -3,49 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSC Wound Care Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="css/form-styles.css" rel="stylesheet">
+    <title>MSC Wound Care Insurance Verification Request</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/modern-form.css">
 </head>
-<body class="bg-gray-100">
-    <header class="bg-white border-b border-gray-200 shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center py-4">
-                <h1 class="text-2xl font-bold text-blue-800">MSC Wound Care Portal</h1>
-                <nav class="w-full md:w-auto mt-4 md:mt-0">
-                    <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">
-                        <li>
-                            <a href="#" id="ivr-tab" class="font-medium text-blue-800 border-b-2 border-blue-800 pb-2">Insurance Verification Request</a>
-                        </li>
-                        <li>
-                            <a href="#" id="product-education-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Product Education</a>
-                        </li>
-                        <li>
-                            <a href="#" id="order-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Order Form</a>
-                        </li>
-                        <li>
-                            <a href="#" id="onboarding-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Onboarding</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <h1 class="header-title">MSC Wound Care Portal</h1>
+            <nav class="header-nav">
+                <a href="#" class="header-nav-item">Home</a>
+                <a href="#" class="header-nav-item">Forms</a>
+                <a href="#" class="header-nav-item">Support</a>
+            </nav>
         </div>
     </header>
-
-    <main class="container mx-auto px-4 py-8">
-        <!-- Form Container - All forms will be within this container -->
-        <div class="form-container">
-            <!-- Insurance Verification Request Form -->
-            <div id="ivr-form" class="form-section active">
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <!-- Progress Bar -->
-                    <div class="progress-container mb-8">
-                        <div class="flex justify-between relative">
-                            <div class="progress-step active" data-step="1">
-                                <div class="progress-step-number bg-green-500 text-white">1</div>
+    
+    <main>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Insurance Verification Request</h2>
+                    <p>Please complete all required fields to submit your request</p>
+                </div>
+                
+                <div class="card-body">
+                    <div id="alertsContainer"></div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-steps">
+                            <div class="progress-step" data-step="1">
+                                <div class="progress-step-number">1</div>
                                 <div class="progress-step-label">Form Setup</div>
                             </div>
                             <div class="progress-step" data-step="2">
+                                <div class="progress-step-number">2</div>
+                                <div class="progress-step-label">Patient & Insurance</div>
+                            </div>
+                            <div class="progress-step" data-step="3">
+                                <div class="progress-step-number">3</div>
+                                <div class="progress-step-label">Provider & Facility</div>
+                            </div>
+                            <div class="progress-step" data-step="4">
+                                <div class="progress-step-number">4</div>
                                 <div class="progress-step-number bg-gray-300 text-gray-700">2</div>
                                 <div class="progress-step-label">Patient & Insurance</div>
                             </div>

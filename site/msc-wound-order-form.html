@@ -129,9 +129,337 @@
                             </div>
                         </div>
 
-                        <!-- Additional form steps would go here -->
+                        <!-- Step 2: Facility Information -->
+                        <div class="form-step" data-step="2">
+                            <div class="form-section">
+                                <div class="form-section-title">Facility Information</div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="facilityName">Facility Name <span class="text-danger">*</span></label>
+                                            <input type="text" id="facilityName" name="facilityInfo.facilityName" class="form-control" required>
+                                            <div class="form-text">Name of the healthcare facility</div>
+                                            <div class="invalid-feedback">Please enter the facility name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="contactName">Contact Name <span class="text-danger">*</span></label>
+                                            <input type="text" id="contactName" name="facilityInfo.contactName" class="form-control" required>
+                                            <div class="form-text">Primary contact at the facility</div>
+                                            <div class="invalid-feedback">Please enter a contact name</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="contactTitle">Contact Title</label>
+                                            <input type="text" id="contactTitle" name="facilityInfo.contactTitle" class="form-control">
+                                            <div class="form-text">Job title of the contact person</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="contactPhone">Contact Phone <span class="text-danger">*</span></label>
+                                            <input type="tel" id="contactPhone" name="facilityInfo.contactPhone" class="form-control" required>
+                                            <div class="form-text">Phone number for the contact person</div>
+                                            <div class="invalid-feedback">Please enter a contact phone number</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="contactEmail">Contact Email</label>
+                                            <input type="email" id="contactEmail" name="facilityInfo.contactEmail" class="form-control">
+                                            <div class="form-text">Email address for the contact person</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary" data-action="next">Continue to Shipping Information</button>
+                                </div>
+                            </div>
+                        </div>
                         
-                        <div id="responseContainer"></div>
+                        <!-- Step 3: Shipping & Billing Information -->
+                        <div class="form-step" data-step="3">
+                            <div class="form-section">
+                                <div class="form-section-title">Shipping Information</div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="shippingAddressLine1">Address Line 1 <span class="text-danger">*</span></label>
+                                            <input type="text" id="shippingAddressLine1" name="shippingInfo.shippingAddressLine1" class="form-control" required>
+                                            <div class="form-text">Street address for shipping</div>
+                                            <div class="invalid-feedback">Please enter the shipping address</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="shippingAddressLine2">Address Line 2</label>
+                                            <input type="text" id="shippingAddressLine2" name="shippingInfo.shippingAddressLine2" class="form-control">
+                                            <div class="form-text">Suite, unit, etc.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="shippingCity">City <span class="text-danger">*</span></label>
+                                            <input type="text" id="shippingCity" name="shippingInfo.shippingCity" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the city</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="shippingState">State <span class="text-danger">*</span></label>
+                                            <input type="text" id="shippingState" name="shippingInfo.shippingState" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the state</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="shippingZipCode">ZIP Code <span class="text-danger">*</span></label>
+                                            <input type="text" id="shippingZipCode" name="shippingInfo.shippingZipCode" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the ZIP code</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="shippingMethod">Shipping Method <span class="text-danger">*</span></label>
+                                            <select id="shippingMethod" name="shippingInfo.shippingMethod" class="form-control" required>
+                                                <option value="fedex_standard">FedEx Standard</option>
+                                                <option value="fedex_overnight">FedEx Overnight</option>
+                                                <option value="fedex_2day">FedEx 2-Day</option>
+                                                <option value="pickup">Pickup</option>
+                                            </select>
+                                            <div class="invalid-feedback">Please select a shipping method</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-section">
+                                <div class="form-section-title">Billing Information</div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" id="sameAsShipping" name="billingInfo.sameAsShipping" class="form-check-input" checked>
+                                            <label for="sameAsShipping" class="form-check-label">Same as Shipping Address</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="billingFields" class="conditional-field">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="billingFacilityName">Billing Facility Name</label>
+                                                <input type="text" id="billingFacilityName" name="billingInfo.billingFacilityName" class="form-control">
+                                                <div class="form-text">Only if different from shipping facility</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="billingAddressLine1">Address Line 1</label>
+                                                <input type="text" id="billingAddressLine1" name="billingInfo.billingAddressLine1" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="billingCity">City</label>
+                                                <input type="text" id="billingCity" name="billingInfo.billingCity" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="billingState">State</label>
+                                                <input type="text" id="billingState" name="billingInfo.billingState" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="billingZipCode">ZIP Code</label>
+                                                <input type="text" id="billingZipCode" name="billingInfo.billingZipCode" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary" data-action="next">Continue to Products</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4: Product Information -->
+                        <div class="form-step" data-step="4">
+                            <div class="form-section">
+                                <div class="form-section-title">Product Information</div>
+                                
+                                <div id="productContainer">
+                                    <!-- Product items will be added here dynamically -->
+                                    <div class="product-item" data-product-index="0">
+                                        <button type="button" class="remove-product-btn" aria-label="Remove product">×</button>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="manufacturer-0">Manufacturer <span class="text-danger">*</span></label>
+                                                    <select id="manufacturer-0" name="products[0].manufacturer" class="form-control" required>
+                                                        <option value="">Select Manufacturer</option>
+                                                        <option value="ACZ_Distribution">ACZ Distribution</option>
+                                                        <option value="Advanced_Solution">Advanced Solution</option>
+                                                        <option value="MedLife_Solutions">MedLife Solutions</option>
+                                                        <option value="BioWerX">BioWerX</option>
+                                                        <option value="Imbed_Biosciences">Imbed Biosciences</option>
+                                                        <option value="Stability_Biologics">Stability Biologics</option>
+                                                        <option value="Legacy_Medical_Consultants">Legacy Medical Consultants</option>
+                                                        <option value="BioWound_Solutions">BioWound Solutions</option>
+                                                    </select>
+                                                    <div class="form-text">Company that makes the product</div>
+                                                    <div class="invalid-feedback">Please select a manufacturer</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="productCode-0">Product Code <span class="text-danger">*</span></label>
+                                                    <input type="text" id="productCode-0" name="products[0].productCode" class="form-control" required>
+                                                    <div class="form-text">SKU or item number</div>
+                                                    <div class="invalid-feedback">Please enter a product code</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="description-0">Description <span class="text-danger">*</span></label>
+                                                    <input type="text" id="description-0" name="products[0].description" class="form-control" required>
+                                                    <div class="form-text">Product name and details</div>
+                                                    <div class="invalid-feedback">Please enter a product description</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="size-0">Size <span class="text-danger">*</span></label>
+                                                    <input type="text" id="size-0" name="products[0].size" class="form-control" required>
+                                                    <div class="form-text">Dimensions of the product</div>
+                                                    <div class="invalid-feedback">Please enter the product size</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="quantity-0">Quantity <span class="text-danger">*</span></label>
+                                                    <input type="number" id="quantity-0" name="products[0].quantity" class="form-control" required min="1" value="1">
+                                                    <div class="invalid-feedback">Please enter a quantity</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="unitPrice-0">Unit Price <span class="text-danger">*</span></label>
+                                                    <input type="number" id="unitPrice-0" name="products[0].unitPrice" class="form-control" required step="0.01">
+                                                    <div class="form-text">Price per unit</div>
+                                                    <div class="invalid-feedback">Please enter a unit price</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="totalPrice-0">Total Price</label>
+                                                    <input type="number" id="totalPrice-0" name="products[0].totalPrice" class="form-control" readonly>
+                                                    <div class="form-text">Automatically calculated</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" class="btn btn-secondary add-product-btn" id="addProductBtn">
+                                    + Add Another Product
+                                </button>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary" data-action="next">Continue to Review</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 5: Review and Submit -->
+                        <div class="form-step" data-step="5">
+                            <div class="form-section">
+                                <div class="form-section-title">Additional Information</div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="specialInstructions">Special Instructions</label>
+                                            <textarea id="specialInstructions" name="additionalInfo.specialInstructions" class="form-control" rows="4"></textarea>
+                                            <div class="form-text">Any special notes or requests</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-section">
+                                <div class="form-section-title">Order Summary</div>
+                                <div id="orderSummary">
+                                    <!-- This will be populated with JS -->
+                                    <p>Please review your order details before submitting.</p>
+                                </div>
+                            </div>
+                            
+                            <div id="responseContainer"></div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-primary">Submit Order</button>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 
