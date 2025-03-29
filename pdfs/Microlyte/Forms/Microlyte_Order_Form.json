@@ -1,0 +1,3658 @@
+{
+	"status": "succeeded",
+	"createdDateTime": "2025-03-18T22:00:25Z",
+	"lastUpdatedDateTime": "2025-03-18T22:00:28Z",
+	"analyzeResult": {
+		"apiVersion": "2023-07-31",
+		"modelId": "prebuilt-document",
+		"stringIndexType": "utf16CodeUnit",
+		"content": "Order Date:\nImbed BIOSCIENCES\nShipping Information:\nFacility Name:\nAddress:\nEmail:\nPhone:\nBilling Information:\nFacility Name:\nBilling Address:\nBilling Contact Email:\nPhone:\nItem Details\nPrice\nQuantity\nTotal\nMicrolyte 1.6mm Disc (2)\n$350.00\nMicrolyte 2x2\n$725.00\nMicrolyte 3x3\n$850.00\nMicrolyte 4x4\n$1,280.00\nMicroltye 5x5\n$1,750.00\nMicrolyte 10x10\n$7,000.00\nTotal:",
+		"pages": [
+			{
+				"pageNumber": 1,
+				"angle": 0,
+				"width": 8.5,
+				"height": 11,
+				"unit": "inch",
+				"words": [
+					{
+						"content": "Order",
+						"polygon": [
+							5.6969,
+							0.5252,
+							6.0264,
+							0.5299,
+							6.0264,
+							0.6541,
+							5.6969,
+							0.6541
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 0,
+							"length": 5
+						}
+					},
+					{
+						"content": "Date:",
+						"polygon": [
+							6.0503,
+							0.5299,
+							6.3654,
+							0.5252,
+							6.3654,
+							0.6589,
+							6.0503,
+							0.6541
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 6,
+							"length": 5
+						}
+					},
+					{
+						"content": "Imbed",
+						"polygon": [
+							3.739,
+							1.2604,
+							5.7972,
+							1.2365,
+							5.8115,
+							1.8142,
+							3.739,
+							1.819
+						],
+						"confidence": 0.961,
+						"span": {
+							"offset": 12,
+							"length": 5
+						}
+					},
+					{
+						"content": "BIOSCIENCES",
+						"polygon": [
+							3.7629,
+							1.8859,
+							5.8831,
+							1.8811,
+							5.8879,
+							2.1484,
+							3.7534,
+							2.1437
+						],
+						"confidence": 0.964,
+						"span": {
+							"offset": 18,
+							"length": 11
+						}
+					},
+					{
+						"content": "Shipping",
+						"polygon": [
+							3.4907,
+							2.602,
+							4.0829,
+							2.5972,
+							4.0829,
+							2.7739,
+							3.4955,
+							2.7739
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 30,
+							"length": 8
+						}
+					},
+					{
+						"content": "Information:",
+						"polygon": [
+							4.1163,
+							2.5972,
+							5.0045,
+							2.602,
+							5.0045,
+							2.7691,
+							4.1163,
+							2.7739
+						],
+						"confidence": 0.985,
+						"span": {
+							"offset": 39,
+							"length": 12
+						}
+					},
+					{
+						"content": "Facility",
+						"polygon": [
+							1.0744,
+							2.8168,
+							1.5472,
+							2.8121,
+							1.5472,
+							2.9744,
+							1.0792,
+							2.9744
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 52,
+							"length": 8
+						}
+					},
+					{
+						"content": "Name:",
+						"polygon": [
+							1.5758,
+							2.8121,
+							2.0295,
+							2.8168,
+							2.0295,
+							2.9696,
+							1.5758,
+							2.9744
+						],
+						"confidence": 0.991,
+						"span": {
+							"offset": 61,
+							"length": 5
+						}
+					},
+					{
+						"content": "Address:",
+						"polygon": [
+							1.0744,
+							3.0317,
+							1.6618,
+							3.0269,
+							1.6618,
+							3.1749,
+							1.0744,
+							3.1701
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 67,
+							"length": 8
+						}
+					},
+					{
+						"content": "Email:",
+						"polygon": [
+							1.0792,
+							3.2274,
+							1.4851,
+							3.2322,
+							1.4803,
+							3.3802,
+							1.0744,
+							3.3754
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 76,
+							"length": 6
+						}
+					},
+					{
+						"content": "Phone:",
+						"polygon": [
+							1.0744,
+							3.447,
+							1.552,
+							3.447,
+							1.552,
+							3.5903,
+							1.0744,
+							3.5855
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 83,
+							"length": 6
+						}
+					},
+					{
+						"content": "Billing",
+						"polygon": [
+							3.5767,
+							4.0677,
+							3.9969,
+							4.0677,
+							3.9969,
+							4.2348,
+							3.5767,
+							4.23
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 90,
+							"length": 7
+						}
+					},
+					{
+						"content": "Information:",
+						"polygon": [
+							4.0303,
+							4.0677,
+							4.9185,
+							4.0677,
+							4.9185,
+							4.23,
+							4.0303,
+							4.2348
+						],
+						"confidence": 0.986,
+						"span": {
+							"offset": 98,
+							"length": 12
+						}
+					},
+					{
+						"content": "Facility",
+						"polygon": [
+							1.0697,
+							4.2826,
+							1.5424,
+							4.2778,
+							1.5472,
+							4.4401,
+							1.0744,
+							4.4401
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 111,
+							"length": 8
+						}
+					},
+					{
+						"content": "Name:",
+						"polygon": [
+							1.5758,
+							4.2778,
+							2.0295,
+							4.2778,
+							2.0295,
+							4.4401,
+							1.5758,
+							4.4401
+						],
+						"confidence": 0.981,
+						"span": {
+							"offset": 120,
+							"length": 5
+						}
+					},
+					{
+						"content": "Billing",
+						"polygon": [
+							1.0744,
+							4.4878,
+							1.4803,
+							4.4878,
+							1.4803,
+							4.6597,
+							1.0697,
+							4.6597
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 126,
+							"length": 7
+						}
+					},
+					{
+						"content": "Address:",
+						"polygon": [
+							1.5138,
+							4.4878,
+							2.1154,
+							4.4878,
+							2.1202,
+							4.6549,
+							1.5138,
+							4.6597
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 134,
+							"length": 8
+						}
+					},
+					{
+						"content": "Billing",
+						"polygon": [
+							1.0792,
+							4.6979,
+							1.4851,
+							4.6979,
+							1.4851,
+							4.865,
+							1.0792,
+							4.8602
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 143,
+							"length": 7
+						}
+					},
+					{
+						"content": "Contact",
+						"polygon": [
+							1.5138,
+							4.6979,
+							2.0438,
+							4.6979,
+							2.0438,
+							4.8602,
+							1.5185,
+							4.865
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 151,
+							"length": 7
+						}
+					},
+					{
+						"content": "Email:",
+						"polygon": [
+							2.0772,
+							4.6979,
+							2.507,
+							4.6931,
+							2.507,
+							4.8555,
+							2.0772,
+							4.8602
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 159,
+							"length": 6
+						}
+					},
+					{
+						"content": "Phone:",
+						"polygon": [
+							1.0744,
+							4.908,
+							1.5615,
+							4.9128,
+							1.5615,
+							5.0655,
+							1.0744,
+							5.0655
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 166,
+							"length": 6
+						}
+					},
+					{
+						"content": "Item",
+						"polygon": [
+							1.189,
+							5.5382,
+							1.4469,
+							5.5382,
+							1.4517,
+							5.6862,
+							1.1938,
+							5.6814
+						],
+						"confidence": 0.95,
+						"span": {
+							"offset": 173,
+							"length": 4
+						}
+					},
+					{
+						"content": "Details",
+						"polygon": [
+							1.5567,
+							5.5382,
+							2.0295,
+							5.5334,
+							2.0295,
+							5.6814,
+							1.5567,
+							5.6862
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 178,
+							"length": 7
+						}
+					},
+					{
+						"content": "Price",
+						"polygon": [
+							3.2233,
+							5.5239,
+							3.5671,
+							5.5239,
+							3.5671,
+							5.6862,
+							3.2233,
+							5.6862
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 186,
+							"length": 5
+						}
+					},
+					{
+						"content": "Quantity",
+						"polygon": [
+							4.8326,
+							5.543,
+							5.4486,
+							5.543,
+							5.4486,
+							5.7053,
+							4.8374,
+							5.6957
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 192,
+							"length": 8
+						}
+					},
+					{
+						"content": "Total",
+						"polygon": [
+							6.7618,
+							5.5382,
+							7.0913,
+							5.5382,
+							7.0913,
+							5.6767,
+							6.7618,
+							5.6767
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 201,
+							"length": 5
+						}
+					},
+					{
+						"content": "Microlyte",
+						"polygon": [
+							0.7449,
+							5.9536,
+							1.3944,
+							5.944,
+							1.3992,
+							6.1111,
+							0.7449,
+							6.1063
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 207,
+							"length": 9
+						}
+					},
+					{
+						"content": "1.6mm",
+						"polygon": [
+							1.4421,
+							5.944,
+							1.8576,
+							5.944,
+							1.8576,
+							6.1111,
+							1.4421,
+							6.1111
+						],
+						"confidence": 0.991,
+						"span": {
+							"offset": 217,
+							"length": 5
+						}
+					},
+					{
+						"content": "Disc",
+						"polygon": [
+							1.9435,
+							5.944,
+							2.2253,
+							5.944,
+							2.2301,
+							6.1111,
+							1.9483,
+							6.1111
+						],
+						"confidence": 0.978,
+						"span": {
+							"offset": 223,
+							"length": 4
+						}
+					},
+					{
+						"content": "(2)",
+						"polygon": [
+							2.2587,
+							5.944,
+							2.4593,
+							5.944,
+							2.464,
+							6.1111,
+							2.2635,
+							6.1111
+						],
+						"confidence": 0.983,
+						"span": {
+							"offset": 228,
+							"length": 3
+						}
+					},
+					{
+						"content": "$350.00",
+						"polygon": [
+							2.6169,
+							5.944,
+							3.1803,
+							5.9392,
+							3.1803,
+							6.1111,
+							2.6169,
+							6.1159
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 232,
+							"length": 7
+						}
+					},
+					{
+						"content": "Microlyte",
+						"polygon": [
+							0.7449,
+							6.1589,
+							1.3896,
+							6.1589,
+							1.3896,
+							6.3164,
+							0.7449,
+							6.3212
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 240,
+							"length": 9
+						}
+					},
+					{
+						"content": "2x2",
+						"polygon": [
+							1.4421,
+							6.1589,
+							1.6857,
+							6.1589,
+							1.6857,
+							6.3164,
+							1.4421,
+							6.3164
+						],
+						"confidence": 0.945,
+						"span": {
+							"offset": 250,
+							"length": 3
+						}
+					},
+					{
+						"content": "$725.00",
+						"polygon": [
+							2.6121,
+							6.1589,
+							3.1756,
+							6.1589,
+							3.1756,
+							6.3164,
+							2.6169,
+							6.3164
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 254,
+							"length": 7
+						}
+					},
+					{
+						"content": "Microlyte",
+						"polygon": [
+							0.7449,
+							6.3642,
+							1.3944,
+							6.3689,
+							1.3944,
+							6.5313,
+							0.7497,
+							6.5313
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 262,
+							"length": 9
+						}
+					},
+					{
+						"content": "3x3",
+						"polygon": [
+							1.4374,
+							6.3689,
+							1.6809,
+							6.3642,
+							1.6809,
+							6.5313,
+							1.4374,
+							6.5313
+						],
+						"confidence": 0.86,
+						"span": {
+							"offset": 272,
+							"length": 3
+						}
+					},
+					{
+						"content": "$850.00",
+						"polygon": [
+							2.6216,
+							6.3689,
+							3.1803,
+							6.3642,
+							3.1708,
+							6.536,
+							2.6169,
+							6.5313
+						],
+						"confidence": 0.992,
+						"span": {
+							"offset": 276,
+							"length": 7
+						}
+					},
+					{
+						"content": "Microlyte",
+						"polygon": [
+							0.7449,
+							6.6029,
+							1.3896,
+							6.6076,
+							1.3944,
+							6.7604,
+							0.7449,
+							6.7604
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 284,
+							"length": 9
+						}
+					},
+					{
+						"content": "4x4",
+						"polygon": [
+							1.4326,
+							6.6076,
+							1.6761,
+							6.6076,
+							1.6761,
+							6.7604,
+							1.4326,
+							6.7604
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 294,
+							"length": 3
+						}
+					},
+					{
+						"content": "$1,280.00",
+						"polygon": [
+							2.6169,
+							6.5981,
+							3.2902,
+							6.6029,
+							3.2902,
+							6.7604,
+							2.6169,
+							6.7604
+						],
+						"confidence": 0.995,
+						"span": {
+							"offset": 298,
+							"length": 9
+						}
+					},
+					{
+						"content": "Microltye",
+						"polygon": [
+							0.7449,
+							6.8082,
+							1.3992,
+							6.8177,
+							1.3992,
+							6.9753,
+							0.7497,
+							6.98
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 308,
+							"length": 9
+						}
+					},
+					{
+						"content": "5x5",
+						"polygon": [
+							1.4326,
+							6.8129,
+							1.6761,
+							6.8129,
+							1.6761,
+							6.98,
+							1.4326,
+							6.9753
+						],
+						"confidence": 0.723,
+						"span": {
+							"offset": 318,
+							"length": 3
+						}
+					},
+					{
+						"content": "$1,750.00",
+						"polygon": [
+							2.6216,
+							6.8082,
+							3.3045,
+							6.8082,
+							3.3093,
+							6.9753,
+							2.6216,
+							6.9753
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 322,
+							"length": 9
+						}
+					},
+					{
+						"content": "Microlyte",
+						"polygon": [
+							0.7449,
+							7.0182,
+							1.3944,
+							7.023,
+							1.3992,
+							7.1806,
+							0.7497,
+							7.1853
+						],
+						"confidence": 0.993,
+						"span": {
+							"offset": 332,
+							"length": 9
+						}
+					},
+					{
+						"content": "10x10",
+						"polygon": [
+							1.4469,
+							7.023,
+							1.8433,
+							7.0135,
+							1.848,
+							7.1853,
+							1.4517,
+							7.1806
+						],
+						"confidence": 0.76,
+						"span": {
+							"offset": 342,
+							"length": 5
+						}
+					},
+					{
+						"content": "$7,000.00",
+						"polygon": [
+							2.6216,
+							7.0182,
+							3.3045,
+							7.0182,
+							3.3045,
+							7.1853,
+							2.6264,
+							7.1853
+						],
+						"confidence": 0.99,
+						"span": {
+							"offset": 348,
+							"length": 9
+						}
+					},
+					{
+						"content": "Total:",
+						"polygon": [
+							5.6635,
+							7.4384,
+							6.0551,
+							7.4384,
+							6.0551,
+							7.6007,
+							5.6635,
+							7.6007
+						],
+						"confidence": 0.994,
+						"span": {
+							"offset": 358,
+							"length": 6
+						}
+					}
+				],
+				"lines": [
+					{
+						"content": "Order Date:",
+						"polygon": [
+							5.6874,
+							0.5204,
+							6.3654,
+							0.5204,
+							6.3654,
+							0.6541,
+							5.6874,
+							0.6541
+						],
+						"spans": [
+							{
+								"offset": 0,
+								"length": 11
+							}
+						]
+					},
+					{
+						"content": "Imbed",
+						"polygon": [
+							3.739,
+							1.2318,
+							5.9166,
+							1.2222,
+							5.9213,
+							1.8047,
+							3.739,
+							1.819
+						],
+						"spans": [
+							{
+								"offset": 12,
+								"length": 5
+							}
+						]
+					},
+					{
+						"content": "BIOSCIENCES",
+						"polygon": [
+							3.7534,
+							1.8811,
+							5.8879,
+							1.8763,
+							5.8879,
+							2.1437,
+							3.7534,
+							2.1437
+						],
+						"spans": [
+							{
+								"offset": 18,
+								"length": 11
+							}
+						]
+					},
+					{
+						"content": "Shipping Information:",
+						"polygon": [
+							3.4812,
+							2.5972,
+							5.0045,
+							2.5972,
+							5.0045,
+							2.7643,
+							3.4812,
+							2.7691
+						],
+						"spans": [
+							{
+								"offset": 30,
+								"length": 21
+							}
+						]
+					},
+					{
+						"content": "Facility Name:",
+						"polygon": [
+							1.0697,
+							2.8073,
+							2.0343,
+							2.8073,
+							2.0343,
+							2.9696,
+							1.0697,
+							2.9696
+						],
+						"spans": [
+							{
+								"offset": 52,
+								"length": 14
+							}
+						]
+					},
+					{
+						"content": "Address:",
+						"polygon": [
+							1.0649,
+							3.0221,
+							1.6666,
+							3.0221,
+							1.6666,
+							3.1701,
+							1.0649,
+							3.1701
+						],
+						"spans": [
+							{
+								"offset": 67,
+								"length": 8
+							}
+						]
+					},
+					{
+						"content": "Email:",
+						"polygon": [
+							1.0697,
+							3.2274,
+							1.4851,
+							3.2322,
+							1.4851,
+							3.3802,
+							1.0792,
+							3.3754
+						],
+						"spans": [
+							{
+								"offset": 76,
+								"length": 6
+							}
+						]
+					},
+					{
+						"content": "Phone:",
+						"polygon": [
+							1.0649,
+							3.4423,
+							1.552,
+							3.4423,
+							1.552,
+							3.5855,
+							1.0649,
+							3.5855
+						],
+						"spans": [
+							{
+								"offset": 83,
+								"length": 6
+							}
+						]
+					},
+					{
+						"content": "Billing Information:",
+						"polygon": [
+							3.5767,
+							4.0677,
+							4.9185,
+							4.0677,
+							4.9185,
+							4.23,
+							3.5767,
+							4.23
+						],
+						"spans": [
+							{
+								"offset": 90,
+								"length": 20
+							}
+						]
+					},
+					{
+						"content": "Facility Name:",
+						"polygon": [
+							1.0697,
+							4.2778,
+							2.0343,
+							4.273,
+							2.0343,
+							4.4353,
+							1.0697,
+							4.4401
+						],
+						"spans": [
+							{
+								"offset": 111,
+								"length": 14
+							}
+						]
+					},
+					{
+						"content": "Billing Address:",
+						"polygon": [
+							1.0553,
+							4.4878,
+							2.125,
+							4.4878,
+							2.125,
+							4.6549,
+							1.0553,
+							4.6549
+						],
+						"spans": [
+							{
+								"offset": 126,
+								"length": 16
+							}
+						]
+					},
+					{
+						"content": "Billing Contact Email:",
+						"polygon": [
+							1.0744,
+							4.6931,
+							2.507,
+							4.6884,
+							2.507,
+							4.8555,
+							1.0744,
+							4.8602
+						],
+						"spans": [
+							{
+								"offset": 143,
+								"length": 22
+							}
+						]
+					},
+					{
+						"content": "Phone:",
+						"polygon": [
+							1.0744,
+							4.9032,
+							1.5615,
+							4.908,
+							1.5615,
+							5.0655,
+							1.0744,
+							5.0608
+						],
+						"spans": [
+							{
+								"offset": 166,
+								"length": 6
+							}
+						]
+					},
+					{
+						"content": "Item Details",
+						"polygon": [
+							1.189,
+							5.5334,
+							2.0343,
+							5.5334,
+							2.0343,
+							5.6814,
+							1.189,
+							5.6814
+						],
+						"spans": [
+							{
+								"offset": 173,
+								"length": 12
+							}
+						]
+					},
+					{
+						"content": "Price",
+						"polygon": [
+							3.2185,
+							5.5239,
+							3.5815,
+							5.5239,
+							3.5815,
+							5.6862,
+							3.2138,
+							5.6862
+						],
+						"spans": [
+							{
+								"offset": 186,
+								"length": 5
+							}
+						]
+					},
+					{
+						"content": "Quantity",
+						"polygon": [
+							4.8183,
+							5.5382,
+							5.4534,
+							5.5382,
+							5.4486,
+							5.7005,
+							4.8183,
+							5.6957
+						],
+						"spans": [
+							{
+								"offset": 192,
+								"length": 8
+							}
+						]
+					},
+					{
+						"content": "Total",
+						"polygon": [
+							6.7475,
+							5.5382,
+							7.0961,
+							5.5382,
+							7.0961,
+							5.6767,
+							6.7475,
+							5.6767
+						],
+						"spans": [
+							{
+								"offset": 201,
+								"length": 5
+							}
+						]
+					},
+					{
+						"content": "Microlyte 1.6mm Disc (2)",
+						"polygon": [
+							0.7402,
+							5.9392,
+							2.4593,
+							5.9392,
+							2.4593,
+							6.1063,
+							0.7402,
+							6.1111
+						],
+						"spans": [
+							{
+								"offset": 207,
+								"length": 24
+							}
+						]
+					},
+					{
+						"content": "$350.00",
+						"polygon": [
+							2.6073,
+							5.9392,
+							3.1851,
+							5.9392,
+							3.1899,
+							6.1063,
+							2.6073,
+							6.1111
+						],
+						"spans": [
+							{
+								"offset": 232,
+								"length": 7
+							}
+						]
+					},
+					{
+						"content": "Microlyte 2x2",
+						"polygon": [
+							0.7402,
+							6.1541,
+							1.6904,
+							6.1541,
+							1.6904,
+							6.3164,
+							0.7402,
+							6.3164
+						],
+						"spans": [
+							{
+								"offset": 240,
+								"length": 13
+							}
+						]
+					},
+					{
+						"content": "$725.00",
+						"polygon": [
+							2.6121,
+							6.1541,
+							3.1803,
+							6.1541,
+							3.1803,
+							6.3116,
+							2.6121,
+							6.3116
+						],
+						"spans": [
+							{
+								"offset": 254,
+								"length": 7
+							}
+						]
+					},
+					{
+						"content": "Microlyte 3x3",
+						"polygon": [
+							0.7449,
+							6.3642,
+							1.6809,
+							6.3642,
+							1.6809,
+							6.5265,
+							0.7449,
+							6.5265
+						],
+						"spans": [
+							{
+								"offset": 262,
+								"length": 13
+							}
+						]
+					},
+					{
+						"content": "$850.00",
+						"polygon": [
+							2.6169,
+							6.3642,
+							3.1899,
+							6.3594,
+							3.1899,
+							6.5313,
+							2.6169,
+							6.5313
+						],
+						"spans": [
+							{
+								"offset": 276,
+								"length": 7
+							}
+						]
+					},
+					{
+						"content": "Microlyte 4x4",
+						"polygon": [
+							0.7402,
+							6.5981,
+							1.6904,
+							6.6029,
+							1.6904,
+							6.7604,
+							0.7402,
+							6.7556
+						],
+						"spans": [
+							{
+								"offset": 284,
+								"length": 13
+							}
+						]
+					},
+					{
+						"content": "$1,280.00",
+						"polygon": [
+							2.6121,
+							6.5933,
+							3.3093,
+							6.5981,
+							3.3093,
+							6.7604,
+							2.6121,
+							6.7556
+						],
+						"spans": [
+							{
+								"offset": 298,
+								"length": 9
+							}
+						]
+					},
+					{
+						"content": "Microltye 5x5",
+						"polygon": [
+							0.7449,
+							6.8034,
+							1.6809,
+							6.8082,
+							1.6809,
+							6.9753,
+							0.7449,
+							6.9753
+						],
+						"spans": [
+							{
+								"offset": 308,
+								"length": 13
+							}
+						]
+					},
+					{
+						"content": "$1,750.00",
+						"polygon": [
+							2.6169,
+							6.8082,
+							3.3093,
+							6.8034,
+							3.3093,
+							6.9705,
+							2.6169,
+							6.9705
+						],
+						"spans": [
+							{
+								"offset": 322,
+								"length": 9
+							}
+						]
+					},
+					{
+						"content": "Microlyte 10x10",
+						"polygon": [
+							0.7449,
+							7.0135,
+							1.8624,
+							7.0135,
+							1.8624,
+							7.1806,
+							0.7449,
+							7.1806
+						],
+						"spans": [
+							{
+								"offset": 332,
+								"length": 15
+							}
+						]
+					},
+					{
+						"content": "$7,000.00",
+						"polygon": [
+							2.6216,
+							7.0135,
+							3.3045,
+							7.0135,
+							3.3045,
+							7.1806,
+							2.6216,
+							7.1806
+						],
+						"spans": [
+							{
+								"offset": 348,
+								"length": 9
+							}
+						]
+					},
+					{
+						"content": "Total:",
+						"polygon": [
+							5.6444,
+							7.4384,
+							6.0598,
+							7.4384,
+							6.0646,
+							7.6007,
+							5.6444,
+							7.5959
+						],
+						"spans": [
+							{
+								"offset": 358,
+								"length": 6
+							}
+						]
+					}
+				],
+				"spans": [
+					{
+						"offset": 0,
+						"length": 364
+					}
+				]
+			}
+		],
+		"tables": [
+			{
+				"rowCount": 5,
+				"columnCount": 2,
+				"cells": [
+					{
+						"rowIndex": 0,
+						"columnIndex": 0,
+						"columnSpan": 2,
+						"content": "Shipping Information:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.9959,
+									2.5657,
+									7.4805,
+									2.5657,
+									7.4872,
+									2.7737,
+									0.9959,
+									2.7737
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 30,
+								"length": 21
+							}
+						]
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 0,
+						"content": "Facility Name:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.9959,
+									2.7737,
+									2.7864,
+									2.7737,
+									2.7931,
+									2.9818,
+									0.9959,
+									2.9818
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 52,
+								"length": 14
+							}
+						]
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.7864,
+									2.7737,
+									7.4872,
+									2.7737,
+									7.4872,
+									2.9818,
+									2.7931,
+									2.9818
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 0,
+						"content": "Address:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.9959,
+									2.9818,
+									2.7931,
+									2.9818,
+									2.7931,
+									3.1966,
+									0.9959,
+									3.1966
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 67,
+								"length": 8
+							}
+						]
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.7931,
+									2.9818,
+									7.4872,
+									2.9818,
+									7.4872,
+									3.1966,
+									2.7931,
+									3.1966
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 0,
+						"content": "Email:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.9959,
+									3.1966,
+									2.7931,
+									3.1966,
+									2.7931,
+									3.4046,
+									0.9959,
+									3.4046
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 76,
+								"length": 6
+							}
+						]
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.7931,
+									3.1966,
+									7.4872,
+									3.1966,
+									7.4939,
+									3.4046,
+									2.7931,
+									3.4046
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 0,
+						"content": "Phone:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.9959,
+									3.4046,
+									2.7931,
+									3.4046,
+									2.7931,
+									3.6127,
+									0.9959,
+									3.6127
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 83,
+								"length": 6
+							}
+						]
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.7931,
+									3.4046,
+									7.4939,
+									3.4046,
+									7.4939,
+									3.6127,
+									2.7931,
+									3.6127
+								]
+							}
+						],
+						"spans": []
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.973,
+							2.55,
+							7.5138,
+							2.5507,
+							7.5122,
+							3.6372,
+							0.9708,
+							3.637
+						]
+					}
+				],
+				"spans": [
+					{
+						"offset": 30,
+						"length": 59
+					}
+				]
+			},
+			{
+				"rowCount": 5,
+				"columnCount": 2,
+				"cells": [
+					{
+						"rowIndex": 0,
+						"columnIndex": 0,
+						"columnSpan": 2,
+						"content": "Billing Information:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									1.0003,
+									4.0233,
+									7.4917,
+									4.03,
+									7.4917,
+									4.2387,
+									1.0003,
+									4.2387
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 90,
+								"length": 20
+							}
+						]
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 0,
+						"content": "Facility Name:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									1.0003,
+									4.2387,
+									3.0633,
+									4.2387,
+									3.0633,
+									4.4541,
+									1.0003,
+									4.4541
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 111,
+								"length": 14
+							}
+						]
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									3.0633,
+									4.2387,
+									7.4917,
+									4.2387,
+									7.4917,
+									4.4541,
+									3.0633,
+									4.4541
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 0,
+						"content": "Billing Address:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									1.0003,
+									4.4541,
+									3.0633,
+									4.4541,
+									3.0633,
+									4.6627,
+									1.0003,
+									4.6627
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 126,
+								"length": 16
+							}
+						]
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									3.0633,
+									4.4541,
+									7.4917,
+									4.4541,
+									7.4917,
+									4.6627,
+									3.0633,
+									4.6627
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 0,
+						"content": "Billing Contact Email:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									1.0003,
+									4.6627,
+									3.0633,
+									4.6627,
+									3.0633,
+									4.8714,
+									1.0003,
+									4.8714
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 143,
+								"length": 22
+							}
+						]
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									3.0633,
+									4.6627,
+									7.4917,
+									4.6627,
+									7.4984,
+									4.8714,
+									3.0633,
+									4.8714
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 0,
+						"content": "Phone:",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									1.0003,
+									4.8714,
+									3.0633,
+									4.8714,
+									3.0633,
+									5.08,
+									1.0003,
+									5.08
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 166,
+								"length": 6
+							}
+						]
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 1,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									3.0633,
+									4.8714,
+									7.4984,
+									4.8714,
+									7.4984,
+									5.08,
+									3.0633,
+									5.08
+								]
+							}
+						],
+						"spans": []
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.9679,
+							4.0201,
+							7.5155,
+							4.0274,
+							7.5132,
+							5.0964,
+							0.9647,
+							5.0894
+						]
+					}
+				],
+				"spans": [
+					{
+						"offset": 90,
+						"length": 82
+					}
+				]
+			},
+			{
+				"rowCount": 7,
+				"columnCount": 4,
+				"cells": [
+					{
+						"kind": "columnHeader",
+						"rowIndex": 0,
+						"columnIndex": 0,
+						"content": "Item Details",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.672,
+									5.5035,
+									2.5437,
+									5.5035,
+									2.5437,
+									5.9079,
+									0.672,
+									5.9079
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 173,
+								"length": 12
+							}
+						]
+					},
+					{
+						"kind": "columnHeader",
+						"rowIndex": 0,
+						"columnIndex": 1,
+						"content": "Price",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.5437,
+									5.5035,
+									4.2466,
+									5.4962,
+									4.2466,
+									5.9079,
+									2.5437,
+									5.9079
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 186,
+								"length": 5
+							}
+						]
+					},
+					{
+						"kind": "columnHeader",
+						"rowIndex": 0,
+						"columnIndex": 2,
+						"content": "Quantity",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									4.2466,
+									5.4962,
+									6.0303,
+									5.4962,
+									6.0303,
+									5.9079,
+									4.2466,
+									5.9079
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 192,
+								"length": 8
+							}
+						]
+					},
+					{
+						"kind": "columnHeader",
+						"rowIndex": 0,
+						"columnIndex": 3,
+						"content": "Total",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									6.0303,
+									5.4962,
+									7.8139,
+									5.4962,
+									7.8139,
+									5.9079,
+									6.0303,
+									5.9079
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 201,
+								"length": 5
+							}
+						]
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 0,
+						"content": "Microlyte 1.6mm Disc (2)",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.672,
+									5.9079,
+									2.5437,
+									5.9079,
+									2.5437,
+									6.1211,
+									0.672,
+									6.1211
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 207,
+								"length": 24
+							}
+						]
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 1,
+						"content": "$350.00",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.5437,
+									5.9079,
+									4.2466,
+									5.9079,
+									4.2466,
+									6.1211,
+									2.5437,
+									6.1211
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 232,
+								"length": 7
+							}
+						]
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 2,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									4.2466,
+									5.9079,
+									6.0303,
+									5.9079,
+									6.0303,
+									6.1211,
+									4.2466,
+									6.1211
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 1,
+						"columnIndex": 3,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									6.0303,
+									5.9079,
+									7.8139,
+									5.9079,
+									7.8139,
+									6.1211,
+									6.0303,
+									6.1211
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 0,
+						"content": "Microlyte 2x2",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.672,
+									6.1211,
+									2.5437,
+									6.1211,
+									2.5437,
+									6.3343,
+									0.672,
+									6.3343
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 240,
+								"length": 13
+							}
+						]
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 1,
+						"content": "$725.00",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.5437,
+									6.1211,
+									4.2466,
+									6.1211,
+									4.2466,
+									6.3269,
+									2.5437,
+									6.3343
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 254,
+								"length": 7
+							}
+						]
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 2,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									4.2466,
+									6.1211,
+									6.0303,
+									6.1211,
+									6.0303,
+									6.3269,
+									4.2466,
+									6.3269
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 2,
+						"columnIndex": 3,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									6.0303,
+									6.1211,
+									7.8139,
+									6.1211,
+									7.8139,
+									6.3269,
+									6.0303,
+									6.3269
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 0,
+						"content": "Microlyte 3x3",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.672,
+									6.3343,
+									2.5437,
+									6.3343,
+									2.5437,
+									6.5695,
+									0.672,
+									6.5695
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 262,
+								"length": 13
+							}
+						]
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 1,
+						"content": "$850.00",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.5437,
+									6.3343,
+									4.2466,
+									6.3269,
+									4.2466,
+									6.5622,
+									2.5437,
+									6.5695
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 276,
+								"length": 7
+							}
+						]
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 2,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									4.2466,
+									6.3269,
+									6.0303,
+									6.3269,
+									6.0303,
+									6.5622,
+									4.2466,
+									6.5622
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 3,
+						"columnIndex": 3,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									6.0303,
+									6.3269,
+									7.8139,
+									6.3269,
+									7.8139,
+									6.5622,
+									6.0303,
+									6.5622
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 0,
+						"content": "Microlyte 4x4",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.672,
+									6.5695,
+									2.5437,
+									6.5695,
+									2.5437,
+									6.768,
+									0.672,
+									6.768
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 284,
+								"length": 13
+							}
+						]
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 1,
+						"content": "$1,280.00",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.5437,
+									6.5695,
+									4.2466,
+									6.5622,
+									4.2466,
+									6.768,
+									2.5437,
+									6.768
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 298,
+								"length": 9
+							}
+						]
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 2,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									4.2466,
+									6.5622,
+									6.0303,
+									6.5622,
+									6.0303,
+									6.768,
+									4.2466,
+									6.768
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 4,
+						"columnIndex": 3,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									6.0303,
+									6.5622,
+									7.8139,
+									6.5622,
+									7.8139,
+									6.768,
+									6.0303,
+									6.768
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 5,
+						"columnIndex": 0,
+						"content": "Microltye 5x5",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.672,
+									6.768,
+									2.5437,
+									6.768,
+									2.5437,
+									6.9886,
+									0.6793,
+									6.9886
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 308,
+								"length": 13
+							}
+						]
+					},
+					{
+						"rowIndex": 5,
+						"columnIndex": 1,
+						"content": "$1,750.00",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.5437,
+									6.768,
+									4.2466,
+									6.768,
+									4.2466,
+									6.9886,
+									2.5437,
+									6.9886
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 322,
+								"length": 9
+							}
+						]
+					},
+					{
+						"rowIndex": 5,
+						"columnIndex": 2,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									4.2466,
+									6.768,
+									6.0303,
+									6.768,
+									6.0303,
+									6.9886,
+									4.2466,
+									6.9886
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 5,
+						"columnIndex": 3,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									6.0303,
+									6.768,
+									7.8139,
+									6.768,
+									7.8213,
+									6.9886,
+									6.0303,
+									6.9886
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 6,
+						"columnIndex": 0,
+						"content": "Microlyte 10x10",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.6793,
+									6.9886,
+									2.5437,
+									6.9886,
+									2.5437,
+									7.1871,
+									0.6793,
+									7.1871
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 332,
+								"length": 15
+							}
+						]
+					},
+					{
+						"rowIndex": 6,
+						"columnIndex": 1,
+						"content": "$7,000.00",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									2.5437,
+									6.9886,
+									4.2466,
+									6.9886,
+									4.2466,
+									7.1871,
+									2.5437,
+									7.1871
+								]
+							}
+						],
+						"spans": [
+							{
+								"offset": 348,
+								"length": 9
+							}
+						]
+					},
+					{
+						"rowIndex": 6,
+						"columnIndex": 2,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									4.2466,
+									6.9886,
+									6.0303,
+									6.9886,
+									6.0303,
+									7.1871,
+									4.2466,
+									7.1871
+								]
+							}
+						],
+						"spans": []
+					},
+					{
+						"rowIndex": 6,
+						"columnIndex": 3,
+						"content": "",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									6.0303,
+									6.9886,
+									7.8213,
+									6.9886,
+									7.8213,
+									7.1871,
+									6.0303,
+									7.1871
+								]
+							}
+						],
+						"spans": []
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.6698,
+							5.486,
+							7.8273,
+							5.4887,
+							7.8269,
+							7.2094,
+							0.6688,
+							7.2068
+						]
+					}
+				],
+				"spans": [
+					{
+						"offset": 173,
+						"length": 184
+					}
+				]
+			}
+		],
+		"paragraphs": [
+			{
+				"spans": [
+					{
+						"offset": 0,
+						"length": 11
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							5.6874,
+							0.5204,
+							6.3654,
+							0.5204,
+							6.3654,
+							0.6541,
+							5.6874,
+							0.6541
+						]
+					}
+				],
+				"content": "Order Date:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 12,
+						"length": 17
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							3.7365,
+							1.2318,
+							5.9188,
+							1.2222,
+							5.9228,
+							2.1435,
+							3.7405,
+							2.1531
+						]
+					}
+				],
+				"content": "Imbed BIOSCIENCES"
+			},
+			{
+				"spans": [
+					{
+						"offset": 30,
+						"length": 21
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.9959,
+							2.5657,
+							7.4805,
+							2.5657,
+							7.4872,
+							2.7737,
+							0.9959,
+							2.7737
+						]
+					}
+				],
+				"content": "Shipping Information:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 52,
+						"length": 14
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.9959,
+							2.7737,
+							2.7864,
+							2.7737,
+							2.7931,
+							2.9818,
+							0.9959,
+							2.9818
+						]
+					}
+				],
+				"content": "Facility Name:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 67,
+						"length": 8
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.9959,
+							2.9818,
+							2.7931,
+							2.9818,
+							2.7931,
+							3.1966,
+							0.9959,
+							3.1966
+						]
+					}
+				],
+				"content": "Address:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 76,
+						"length": 6
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.9959,
+							3.1966,
+							2.7931,
+							3.1966,
+							2.7931,
+							3.4046,
+							0.9959,
+							3.4046
+						]
+					}
+				],
+				"content": "Email:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 83,
+						"length": 6
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.9959,
+							3.4046,
+							2.7931,
+							3.4046,
+							2.7931,
+							3.6127,
+							0.9959,
+							3.6127
+						]
+					}
+				],
+				"content": "Phone:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 90,
+						"length": 20
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							1.0003,
+							4.0233,
+							7.4917,
+							4.03,
+							7.4917,
+							4.2387,
+							1.0003,
+							4.2387
+						]
+					}
+				],
+				"content": "Billing Information:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 111,
+						"length": 14
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							1.0003,
+							4.2387,
+							3.0633,
+							4.2387,
+							3.0633,
+							4.4541,
+							1.0003,
+							4.4541
+						]
+					}
+				],
+				"content": "Facility Name:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 126,
+						"length": 16
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							1.0003,
+							4.4541,
+							3.0633,
+							4.4541,
+							3.0633,
+							4.6627,
+							1.0003,
+							4.6627
+						]
+					}
+				],
+				"content": "Billing Address:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 143,
+						"length": 22
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							1.0003,
+							4.6627,
+							3.0633,
+							4.6627,
+							3.0633,
+							4.8714,
+							1.0003,
+							4.8714
+						]
+					}
+				],
+				"content": "Billing Contact Email:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 166,
+						"length": 6
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							1.0003,
+							4.8714,
+							3.0633,
+							4.8714,
+							3.0633,
+							5.08,
+							1.0003,
+							5.08
+						]
+					}
+				],
+				"content": "Phone:"
+			},
+			{
+				"spans": [
+					{
+						"offset": 173,
+						"length": 12
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.672,
+							5.5035,
+							2.5437,
+							5.5035,
+							2.5437,
+							5.9079,
+							0.672,
+							5.9079
+						]
+					}
+				],
+				"content": "Item Details"
+			},
+			{
+				"spans": [
+					{
+						"offset": 186,
+						"length": 5
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							2.5437,
+							5.5035,
+							4.2466,
+							5.4962,
+							4.2466,
+							5.9079,
+							2.5437,
+							5.9079
+						]
+					}
+				],
+				"content": "Price"
+			},
+			{
+				"spans": [
+					{
+						"offset": 192,
+						"length": 8
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							4.2466,
+							5.4962,
+							6.0303,
+							5.4962,
+							6.0303,
+							5.9079,
+							4.2466,
+							5.9079
+						]
+					}
+				],
+				"content": "Quantity"
+			},
+			{
+				"spans": [
+					{
+						"offset": 201,
+						"length": 5
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							6.0303,
+							5.4962,
+							7.8139,
+							5.4962,
+							7.8139,
+							5.9079,
+							6.0303,
+							5.9079
+						]
+					}
+				],
+				"content": "Total"
+			},
+			{
+				"spans": [
+					{
+						"offset": 207,
+						"length": 24
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.672,
+							5.9079,
+							2.5437,
+							5.9079,
+							2.5437,
+							6.1211,
+							0.672,
+							6.1211
+						]
+					}
+				],
+				"content": "Microlyte 1.6mm Disc (2)"
+			},
+			{
+				"spans": [
+					{
+						"offset": 232,
+						"length": 7
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							2.5437,
+							5.9079,
+							4.2466,
+							5.9079,
+							4.2466,
+							6.1211,
+							2.5437,
+							6.1211
+						]
+					}
+				],
+				"content": "$350.00"
+			},
+			{
+				"spans": [
+					{
+						"offset": 240,
+						"length": 13
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.672,
+							6.1211,
+							2.5437,
+							6.1211,
+							2.5437,
+							6.3343,
+							0.672,
+							6.3343
+						]
+					}
+				],
+				"content": "Microlyte 2x2"
+			},
+			{
+				"spans": [
+					{
+						"offset": 254,
+						"length": 7
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							2.5437,
+							6.1211,
+							4.2466,
+							6.1211,
+							4.2466,
+							6.3269,
+							2.5437,
+							6.3343
+						]
+					}
+				],
+				"content": "$725.00"
+			},
+			{
+				"spans": [
+					{
+						"offset": 262,
+						"length": 13
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.672,
+							6.3343,
+							2.5437,
+							6.3343,
+							2.5437,
+							6.5695,
+							0.672,
+							6.5695
+						]
+					}
+				],
+				"content": "Microlyte 3x3"
+			},
+			{
+				"spans": [
+					{
+						"offset": 276,
+						"length": 7
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							2.5437,
+							6.3343,
+							4.2466,
+							6.3269,
+							4.2466,
+							6.5622,
+							2.5437,
+							6.5695
+						]
+					}
+				],
+				"content": "$850.00"
+			},
+			{
+				"spans": [
+					{
+						"offset": 284,
+						"length": 13
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.672,
+							6.5695,
+							2.5437,
+							6.5695,
+							2.5437,
+							6.768,
+							0.672,
+							6.768
+						]
+					}
+				],
+				"content": "Microlyte 4x4"
+			},
+			{
+				"spans": [
+					{
+						"offset": 298,
+						"length": 9
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							2.5437,
+							6.5695,
+							4.2466,
+							6.5622,
+							4.2466,
+							6.768,
+							2.5437,
+							6.768
+						]
+					}
+				],
+				"content": "$1,280.00"
+			},
+			{
+				"spans": [
+					{
+						"offset": 308,
+						"length": 13
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.672,
+							6.768,
+							2.5437,
+							6.768,
+							2.5437,
+							6.9886,
+							0.6793,
+							6.9886
+						]
+					}
+				],
+				"content": "Microltye 5x5"
+			},
+			{
+				"spans": [
+					{
+						"offset": 322,
+						"length": 9
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							2.5437,
+							6.768,
+							4.2466,
+							6.768,
+							4.2466,
+							6.9886,
+							2.5437,
+							6.9886
+						]
+					}
+				],
+				"content": "$1,750.00"
+			},
+			{
+				"spans": [
+					{
+						"offset": 332,
+						"length": 15
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							0.6793,
+							6.9886,
+							2.5437,
+							6.9886,
+							2.5437,
+							7.1871,
+							0.6793,
+							7.1871
+						]
+					}
+				],
+				"content": "Microlyte 10x10"
+			},
+			{
+				"spans": [
+					{
+						"offset": 348,
+						"length": 9
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							2.5437,
+							6.9886,
+							4.2466,
+							6.9886,
+							4.2466,
+							7.1871,
+							2.5437,
+							7.1871
+						]
+					}
+				],
+				"content": "$7,000.00"
+			},
+			{
+				"spans": [
+					{
+						"offset": 358,
+						"length": 6
+					}
+				],
+				"boundingRegions": [
+					{
+						"pageNumber": 1,
+						"polygon": [
+							5.6444,
+							7.4384,
+							6.0646,
+							7.4384,
+							6.0646,
+							7.6007,
+							5.6444,
+							7.6007
+						]
+					}
+				],
+				"content": "Total:"
+			}
+		],
+		"keyValuePairs": [
+			{
+				"key": {
+					"content": "Date:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								6.0503,
+								0.5299,
+								6.3654,
+								0.5252,
+								6.3654,
+								0.6589,
+								6.0503,
+								0.6541
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 6,
+							"length": 5
+						}
+					]
+				},
+				"confidence": 0.303
+			},
+			{
+				"key": {
+					"content": "Facility Name:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0744,
+								2.8122,
+								2.0295,
+								2.812,
+								2.0295,
+								2.9743,
+								1.0744,
+								2.9745
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 52,
+							"length": 14
+						}
+					]
+				},
+				"confidence": 0.789
+			},
+			{
+				"key": {
+					"content": "Address:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0744,
+								3.0317,
+								1.6618,
+								3.0269,
+								1.6618,
+								3.1749,
+								1.0744,
+								3.1701
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 67,
+							"length": 8
+						}
+					]
+				},
+				"confidence": 0.753
+			},
+			{
+				"key": {
+					"content": "Email:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0792,
+								3.2274,
+								1.4851,
+								3.2322,
+								1.4803,
+								3.3802,
+								1.0744,
+								3.3754
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 76,
+							"length": 6
+						}
+					]
+				},
+				"confidence": 0.752
+			},
+			{
+				"key": {
+					"content": "Phone:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0744,
+								3.447,
+								1.552,
+								3.447,
+								1.552,
+								3.5903,
+								1.0744,
+								3.5855
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 83,
+							"length": 6
+						}
+					]
+				},
+				"confidence": 0.753
+			},
+			{
+				"key": {
+					"content": "Facility Name:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0697,
+								4.2778,
+								2.0295,
+								4.2778,
+								2.0295,
+								4.4401,
+								1.0697,
+								4.4401
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 111,
+							"length": 14
+						}
+					]
+				},
+				"confidence": 0.789
+			},
+			{
+				"key": {
+					"content": "Billing Address:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0697,
+								4.4878,
+								2.1202,
+								4.4878,
+								2.1202,
+								4.6597,
+								1.0697,
+								4.6597
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 126,
+							"length": 16
+						}
+					]
+				},
+				"confidence": 0.789
+			},
+			{
+				"key": {
+					"content": "Billing Contact Email:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0785,
+								4.6979,
+								2.507,
+								4.6914,
+								2.5078,
+								4.8605,
+								1.0792,
+								4.867
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 143,
+							"length": 22
+						}
+					]
+				},
+				"confidence": 0.75
+			},
+			{
+				"key": {
+					"content": "Phone:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								1.0744,
+								4.908,
+								1.5615,
+								4.9128,
+								1.5615,
+								5.0655,
+								1.0744,
+								5.0655
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 166,
+							"length": 6
+						}
+					]
+				},
+				"confidence": 0.753
+			},
+			{
+				"key": {
+					"content": "Quantity",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								4.8326,
+								5.543,
+								5.4486,
+								5.543,
+								5.4486,
+								5.7053,
+								4.8374,
+								5.6957
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 192,
+							"length": 8
+						}
+					]
+				},
+				"confidence": 0.306
+			},
+			{
+				"key": {
+					"content": "Total",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								6.7618,
+								5.5382,
+								7.0913,
+								5.5382,
+								7.0913,
+								5.6767,
+								6.7618,
+								5.6767
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 201,
+							"length": 5
+						}
+					]
+				},
+				"confidence": 0.752
+			},
+			{
+				"key": {
+					"content": "Total:",
+					"boundingRegions": [
+						{
+							"pageNumber": 1,
+							"polygon": [
+								5.6635,
+								7.4384,
+								6.0551,
+								7.4384,
+								6.0551,
+								7.6007,
+								5.6635,
+								7.6007
+							]
+						}
+					],
+					"spans": [
+						{
+							"offset": 358,
+							"length": 6
+						}
+					]
+				},
+				"confidence": 0.753
+			}
+		],
+		"entities": [],
+		"styles": [],
+		"documents": []
+	}
+}
