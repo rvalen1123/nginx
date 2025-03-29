@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSC Wound Care Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/modern-form.css">
+    <link rel="stylesheet" href="css/header.css">
+    <style>
+        /* Mobile-specific optimizations for index page */
+        @media (max-width: 768px) {
+            .container.my-8 {
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+            
+            .card {
+                margin: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            .card-header h2 {
+                font-size: 1.25rem;
+                line-height: 1.3;
+            }
+            
+            .card-header p {
+                font-size: 0.9375rem;
+                line-height: 1.4;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            /* Better card grid on mobile */
+            .grid.gap-6 {
+                gap: 0.75rem;
+            }
+            
+            /* Touch-friendly card tiles */
+            .bg-white.rounded-lg {
+                padding: 1.25rem;
+                margin-bottom: 0.75rem;
+                min-height: auto;
+            }
+            
+            /* Larger touch targets for buttons */
+            .btn {
+                padding: 0.875rem;
+                font-size: 1rem;
+                min-height: 3.25rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Better spacing for card content */
+            .text-xl.font-semibold {
+                font-size: 1.125rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .text-gray-600.mb-4 {
+                font-size: 0.9375rem;
+                margin-bottom: 1rem;
+                line-height: 1.4;
+            }
+            
+            /* Smaller icons on mobile */
+            .h-12.w-12 {
+                height: 2.5rem;
+                width: 2.5rem;
+            }
+            
+            /* Footer improvements */
+            footer .container {
+                padding: 0.75rem;
+            }
+            
+            footer .flex.space-x-4 {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                justify-content: center;
+            }
+            
+            footer a {
+                font-size: 0.875rem;
+                margin: 0 0.375rem;
+                min-height: 2.75rem;
+                display: inline-flex;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="header">
+        <div class="container header-container">
+            <div class="header-logo">
+                <a href="index.html">
+                    <img src="images/msc-logo.png" alt="MSC Wound Care" class="h-8">
+                </a>
+            </div>
+            <div class="header-title">MSC Wound Care Portal</div>
+            <nav class="header-nav">
+                <a href="index.html" class="header-nav-item active">Home</a>
+                <a href="msc-wound-onboarding-form.html" class="header-nav-item">Provider Onboarding</a>
+                <a href="msc-wound-ivr-form.html" class="header-nav-item">Insurance Verification</a>
+                <a href="msc-wound-order-form.html" class="header-nav-item">Order Products</a>
+                <a href="dme-kit-signup-form.html" class="header-nav-item">DME Kit Sign-up</a>
+            </nav>
+            <button class="mobile-menu-button" aria-label="Toggle menu">
+                <span class="mobile-menu-icon"><span></span></span>
+            </button>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html" class="mobile-menu-item active">Home</a>
+            <a href="msc-wound-onboarding-form.html" class="mobile-menu-item">Provider Onboarding</a>
+            <a href="msc-wound-ivr-form.html" class="mobile-menu-item">Insurance Verification</a>
+            <a href="msc-wound-order-form.html" class="mobile-menu-item">Order Products</a>
+            <a href="dme-kit-signup-form.html" class="mobile-menu-item">DME Kit Sign-up</a>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container my-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Welcome to MSC Wound Care Portal</h2>
+                    <p>Select a form to get started with Provider Onboarding, Insurance Verification, Order Products, or DME Kit Sign-up</p>
+                </div>
+                
+                <div class="card-body">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="text-blue-600 text-4xl mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Provider Onboarding</h3>
+                            <p class="text-gray-600 mb-4">Complete the provider onboarding process to register with MSC Wound Care.</p>
+                            <a href="msc-wound-onboarding-form.html" class="btn btn-primary block text-center">Start Onboarding</a>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="text-green-600 text-4xl mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Insurance Verification</h3>
+                            <p class="text-gray-600 mb-4">Verify patient insurance coverage for wound care products and services.</p>
+                            <a href="msc-wound-ivr-form.html" class="btn btn-primary block text-center">Start Verification</a>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="text-purple-600 text-4xl mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Order Products</h3>
+                            <p class="text-gray-600 mb-4">Place orders for wound care products and supplies through our portal.</p>
+                            <a href="msc-wound-order-form.html" class="btn btn-primary block text-center">Start Order</a>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                            <div class="text-red-600 text-4xl mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">DME Kit Sign-up</h3>
+                            <p class="text-gray-600 mb-4">Register for our DME Kit program to receive MSC Wound Care products and supplies.</p>
+                            <a href="dme-kit-signup-form.html" class="btn btn-primary block text-center">Start Sign-up</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <p class="text-center">Need help? Contact support at (555) 123-4567</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="py-4 bg-white mt-4 border-t">
+        <div class="container">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600">&copy; 2023 MSC Wound Care. All rights reserved.</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>
+                    <a href="#" class="text-blue-600 hover:underline">Terms of Service</a>
+                    <a href="#" class="text-blue-600 hover:underline">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="js/mobile-menu.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize mobile menu
+            if (typeof initMobileMenu === 'function') {
+                initMobileMenu();
+            }
+            
+            // Set active tab
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navItems = document.querySelectorAll('.header-nav-item, .mobile-menu-item');
+            
+            navItems.forEach(item => {
+                const itemPage = item.getAttribute('href');
+                if (itemPage === currentPage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
