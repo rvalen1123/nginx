@@ -1,37 +1,164 @@
 <!DOCTYPE html>
-
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>NGINX on Railway</title>
-    <meta name="description" content="Choo Choo!" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSC Wound Care Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/css/form-styles.css" rel="stylesheet">
+    <!-- SignaturePad library -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center py-4">
+                <h1 class="text-2xl font-bold text-blue-800">MSC Wound Care Portal</h1>
+                <nav class="w-full md:w-auto mt-4 md:mt-0">
+                    <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8">
+                        <li>
+                            <a href="#" id="ivr-tab" class="font-medium text-blue-800 border-b-2 border-blue-800 pb-2">Insurance Verification Request</a>
+                        </li>
+                        <li>
+                            <a href="#" id="product-education-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Product Education</a>
+                        </li>
+                        <li>
+                            <a href="#" id="order-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Order Form</a>
+                        </li>
+                        <li>
+                            <a href="#" id="onboarding-tab" class="font-medium text-gray-600 hover:text-blue-800 pb-2">Onboarding</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
 
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <link rel="stylesheet" href="/styles.css?v=1.0" />
-  </head>
-
-  <body>
-    <main>
-      <img
-        src="https://railway.app/brand/logo-light.svg"
-        alt="Railway logo"
-        class="logo"
-      />
-
-      <h1>NGINX on Railway</h1>
-
-      <p>
-        Choo Choo! This is an example of an NGINX static site running on
-        Railway.
-        <a
-          href="https://github.com/railwayapp/starters/tree/master/examples/nginx"
-          >View source</a
-        >.
-      </p>
+    <main class="container mx-auto px-4 py-8">
+        <!-- Form Container - All forms will be within this container -->
+        <div class="form-container">
+            <!-- Insurance Verification Request Form -->
+            <div id="ivr-form" class="form-section block">
+                <!-- IVR Form Content Will Be Loaded Here -->
+            </div>
+            
+            <!-- Product Education Form -->
+            <div id="product-education-form" class="form-section hidden">
+                <!-- Product Education Form Content Will Be Loaded Here -->
+            </div>
+            
+            <!-- Order Form -->
+            <div id="order-form" class="form-section hidden">
+                <!-- Order Form Content Will Be Loaded Here -->
+            </div>
+            
+            <!-- Onboarding Form -->
+            <div id="onboarding-form" class="form-section hidden">
+                <!-- Onboarding Form Content Will Be Loaded Here -->
+            </div>
+        </div>
     </main>
 
-    <script src="/script.js"></script>
-  </body>
+    <footer class="bg-gray-100 py-4 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    &copy; 2025 MSC Wound Care. All rights reserved.
+                </div>
+                <div class="mt-2 md:mt-0">
+                    <ul class="flex space-x-4 text-sm">
+                        <li><a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Terms of Service</a></li>
+                        <li><a href="#" class="text-blue-600 hover:underline">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Form Scripts -->
+    <script src="/js/common.js"></script>
+    <script src="/js/ivr-form.js"></script>
+    <script src="/js/product-education-form.js"></script>
+    <script src="/js/order-form.js"></script>
+    <script src="/js/onboarding-form.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load the IVR form by default
+            loadForm('ivr');
+            
+            // Tab navigation
+            const tabs = [
+                { id: 'ivr-tab', form: 'ivr' },
+                { id: 'product-education-tab', form: 'product-education' },
+                { id: 'order-tab', form: 'order' },
+                { id: 'onboarding-tab', form: 'onboarding' }
+            ];
+            
+            tabs.forEach(tab => {
+                document.getElementById(tab.id).addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Hide all forms
+                    tabs.forEach(t => {
+                        document.getElementById(t.id).classList.remove('text-blue-800', 'border-b-2', 'border-blue-800');
+                        document.getElementById(t.id).classList.add('text-gray-600');
+                        document.getElementById(`${t.form}-form`).classList.add('hidden');
+                    });
+                    
+                    // Show the selected form
+                    this.classList.add('text-blue-800', 'border-b-2', 'border-blue-800');
+                    document.getElementById(`${tab.form}-form`).classList.remove('hidden');
+                    
+                    // Load the form content
+                    loadForm(tab.form);
+                });
+            });
+            
+            function loadForm(formType) {
+                const formContainer = document.getElementById(`${formType}-form`);
+                
+                // If form is already loaded, don't reload it
+                if (formContainer.dataset.loaded === 'true') {
+                    return;
+                }
+                
+                // Show loading indicator
+                formContainer.innerHTML = `
+                    <div class="flex justify-center items-center h-48">
+                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    </div>
+                `;
+                
+                // Fetch the form HTML
+                fetch(`/forms/${formType}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        formContainer.innerHTML = html;
+                        formContainer.dataset.loaded = 'true';
+                        
+                        // Initialize the form
+                        if (formType === 'ivr') {
+                            initIVRForm();
+                        } else if (formType === 'product-education') {
+                            initProductEducationForm();
+                        } else if (formType === 'order') {
+                            initOrderForm();
+                        } else if (formType === 'onboarding') {
+                            initOnboardingForm();
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Error loading ${formType} form:`, error);
+                        formContainer.innerHTML = `
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                                <p>Error loading form. Please try again later.</p>
+                            </div>
+                        `;
+                    });
+            }
+        });
+    </script>
+</body>
 </html>

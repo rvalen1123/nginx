@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Customer Onboarding</title>
+    <style>
+        :root {
+            --primary-color: #0062cc;
+            --primary-light: #e6f0ff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+            --border-color: #dee2e6;
+            --shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .form-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .form-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .form-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .form-content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 15px 20px;
+            background-color: var(--primary-light);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .section-header h2 {
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+        
+        .section-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .field-group {
+            margin-bottom: 15px;
+            grid-column: span 1;
+        }
+        
+        .field-group.full-width {
+            grid-column: span 2;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        label.required:after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 98, 204, 0.25);
+        }
+        
+        .checkbox-group,
+        .radio-group {
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group label,
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input,
+        .radio-group input {
+            margin-right: 10px;
+        }
+        
+        .repeater-control {
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .repeater-group {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+        }
+        
+        .repeater-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .repeater-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 16px;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            color: white;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        
+        .btn-secondary {
+            color: white;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 14px;
+        }
+        
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .btn-add:before {
+            content: "+";
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        
+        .signature-pad {
+            width: 100%;
+            height: 150px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: white;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .signature-pad:before {
+            content: "Sign here";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--secondary-color);
+            opacity: 0.5;
+            font-style: italic;
+        }
+        
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--light-gray);
+        }
+        
+        .conditional-field {
+            display: none;
+        }
+        
+        .conditional-field.visible {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .section-content,
+            .repeater-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .field-group,
+            .field-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .form-footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h1>Universal Customer Onboarding</h1>
+            <p>Complete this single form to establish accounts with multiple wound care product manufacturers</p>
+        </div>
+        
+        <form id="onboarding-form">
+            <div class="form-content">
+                <!-- Distributor Information Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Distributor Information</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-group">
+                            <label for="distributor_name">Distributor Name</label>
+                            <input type="text" id="distributor_name" name="distributor_name">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="sales_rep_name">Sales Representative Name</label>
+                            <input type="text" id="sales_rep_name" name="sales_rep_name" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="sales_rep_email">Sales Representative Email</label>
+                            <input type="email" id="sales_rep_email" name="sales_rep_email">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="sales_rep_phone">Sales Representative Phone</label>
+                            <input type="tel" id="sales_rep_phone" name="sales_rep_phone">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="iso_name">ISO (If Applicable)</label>
+                            <input type="text" id="iso_name" name="iso_name">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="gpo_name">GPO Affiliation</label>
+                            <input type="text" id="gpo_name" name="gpo_name">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="idn_name">IDN Affiliation</label>
+                            <input type="text" id="idn_name" name="idn_name">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Provider Information Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Provider Information</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-group">
+                            <label class="required" for="provider_name">Provider Name</label>
+                            <input type="text" id="provider_name" name="provider_name" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="provider_credentials">Provider Credentials (MD, DO, DPM, etc.)</label>
+                            <input type="text" id="provider_credentials" name="provider_credentials">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="tax_id">Tax ID Number</label>
+                            <input type="text" id="tax_id" name="tax_id" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="individual_npi">Individual NPI</label>
+                            <input type="text" id="individual_npi" name="individual_npi" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="group_npi">Group NPI</label>
+                            <input type="text" id="group_npi" name="group_npi">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="ptan">PTAN (if applicable)</label>
+                            <input type="text" id="ptan" name="ptan">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="provider_email">Provider Email</label>
+                            <input type="email" id="provider_email" name="provider_email">
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label for="multi_provider">Additional Providers</label>
+                            <div id="multi_provider_container">
+                                <!-- Initial provider repeater field will be inserted dynamically -->
+                            </div>
+                            <button type="button" class="btn-add btn-small" id="add_provider_btn">Add Provider</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Practice/Facility Information Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Practice/Facility Information</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-group">
+                            <label class="required" for="practice_name">Practice/Facility Name</label>
+                            <input type="text" id="practice_name" name="practice_name" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="practice_phone">Practice Phone</label>
+                            <input type="tel" id="practice_phone" name="practice_phone" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="practice_fax">Practice Fax</label>
+                            <input type="tel" id="practice_fax" name="practice_fax">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="practice_email">Practice Email</label>
+                            <input type="email" id="practice_email" name="practice_email">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="facility_type">Facility Type</label>
+                            <select id="facility_type" name="facility_type" required>
+                                <option value="">Select facility type</option>
+                                <option value="Physician Office">Physician Office</option>
+                                <option value="Hospital Outpatient">Hospital Outpatient</option>
+                                <option value="Hospital Inpatient">Hospital Inpatient</option>
+                                <option value="Ambulatory Surgery Center">Ambulatory Surgery Center</option>
+                                <option value="Skilled Nursing Facility">Skilled Nursing Facility</option>
+                                <option value="Wound Care Center">Wound Care Center</option>
+                                <option value="Critical Access Hospital">Critical Access Hospital</option>
+                                <option value="Government - VA">Government - VA</option>
+                                <option value="Government - DOD">Government - DOD</option>
+                                <option value="Government - IHS">Government - IHS</option>
+                                <option value="Long Term Care">Long Term Care</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label for="specialty">Specialty</label>
+                            <div class="checkbox-group">
+                                <div><label><input type="checkbox" name="specialty" value="Podiatry"> Podiatry</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="General Surgery"> General Surgery</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="Vascular Surgery"> Vascular Surgery</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="Orthopedic Surgery"> Orthopedic Surgery</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="Plastic Surgery"> Plastic Surgery</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="Dermatology"> Dermatology</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="Infectious Disease"> Infectious Disease</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="Wound Care"> Wound Care</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="OB/GYN"> OB/GYN</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="ENT"> ENT</label></div>
+                                <div><label><input type="checkbox" name="specialty" value="Other"> Other</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shipping Information Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Shipping Information</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-group full-width">
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="shipping_same_as_billing" name="shipping_same_as_billing" checked>
+                                    Shipping Address Same as Practice/Facility Address
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div id="shipping_fields" class="conditional-field">
+                            <div class="field-group">
+                                <label class="required" for="shipping_contact_name">Shipping Contact Name</label>
+                                <input type="text" id="shipping_contact_name" name="shipping_contact_name">
+                            </div>
+                            
+                            <div class="field-group">
+                                <label class="required" for="shipping_address">Shipping Address</label>
+                                <input type="text" id="shipping_address" name="shipping_address">
+                            </div>
+                            
+                            <div class="field-group">
+                                <label class="required" for="shipping_city">City</label>
+                                <input type="text" id="shipping_city" name="shipping_city">
+                            </div>
+                            
+                            <div class="field-group">
+                                <label class="required" for="shipping_state">State</label>
+                                <input type="text" id="shipping_state" name="shipping_state">
+                            </div>
+                            
+                            <div class="field-group">
+                                <label class="required" for="shipping_zip">Zip</label>
+                                <input type="text" id="shipping_zip" name="shipping_zip">
+                            </div>
+                            
+                            <div class="field-group">
+                                <label for="shipping_phone">Shipping Phone</label>
+                                <input type="tel" id="shipping_phone" name="shipping_phone">
+                            </div>
+                            
+                            <div class="field-group">
+                                <label for="shipping_email">Shipping Email</label>
+                                <input type="email" id="shipping_email" name="shipping_email">
+                            </div>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label for="delivery_instructions">Special Delivery Instructions</label>
+                            <textarea id="delivery_instructions" name="delivery_instructions"></textarea>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label for="multi_location">Additional Shipping Locations</label>
+                            <div id="multi_location_container">
+                                <!-- Initial location repeater field will be inserted dynamically -->
+                            </div>
+                            <button type="button" class="btn-add btn-small" id="add_location_btn">Add Location</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Billing Information Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Billing Information</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-group">
+                            <label class="required" for="billing_contact_name">Billing/AP Contact Name</label>
+                            <input type="text" id="billing_contact_name" name="billing_contact_name" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="billing_address">Billing Address</label>
+                            <input type="text" id="billing_address" name="billing_address" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="billing_city">City</label>
+                            <input type="text" id="billing_city" name="billing_city" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="billing_state">State</label>
+                            <input type="text" id="billing_state" name="billing_state" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="billing_zip">Zip</label>
+                            <input type="text" id="billing_zip" name="billing_zip" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="billing_phone">Billing Phone</label>
+                            <input type="tel" id="billing_phone" name="billing_phone" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="billing_fax">Billing Fax</label>
+                            <input type="tel" id="billing_fax" name="billing_fax">
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="billing_email">Billing Email</label>
+                            <input type="email" id="billing_email" name="billing_email" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label for="invoicing_preference">Invoicing Preference</label>
+                            <select id="invoicing_preference" name="invoicing_preference">
+                                <option value="">Select preference</option>
+                                <option value="Email">Email</option>
+                                <option value="Fax">Fax</option>
+                                <option value="Mail">Mail</option>
+                                <option value="Portal">Portal</option>
+                            </select>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label>Purchase Order Required</label>
+                            <div class="radio-group">
+                                <div>
+                                    <label>
+                                        <input type="radio" name="purchase_order_required" value="Yes - Will issue formal purchase orders">
+                                        Yes - Will issue formal purchase orders
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="purchase_order_required" value="No - Will use standard manufacturer POs">
+                                        No - Will use standard manufacturer POs
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Information Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Additional Information</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-group full-width">
+                            <label>Shipping Terms</label>
+                            <div class="radio-group">
+                                <div>
+                                    <label>
+                                        <input type="radio" name="shipping_terms" value="Charged to Facility">
+                                        Charged to Facility
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="shipping_terms" value="Ship on Facility's Carrier Account">
+                                        Ship on Facility's Carrier Account
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-group conditional-field" id="carrier_account_container">
+                            <label for="carrier_account">Carrier Account Number (if applicable)</label>
+                            <input type="text" id="carrier_account" name="carrier_account">
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label>Inventory Status</label>
+                            <div class="radio-group">
+                                <div>
+                                    <label>
+                                        <input type="radio" name="inventory_status" value="Consignment">
+                                        Consignment
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="inventory_status" value="Outright Purchase">
+                                        Outright Purchase
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label>Claims Processor Information</label>
+                            <div class="repeater-control">
+                                <div class="field-group">
+                                    <label for="claims_contact_name">Contact Name</label>
+                                    <input type="text" id="claims_contact_name" name="claims_contact_name">
+                                </div>
+                                
+                                <div class="field-group">
+                                    <label for="claims_email">Email</label>
+                                    <input type="email" id="claims_email" name="claims_email">
+                                </div>
+                                
+                                <div class="field-group">
+                                    <label for="claims_phone">Phone</label>
+                                    <input type="tel" id="claims_phone" name="claims_phone">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label>Provider Portal Enrollment</label>
+                            <div class="radio-group">
+                                <div>
+                                    <label>
+                                        <input type="radio" name="portal_enrollment" value="Yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="portal_enrollment" value="No">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label>Preferred Method for Benefits Communication</label>
+                            <div class="radio-group">
+                                <div>
+                                    <label>
+                                        <input type="radio" name="benefit_communication" value="Email">
+                                        Email
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input type="radio" name="benefit_communication" value="Fax">
+                                        Fax
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Agreement Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Agreement</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-group full-width">
+                            <div class="checkbox-group">
+                                <label class="required">
+                                    <input type="checkbox" id="terms_agreement" name="terms_agreement" required>
+                                    I acknowledge receipt of and agree to the manufacturer's terms and conditions. I understand that my information will be shared with selected manufacturers to establish accounts.
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="field-group full-width">
+                            <label class="required" for="authorized_signature">Authorized Signature</label>
+                            <div class="signature-pad" id="signature-pad"></div>
+                            <button type="button" class="btn-small btn-secondary" id="clear-signature">Clear Signature</button>
+                            <input type="hidden" id="authorized_signature" name="authorized_signature" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="signer_name">Name (Printed)</label>
+                            <input type="text" id="signer_name" name="signer_name" required>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label class="required" for="signed_date">Date</label>
+                            <input type="date" id="signed_date" name="signed_date" required>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="form-footer">
+                <button type="button" class="btn btn-secondary" id="save-draft">Save Draft</button>
+                <button type="submit" class="btn btn-primary">Submit Form</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Function to create repeater fields
+        function createRepeaterField(container, fieldType) {
+            const repeaterId = `${fieldType}_${Date.now()}`;
+            
+            let repeaterHTML = '';
+            if (fieldType === 'provider') {
+                repeaterHTML = `
+                    <div class="repeater-group" id="${repeaterId}">
+                        <div class="repeater-content">
+                            <div class="field-group">
+                                <label for="${repeaterId}_name">Provider Name</label>
+                                <input type="text" id="${repeaterId}_name" name="additional_provider_name[]">
+                            </div>
+                            <div class="field-group">
+                                <label for="${repeaterId}_npi">Provider NPI</label>
+                                <input type="text" id="${repeaterId}_npi" name="additional_provider_npi[]">
+                            </div>
+                        </div>
+                        <div class="repeater-actions">
+                            <button type="button" class="btn-small btn-secondary remove-repeater" data-id="${repeaterId}">Remove</button>
+                        </div>
+                    </div>
+                `;
+            } else if (fieldType === 'location') {
+                repeaterHTML = `
+                    <div class="repeater-group"
