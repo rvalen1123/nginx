@@ -480,5 +480,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const dmeKitForm = document.getElementById('dmeKitForm');
     if (dmeKitForm) {
         new DMEKitForm(dmeKitForm);
+        console.log('DME Kit form initialized successfully');
+    } else {
+        console.log('DME Kit form element not found');
     }
 }); 

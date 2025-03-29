@@ -6,10 +6,10 @@
     <title>MSC DME Kit Sign-up Form</title>
     
     <!-- Favicon -->
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -111,38 +111,32 @@
 
 <body class="bg-gray-100">
     <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <img src="img/logo.png" alt="MSC Wound Care Logo" />
-                </div>
-                <nav class="desktop-nav">
-                    <ul class="nav-list">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="msc-wound-onboarding-form.html">Provider Onboarding</a></li>
-                        <li><a href="msc-wound-ivr-form.html">Insurance Verification</a></li>
-                        <li><a href="msc-wound-order-form.html">Order Products</a></li>
-                        <li class="active"><a href="dme-kit-signup-form.html">DME Kit Sign-up</a></li>
-                    </ul>
-                </nav>
-                <div class="mobile-nav-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+        <div class="container header-container">
+            <div class="header-logo">
+                <a href="index.html">
+                    <img src="images/msc-logo.png" alt="MSC Wound Care" class="h-8">
+                </a>
             </div>
+            <div class="header-title">MSC Wound Care Portal</div>
+            <nav class="header-nav">
+                <a href="index.html" class="header-nav-item">Home</a>
+                <a href="msc-wound-onboarding-form.html" class="header-nav-item">Provider Onboarding</a>
+                <a href="msc-wound-ivr-form.html" class="header-nav-item">Insurance Verification</a>
+                <a href="msc-wound-order-form.html" class="header-nav-item">Order Products</a>
+                <a href="dme-kit-signup-form.html" class="header-nav-item active">DME Kit Sign-up</a>
+            </nav>
+            <button class="mobile-menu-button" aria-label="Toggle menu">
+                <span class="mobile-menu-icon"></span>
+            </button>
+        </div>
+        <div class="mobile-menu">
+            <a href="index.html" class="mobile-menu-item">Home</a>
+            <a href="msc-wound-onboarding-form.html" class="mobile-menu-item">Provider Onboarding</a>
+            <a href="msc-wound-ivr-form.html" class="mobile-menu-item">Insurance Verification</a>
+            <a href="msc-wound-order-form.html" class="mobile-menu-item">Order Products</a>
+            <a href="dme-kit-signup-form.html" class="mobile-menu-item active">DME Kit Sign-up</a>
         </div>
     </header>
-    
-    <div class="mobile-nav">
-        <ul class="mobile-nav-list">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="msc-wound-onboarding-form.html">Provider Onboarding</a></li>
-            <li><a href="msc-wound-ivr-form.html">Insurance Verification</a></li>
-            <li><a href="msc-wound-order-form.html">Order Products</a></li>
-            <li class="active"><a href="dme-kit-signup-form.html">DME Kit Sign-up</a></li>
-        </ul>
-    </div>
     
     <div class="container mt-5">
         <div class="form-header">
@@ -465,7 +459,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize mobile menu
-            initMobileMenu();
+            if (typeof initMobileMenu === 'function') {
+                initMobileMenu();
+            }
+            
+            // Set active tab
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navItems = document.querySelectorAll('.header-nav-item, .mobile-menu-item');
+            
+            navItems.forEach(item => {
+                const itemPage = item.getAttribute('href');
+                if (itemPage === currentPage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
         });
     </script>
 </body>
