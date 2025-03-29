@@ -45,42 +45,13 @@ services:
       start_period: 10s
     ports:
       - "3000:3000"
-    volumes:
-      - uploads:/app/uploads
+    # Railway volumes are configured in railway.toml instead of here
     networks:
       - msc-network
     restart: unless-stopped
 
-  n8n:
-    image: n8nio/n8n:latest
-    environment:
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=http
-      - N8N_HOST=n8n
-      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-n8n-encryption-key}
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER:-admin}
-      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:-password}
-      - NODE_ENV=production
-      - WEBHOOK_URL=${WEBHOOK_URL:-http://backend:3000}
-      - EXECUTIONS_PROCESS=main
-      - GENERIC_TIMEZONE=America/Chicago
-    ports:
-      - "5678:5678"
-    volumes:
-      - n8n_data:/home/node/.n8n
-    networks:
-      - msc-network
-    restart: unless-stopped
-    depends_on:
-      - backend
-
-  # DocuSeal is hosted on Railway at https://docuseal-railway-production-d8fb.up.railway.app
-  # No need to run it locally
-
-volumes:
-  uploads:
-  n8n_data:
+  # n8n and DocuSeal are hosted on Railway
+  # We connect to existing instances, not spinning up our own
 
 networks:
   msc-network:
