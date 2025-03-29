@@ -37,20 +37,21 @@ const createTextInput = ({
   helpText = ''
 }) => {
   return `
-    <div class="form-group mb-4">
-      <label for="${id}" class="block text-sm font-medium text-gray-700 mb-1">
-        ${label} ${required ? '<span class="text-red-500">*</span>' : ''}
+    <div class="form-group">
+      <label for="${id}" class="block font-medium text-gray-700 mb-1">
+        ${label} ${required ? '<span class="text-danger">*</span>' : ''}
       </label>
       <input 
         type="${type}" 
         id="${id}" 
         name="${name}" 
-        class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+        class="form-control shadow-sm" 
         placeholder="${placeholder}"
         value="${value}"
         ${required ? 'required' : ''}
       >
-      ${helpText ? `<p class="mt-1 text-xs text-gray-500">${helpText}</p>` : ''}
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
+      <div class="invalid-feedback">This field is required</div>
     </div>
   `;
 };
@@ -78,20 +79,28 @@ const createSelect = ({
   }).join('');
 
   return `
-    <div class="form-group mb-4">
-      <label for="${id}" class="block text-sm font-medium text-gray-700 mb-1">
-        ${label} ${required ? '<span class="text-red-500">*</span>' : ''}
+    <div class="form-group">
+      <label for="${id}" class="block font-medium text-gray-700 mb-1">
+        ${label} ${required ? '<span class="text-danger">*</span>' : ''}
       </label>
-      <select 
-        id="${id}" 
-        name="${name}" 
-        class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        ${required ? 'required' : ''}
-      >
-        <option value="">Please select</option>
-        ${optionsHtml}
-      </select>
-      ${helpText ? `<p class="mt-1 text-xs text-gray-500">${helpText}</p>` : ''}
+      <div class="relative">
+        <select 
+          id="${id}" 
+          name="${name}" 
+          class="form-control appearance-none shadow-sm"
+          ${required ? 'required' : ''}
+        >
+          <option value="">Please select</option>
+          ${optionsHtml}
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+          </svg>
+        </div>
+      </div>
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
+      <div class="invalid-feedback">Please select an option</div>
     </div>
   `;
 };
@@ -112,19 +121,20 @@ const createTextarea = ({
   helpText = ''
 }) => {
   return `
-    <div class="form-group mb-4">
-      <label for="${id}" class="block text-sm font-medium text-gray-700 mb-1">
-        ${label} ${required ? '<span class="text-red-500">*</span>' : ''}
+    <div class="form-group">
+      <label for="${id}" class="block font-medium text-gray-700 mb-1">
+        ${label} ${required ? '<span class="text-danger">*</span>' : ''}
       </label>
       <textarea 
         id="${id}" 
         name="${name}" 
         rows="${rows}"
-        class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+        class="form-control shadow-sm" 
         placeholder="${placeholder}"
         ${required ? 'required' : ''}
       >${value}</textarea>
-      ${helpText ? `<p class="mt-1 text-xs text-gray-500">${helpText}</p>` : ''}
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
+      <div class="invalid-feedback">This field is required</div>
     </div>
   `;
 };
@@ -142,20 +152,20 @@ const createCheckbox = ({
   helpText = ''
 }) => {
   return `
-    <div class="form-group mb-4">
-      <div class="flex items-center">
+    <div class="form-group">
+      <div class="form-check">
         <input 
           type="checkbox" 
           id="${id}" 
           name="${name}" 
-          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
+          class="form-check-input" 
           ${checked ? 'checked' : ''}
         >
-        <label for="${id}" class="ml-2 block text-sm text-gray-700">
+        <label for="${id}" class="form-check-label">
           ${label}
         </label>
       </div>
-      ${helpText ? `<p class="mt-1 text-xs text-gray-500 ml-6">${helpText}</p>` : ''}
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
     </div>
   `;
 };
@@ -177,34 +187,34 @@ const createRadioGroup = ({
     const id = `${name}_${index}`;
     if (typeof opt === 'string') {
       return `
-        <div class="flex items-center mb-2">
+        <div class="form-check mb-2">
           <input 
             type="radio" 
             id="${id}" 
             name="${name}" 
             value="${opt}" 
-            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" 
+            class="form-check-input" 
             ${selectedValue === opt ? 'checked' : ''}
             ${required ? 'required' : ''}
           >
-          <label for="${id}" class="ml-2 block text-sm text-gray-700">
+          <label for="${id}" class="form-check-label">
             ${opt}
           </label>
         </div>
       `;
     } else {
       return `
-        <div class="flex items-center mb-2">
+        <div class="form-check mb-2">
           <input 
             type="radio" 
             id="${id}" 
             name="${name}" 
             value="${opt.value}" 
-            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" 
+            class="form-check-input" 
             ${selectedValue === opt.value ? 'checked' : ''}
             ${required ? 'required' : ''}
           >
-          <label for="${id}" class="ml-2 block text-sm text-gray-700">
+          <label for="${id}" class="form-check-label">
             ${opt.label}
           </label>
         </div>
@@ -213,14 +223,15 @@ const createRadioGroup = ({
   }).join('');
 
   return `
-    <div class="form-group mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-1">
-        ${label} ${required ? '<span class="text-red-500">*</span>' : ''}
+    <div class="form-group">
+      <label class="block font-medium text-gray-700 mb-2">
+        ${label} ${required ? '<span class="text-danger">*</span>' : ''}
       </label>
-      <div class="mt-1">
+      <div class="space-y-1">
         ${radioOptions}
       </div>
-      ${helpText ? `<p class="mt-1 text-xs text-gray-500">${helpText}</p>` : ''}
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
+      <div class="invalid-feedback">Please select an option</div>
     </div>
   `;
 };
@@ -238,28 +249,29 @@ const createSignatureField = ({
   helpText = ''
 }) => {
   return `
-    <div class="form-group mb-4">
-      <label for="${id}" class="block text-sm font-medium text-gray-700 mb-1">
-        ${label} ${required ? '<span class="text-red-500">*</span>' : ''}
+    <div class="form-group">
+      <label for="${id}" class="block font-medium text-gray-700 mb-1">
+        ${label} ${required ? '<span class="text-danger">*</span>' : ''}
       </label>
-      <div class="signature-container border border-gray-300 rounded-md p-2 bg-white">
-        <canvas id="${id}_canvas" class="signature-pad w-full h-32 border border-gray-200 rounded cursor-crosshair"></canvas>
+      <div class="signature-pad-container border border-gray-300 rounded-md overflow-hidden shadow-sm">
+        <canvas id="${id}_canvas" class="signature-pad w-full h-32 bg-white"></canvas>
         <input type="hidden" id="${id}" name="${name}" ${required ? 'required' : ''}>
-        <div class="flex justify-end mt-2">
-          <button type="button" class="text-sm text-blue-600 hover:text-blue-800" onclick="clearSignature('${id}_canvas', '${id}')">
-            Clear
+        <div class="bg-gray-50 px-4 py-2 border-t border-gray-200 flex justify-end">
+          <button type="button" class="btn btn-sm text-primary hover:text-primary-hover" onclick="clearSignature('${id}_canvas', '${id}')">
+            Clear Signature
           </button>
         </div>
       </div>
-      ${helpText ? `<p class="mt-1 text-xs text-gray-500">${helpText}</p>` : ''}
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
+      <div class="invalid-feedback">Signature is required</div>
     </div>
   `;
 };
 
 /**
  * Creates a date picker field
- * @param {Object} options - Date picker options
- * @returns {string} HTML string for the date picker
+ * @param {Object} options - Date field options
+ * @returns {string} HTML string for the date field
  */
 const createDatePicker = ({
   id,
@@ -270,54 +282,74 @@ const createDatePicker = ({
   helpText = ''
 }) => {
   return `
-    <div class="form-group mb-4">
-      <label for="${id}" class="block text-sm font-medium text-gray-700 mb-1">
-        ${label} ${required ? '<span class="text-red-500">*</span>' : ''}
+    <div class="form-group">
+      <label for="${id}" class="block font-medium text-gray-700 mb-1">
+        ${label} ${required ? '<span class="text-danger">*</span>' : ''}
       </label>
-      <input 
-        type="date" 
-        id="${id}" 
-        name="${name}" 
-        class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-        value="${value}"
-        ${required ? 'required' : ''}
-      >
-      ${helpText ? `<p class="mt-1 text-xs text-gray-500">${helpText}</p>` : ''}
+      <div class="relative">
+        <input 
+          type="date" 
+          id="${id}" 
+          name="${name}" 
+          class="form-control shadow-sm" 
+          value="${value}"
+          ${required ? 'required' : ''}
+        >
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+      </div>
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
+      <div class="invalid-feedback">Please select a date</div>
     </div>
   `;
 };
 
 /**
- * Creates a simple form step indicator
- * @param {number} currentStep - Current step number (1-based)
+ * Creates a multi-step form progress indicator
+ * @param {number} currentStep - Current active step
  * @param {number} totalSteps - Total number of steps
- * @param {Array} stepLabels - Array of labels for each step
- * @returns {string} HTML string for step indicator
+ * @param {Array} stepLabels - Labels for each step
+ * @returns {string} HTML string for the step indicator
  */
 const createStepIndicator = (currentStep, totalSteps, stepLabels = []) => {
-  let stepsHtml = '';
-  
+  let stepsHTML = '';
   for (let i = 1; i <= totalSteps; i++) {
     const label = stepLabels[i-1] || `Step ${i}`;
-    stepsHtml += `
-      <div class="step ${i < currentStep ? 'complete' : ''} ${i === currentStep ? 'active' : ''}">
-        <div class="step-circle ${i <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}">${i}</div>
-        <div class="step-label ${i === currentStep ? 'font-medium' : ''}">${label}</div>
+    const isActive = i === currentStep;
+    const isCompleted = i < currentStep;
+    
+    stepsHTML += `
+      <div class="progress-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}" data-step="${i}">
+        <div class="progress-step-number">${isCompleted ? '✓' : i}</div>
+        <div class="progress-step-label">${label}</div>
       </div>
-      ${i < totalSteps ? '<div class="step-line"></div>' : ''}
     `;
   }
   
+  const percentComplete = ((currentStep - 1) / (totalSteps - 1)) * 100;
+  
   return `
-    <div class="step-indicator flex items-center justify-between mb-8">
-      ${stepsHtml}
+    <div class="progress-container">
+      <div class="progress-steps">
+        ${stepsHTML}
+      </div>
+      <div class="progress-bar">
+        <div class="progress-bar-fill" style="width: ${percentComplete}%"></div>
+      </div>
+      <div class="progress-text">
+        <span>Step ${currentStep} of ${totalSteps}</span>
+        <span>${Math.round(percentComplete)}% Complete</span>
+      </div>
     </div>
   `;
 };
 
 /**
- * Creates form navigation buttons (prev/next/submit)
- * @param {Object} options - Navigation button options
+ * Creates navigation buttons for multi-step form
+ * @param {Object} options - Navigation options
  * @returns {string} HTML string for navigation buttons
  */
 const createFormNavigation = ({
@@ -328,45 +360,91 @@ const createFormNavigation = ({
   submitLabel = 'Submit',
   showPrev = true
 }) => {
+  const isFirstStep = currentStep === 1;
+  const isLastStep = currentStep === totalSteps;
+  
   return `
-    <div class="form-navigation flex justify-between mt-8">
-      ${showPrev && currentStep > 1 ? 
-        `<button type="button" id="prevStep" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+    <div class="form-navigation mt-6 flex ${showPrev ? 'justify-between' : 'justify-end'}">
+      ${showPrev && !isFirstStep ? `
+        <button type="button" class="btn btn-secondary" data-action="back">
+          <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
           ${prevLabel}
-        </button>` : 
-        `<div></div>`
-      }
+        </button>
+      ` : showPrev ? '<div></div>' : ''}
       
-      ${currentStep < totalSteps ? 
-        `<button type="button" id="nextStep" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-          ${nextLabel}
-        </button>` : 
-        `<button type="submit" id="submitForm" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+      ${isLastStep ? `
+        <button type="submit" class="btn btn-primary">
           ${submitLabel}
-        </button>`
-      }
+          <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </button>
+      ` : `
+        <button type="button" class="btn btn-primary" data-action="next">
+          ${nextLabel}
+          <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      `}
     </div>
   `;
 };
 
-// Export all components if in a browser context
-if (typeof window !== 'undefined') {
-  window.FormComponents = {
-    createFormSection,
-    createTextInput,
-    createSelect,
-    createTextarea,
-    createCheckbox,
-    createRadioGroup,
-    createSignatureField,
-    createDatePicker,
-    createStepIndicator,
-    createFormNavigation
-  };
-}
+/**
+ * Creates a file upload field
+ * @param {Object} options - File upload options
+ * @returns {string} HTML string for the file upload
+ */
+const createFileUpload = ({
+  id,
+  label,
+  name = id,
+  required = false,
+  accept = '',
+  multiple = false,
+  helpText = ''
+}) => {
+  return `
+    <div class="form-group">
+      <label for="${id}" class="block font-medium text-gray-700 mb-1">
+        ${label} ${required ? '<span class="text-danger">*</span>' : ''}
+      </label>
+      <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md shadow-sm">
+        <div class="space-y-1 text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div class="flex text-sm text-gray-600">
+            <label for="${id}" class="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary-hover">
+              <span>Upload a file</span>
+              <input 
+                id="${id}" 
+                name="${name}" 
+                type="file" 
+                class="sr-only" 
+                ${required ? 'required' : ''}
+                ${accept ? `accept="${accept}"` : ''}
+                ${multiple ? 'multiple' : ''}
+              >
+            </label>
+            <p class="pl-1">or drag and drop</p>
+          </div>
+          <p class="text-xs text-gray-500">
+            ${accept ? `${accept.replace(/\./g, '').toUpperCase()} up to 10MB` : 'Upload files up to 10MB'}
+          </p>
+        </div>
+      </div>
+      ${helpText ? `<div class="form-text">${helpText}</div>` : ''}
+      <div class="invalid-feedback">Please upload a file</div>
+    </div>
+  `;
+};
 
-// If in Node.js, export the functions
-if (typeof module !== 'undefined') {
+// Export all components
+if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     createFormSection,
     createTextInput,
@@ -377,6 +455,7 @@ if (typeof module !== 'undefined') {
     createSignatureField,
     createDatePicker,
     createStepIndicator,
-    createFormNavigation
+    createFormNavigation,
+    createFileUpload
   };
 }

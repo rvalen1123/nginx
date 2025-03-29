@@ -32,7 +32,7 @@
                     
                     <div class="progress-container">
                         <div class="progress-steps">
-                            <div class="progress-step" data-step="1">
+                            <div class="progress-step active" data-step="1">
                                 <div class="progress-step-number">1</div>
                                 <div class="progress-step-label">Order Info</div>
                             </div>
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-bar-fill"></div>
+                            <div class="progress-bar-fill" style="width: 0%"></div>
                         </div>
                         <div class="progress-text">
                             <span>Step <span id="currentStep">1</span> of 5</span>
@@ -64,23 +64,47 @@
 
                     <form id="universalOrderForm">
                         <!-- Step 1: Order Information -->
-                        <div class="form-step" data-step="1">
+                        <div class="form-step active" data-step="1">
                             <div class="form-section">
                                 <div class="form-section-title">Order Information</div>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="orderNumber">Order Number <span class="text-danger">*</span></label>
-                                            <input type="text" id="orderNumber" name="orderInfo.orderNumber" class="form-control" required placeholder="WC-YYYY-NNNN">
+                                            <label for="orderNumber" class="block font-medium text-gray-700 mb-1">
+                                                Order Number <span class="text-danger">*</span>
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                id="orderNumber" 
+                                                name="orderInfo.orderNumber" 
+                                                class="form-control shadow-sm" 
+                                                required 
+                                                placeholder="WC-YYYY-NNNN"
+                                            >
                                             <div class="form-text">Unique identifier for this order</div>
                                             <div class="invalid-feedback">Please enter an order number</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="orderDate">Order Date <span class="text-danger">*</span></label>
-                                            <input type="date" id="orderDate" name="orderInfo.orderDate" class="form-control" required>
+                                            <label for="orderDate" class="block font-medium text-gray-700 mb-1">
+                                                Order Date <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="relative">
+                                                <input 
+                                                    type="date" 
+                                                    id="orderDate" 
+                                                    name="orderInfo.orderDate" 
+                                                    class="form-control shadow-sm" 
+                                                    required
+                                                >
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
                                             <div class="form-text">Date the order was placed</div>
                                             <div class="invalid-feedback">Please select a date</div>
                                         </div>
@@ -90,15 +114,36 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="poNumber">PO Number</label>
-                                            <input type="text" id="poNumber" name="orderInfo.poNumber" class="form-control">
+                                            <label for="poNumber" class="block font-medium text-gray-700 mb-1">
+                                                PO Number
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                id="poNumber" 
+                                                name="orderInfo.poNumber" 
+                                                class="form-control shadow-sm"
+                                            >
                                             <div class="form-text">Purchase order number if applicable</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="requestedDeliveryDate">Requested Delivery Date</label>
-                                            <input type="date" id="requestedDeliveryDate" name="orderInfo.requestedDeliveryDate" class="form-control">
+                                            <label for="requestedDeliveryDate" class="block font-medium text-gray-700 mb-1">
+                                                Requested Delivery Date
+                                            </label>
+                                            <div class="relative">
+                                                <input 
+                                                    type="date" 
+                                                    id="requestedDeliveryDate" 
+                                                    name="orderInfo.requestedDeliveryDate" 
+                                                    class="form-control shadow-sm"
+                                                >
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
                                             <div class="form-text">When the order should be delivered</div>
                                         </div>
                                     </div>
@@ -107,25 +152,37 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="status">Status <span class="text-danger">*</span></label>
-                                            <select id="status" name="orderInfo.status" class="form-control" required>
-                                                <option value="draft">Draft</option>
-                                                <option value="submitted">Submitted</option>
-                                                <option value="processing">Processing</option>
-                                                <option value="shipped">Shipped</option>
-                                                <option value="delivered">Delivered</option>
-                                                <option value="cancelled">Cancelled</option>
-                                            </select>
+                                            <label for="status" class="block font-medium text-gray-700 mb-1">
+                                                Status <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="relative">
+                                                <select id="status" name="orderInfo.status" class="form-control appearance-none shadow-sm" required>
+                                                    <option value="draft">Draft</option>
+                                                    <option value="submitted">Submitted</option>
+                                                    <option value="processing">Processing</option>
+                                                    <option value="shipped">Shipped</option>
+                                                    <option value="delivered">Delivered</option>
+                                                    <option value="cancelled">Cancelled</option>
+                                                </select>
+                                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
                                             <div class="invalid-feedback">Please select a status</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                                 
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <button type="button" class="btn btn-primary btn-block" data-action="next">Continue to Facility Information</button>
-                                </div>
+                            <div class="form-navigation mt-6 flex justify-end">
+                                <button type="button" class="btn btn-primary" data-action="next">
+                                    Continue to Facility Information
+                                    <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
@@ -470,7 +527,15 @@
         </div>
     </main>
     
-    <!-- Include the new form handler script -->
+    <footer class="py-4 bg-white mt-4 border-t">
+        <div class="container">
+            <div class="text-center text-sm text-gray-600">
+                <p>&copy; 2023 MSC Wound Care. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
     <script src="js/form-handler.js"></script>
+    <script src="js/order-form.js"></script>
 </body>
 </html>
