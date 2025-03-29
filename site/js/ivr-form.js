@@ -194,13 +194,19 @@ class IVRForm {
             return await response.json();
         } catch (error) {
             console.warn('Using mock manufacturer data due to API error:', error);
-            // Mock data for testing
+            // Updated manufacturer list to match product groupings
             return [
-                { id: 1, name: 'Acme Medical Supplies' },
-                { id: 2, name: 'MediTech Innovations' },
-                { id: 3, name: 'BioHeal Solutions' },
-                { id: 4, name: 'WoundCare Specialists' },
-                { id: 5, name: 'Advanced Healing Products' }
+                { id: 1, name: 'MedBio Innovations' },
+                { id: 2, name: 'Complete Therapeutics' },
+                { id: 3, name: 'Advanced Membrane Solutions' },
+                { id: 4, name: 'Neostim Biologics' },
+                { id: 5, name: 'Regenerative Wound Solutions' },
+                { id: 6, name: 'AmnioCare Technologies' },
+                { id: 7, name: 'XCell Medical' },
+                { id: 8, name: 'EpiHealing Products' },
+                { id: 9, name: 'SURGraft Solutions' },
+                { id: 10, name: 'Advanced Derm Products' },
+                { id: 11, name: 'Redbook Specialty Products' }
             ];
         }
     }
@@ -291,32 +297,68 @@ class IVRForm {
             return await response.json();
         } catch (error) {
             console.warn('Using mock product data due to API error:', error);
-            // Mock data for testing
+            // Comprehensive product list with Q codes and National ASP prices, organized by manufacturer
             const mockProducts = {
-                '1': [ // Acme Medical Supplies
-                    { id: 101, name: 'Advanced Wound Gel' },
-                    { id: 102, name: 'Hydrocolloid Dressing' },
-                    { id: 103, name: 'Antimicrobial Gauze' }
+                '1': [ // MedBio Innovations
+                    { id: 1, name: 'Biovance', price: 550.64, sku: 'Q4154' },
+                    { id: 2, name: 'IMPAX', price: 169.86, sku: 'Q4262' },
+                    { id: 3, name: 'Helicol', price: 322.15, sku: 'Q4164' },
+                    { id: 4, name: 'Zenith', price: 71.49, sku: 'Q4253' },
+                    { id: 5, name: 'Orion', price: 464.34, sku: 'Q4276' }
                 ],
-                '2': [ // MediTech Innovations
-                    { id: 201, name: 'Collagen Matrix' },
-                    { id: 202, name: 'Foam Dressing' },
-                    { id: 203, name: 'Transparent Film' }
+                '2': [ // Complete Therapeutics
+                    { id: 6, name: 'Complete FT', price: 1399.12, sku: 'Q4271' },
+                    { id: 16, name: 'Complete ACA', price: 2008.70, sku: 'Q4302' },
+                    { id: 21, name: 'Complete AA', price: 3397.40, sku: 'Q4303' },
+                    { id: 22, name: 'Complete SL', price: 3370.80, sku: 'Q4270' }
                 ],
-                '3': [ // BioHeal Solutions
-                    { id: 301, name: 'Alginate Dressing' },
-                    { id: 302, name: 'Negative Pressure System' },
-                    { id: 303, name: 'Compression Bandage' }
+                '3': [ // Advanced Membrane Solutions
+                    { id: 7, name: 'Barrera', price: 560.29, sku: 'Q4281' },
+                    { id: 8, name: 'CarePatch', price: 482.71, sku: 'Q4236' },
+                    { id: 9, name: 'Membrane Wrap', price: 1055.97, sku: 'Q4205' },
+                    { id: 10, name: 'Membrane Wrap Hydro', price: 1841.00, sku: 'Q4290' }
                 ],
-                '4': [ // WoundCare Specialists
-                    { id: 401, name: 'Silver Dressing' },
-                    { id: 402, name: 'Silicone Gel' },
-                    { id: 403, name: 'Honey-Based Ointment' }
+                '4': [ // Neostim Biologics
+                    { id: 11, name: 'Neostim TL', price: 1750.26, sku: 'Q4265' },
+                    { id: 12, name: 'Neostim DL', price: 274.60, sku: 'Q4267' },
+                    { id: 13, name: 'Neostim SL', price: 989.67, sku: 'Q4266' }
                 ],
-                '5': [ // Advanced Healing Products
-                    { id: 501, name: 'Bioactive Dressing' },
-                    { id: 502, name: 'Skin Substitute' },
-                    { id: 503, name: 'Growth Factor Spray' }
+                '5': [ // Regenerative Wound Solutions
+                    { id: 14, name: 'Restorigin', price: 940.15, sku: 'Q4191' },
+                    { id: 15, name: 'Wound Fix', price: 273.51, sku: 'Q4217' },
+                    { id: 17, name: 'Procenta', price: 2213.13, sku: 'Q4310' },
+                    { id: 18, name: 'Revoshield+ Amnio', price: 1602.22, sku: 'Q4289' }
+                ],
+                '6': [ // AmnioCare Technologies
+                    { id: 19, name: 'AmnioBand', price: 136.47, sku: 'Q4151' },
+                    { id: 20, name: 'Amnio AMP', price: 2863.13, sku: 'Q4250' },
+                    { id: 26, name: 'Amnio-Maxx', price: 2349.92, sku: 'Q4239' },
+                    { id: 28, name: 'Amniocore Pro', price: 2279.00, sku: 'Q4298' },
+                    { id: 29, name: 'Amniocore Pro +', price: 2597.00, sku: 'Q4299' },
+                    { id: 30, name: 'Amnio quad-core', price: 2650.00, sku: 'Q4294' },
+                    { id: 31, name: 'Amnio tri-core', price: 2332.00, sku: 'Q4295' },
+                    { id: 32, name: 'AmnioCore', price: 1192.50, sku: 'Q4227' }
+                ],
+                '7': [ // XCell Medical
+                    { id: 23, name: 'Xcellerate', price: 247.91, sku: 'Q4234' },
+                    { id: 37, name: 'Xcell Amnio Matrix', price: 3246.50, sku: 'Q4280' }
+                ],
+                '8': [ // EpiHealing Products
+                    { id: 24, name: 'Epifix', price: 158.34, sku: 'Q4186' },
+                    { id: 25, name: 'Epicord', price: 247.02, sku: 'Q4187' }
+                ],
+                '9': [ // SURGraft Solutions
+                    { id: 27, name: 'SURGraft XT', price: 2862.00, sku: 'Q4268' },
+                    { id: 36, name: 'Surgraft TL', price: 1712.99, sku: 'Q4263' }
+                ],
+                '10': [ // Advanced Derm Products
+                    { id: 33, name: 'Coll-e-derm', price: 1608.27, sku: 'Q4193' },
+                    { id: 34, name: 'Xwrap', price: 2929.01, sku: 'Q4204' },
+                    { id: 35, name: 'Derm-maxx', price: 1644.99, sku: 'Q4238' }
+                ],
+                '11': [ // Redbook Specialty Products
+                    { id: 38, name: 'Rampart T.M. DL Matrix', price: 2850.00, sku: 'Q4347' },
+                    { id: 39, name: 'Microlyte', price: 239.00, sku: 'A2005' }
                 ]
             };
             

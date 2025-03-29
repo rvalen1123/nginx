@@ -180,15 +180,19 @@ class OrderForm {
         console.log('Loading form data');
         
         try {
-            // Load products
-            const productData = await this.fetchProducts();
-            this.populateProductDropdown(productData);
+            // Load manufacturers
+            const manufacturers = await this.fetchManufacturers();
+            this.populateSelect('manufacturer', manufacturers);
             
             // Load sales representatives
             const salesReps = await this.fetchSalesReps();
             this.populateSelect('sales_rep', salesReps);
             
-            // Load any other necessary data
+            // Initialize manufacturer dropdown change event
+            const manufacturerSelect = this.form.querySelector('#manufacturer');
+            if (manufacturerSelect) {
+                manufacturerSelect.addEventListener('change', () => this.loadProductsByManufacturer());
+            }
             
             return true;
         } catch (error) {
@@ -197,29 +201,130 @@ class OrderForm {
         }
     }
     
-    async fetchProducts() {
+    async fetchManufacturers() {
         try {
-            const response = await fetch('/api/products');
+            const response = await fetch('/api/manufacturers');
+            if (!response.ok) throw new Error('Failed to fetch manufacturers');
+            return await response.json();
+        } catch (error) {
+            console.warn('Using mock manufacturer data due to API error:', error);
+            // Updated manufacturer list to match product groupings
+            return [
+                { id: 1, name: 'MedBio Innovations' },
+                { id: 2, name: 'Complete Therapeutics' },
+                { id: 3, name: 'Advanced Membrane Solutions' },
+                { id: 4, name: 'Neostim Biologics' },
+                { id: 5, name: 'Regenerative Wound Solutions' },
+                { id: 6, name: 'AmnioCare Technologies' },
+                { id: 7, name: 'XCell Medical' },
+                { id: 8, name: 'EpiHealing Products' },
+                { id: 9, name: 'SURGraft Solutions' },
+                { id: 10, name: 'Advanced Derm Products' },
+                { id: 11, name: 'Redbook Specialty Products' }
+            ];
+        }
+    }
+    
+    async loadProductsByManufacturer() {
+        const manufacturerSelect = this.form.querySelector('#manufacturer');
+        if (!manufacturerSelect) {
+            console.error('Manufacturer select not found');
+            return;
+        }
+        
+        const manufacturerId = manufacturerSelect.value;
+        if (!manufacturerId) {
+            console.log('No manufacturer selected');
+            return;
+        }
+        
+        console.log(`Loading products for manufacturer ID: ${manufacturerId}`);
+        
+        try {
+            const products = await this.fetchProductsByManufacturer(manufacturerId);
+            this.populateProductDropdown(products);
+        } catch (error) {
+            console.error('Error loading products:', error);
+            showAlert('Error loading products. Please try again.', 'error');
+        }
+    }
+    
+    async fetchProductsByManufacturer(manufacturerId) {
+        try {
+            const response = await fetch(`/api/products?manufacturer=${manufacturerId}`);
             if (!response.ok) throw new Error('Failed to fetch products');
             return await response.json();
         } catch (error) {
             console.warn('Using mock product data due to API error:', error);
-            // Mock data for testing
-            return [
-                { id: 101, name: 'Advanced Wound Gel', price: 29.99, sku: 'AWG-001', category: 'Gels' },
-                { id: 102, name: 'Hydrocolloid Dressing', price: 15.99, sku: 'HCD-002', category: 'Dressings' },
-                { id: 103, name: 'Antimicrobial Gauze', price: 12.50, sku: 'AMG-003', category: 'Gauze' },
-                { id: 201, name: 'Collagen Matrix', price: 45.99, sku: 'CLM-004', category: 'Matrix' },
-                { id: 202, name: 'Foam Dressing', price: 18.75, sku: 'FMD-005', category: 'Dressings' },
-                { id: 301, name: 'Alginate Dressing', price: 22.99, sku: 'ALD-006', category: 'Dressings' },
-                { id: 302, name: 'Negative Pressure System', price: 199.99, sku: 'NPS-007', category: 'Systems' },
-                { id: 401, name: 'Silver Dressing', price: 24.99, sku: 'SLD-008', category: 'Dressings' },
-                { id: 501, name: 'Bioactive Dressing', price: 35.50, sku: 'BAD-009', category: 'Dressings' },
-                { id: 502, name: 'Skin Substitute', price: 149.99, sku: 'SKS-010', category: 'Substitutes' }
-            ];
+            // Comprehensive product list with Q codes and National ASP prices, organized by manufacturer
+            const mockProducts = {
+                '1': [ // MedBio Innovations
+                    { id: 1, name: 'Biovance', price: 550.64, sku: 'Q4154', category: 'Biological' },
+                    { id: 2, name: 'IMPAX', price: 169.86, sku: 'Q4262', category: 'Biological' },
+                    { id: 3, name: 'Helicol', price: 322.15, sku: 'Q4164', category: 'Biological' },
+                    { id: 4, name: 'Zenith', price: 71.49, sku: 'Q4253', category: 'Biological' },
+                    { id: 5, name: 'Orion', price: 464.34, sku: 'Q4276', category: 'Biological' }
+                ],
+                '2': [ // Complete Therapeutics
+                    { id: 6, name: 'Complete FT', price: 1399.12, sku: 'Q4271', category: 'Biological' },
+                    { id: 16, name: 'Complete ACA', price: 2008.70, sku: 'Q4302', category: 'Biological' },
+                    { id: 21, name: 'Complete AA', price: 3397.40, sku: 'Q4303', category: 'Biological' },
+                    { id: 22, name: 'Complete SL', price: 3370.80, sku: 'Q4270', category: 'Biological' }
+                ],
+                '3': [ // Advanced Membrane Solutions
+                    { id: 7, name: 'Barrera', price: 560.29, sku: 'Q4281', category: 'Biological' },
+                    { id: 8, name: 'CarePatch', price: 482.71, sku: 'Q4236', category: 'Biological' },
+                    { id: 9, name: 'Membrane Wrap', price: 1055.97, sku: 'Q4205', category: 'Biological' },
+                    { id: 10, name: 'Membrane Wrap Hydro', price: 1841.00, sku: 'Q4290', category: 'Biological' }
+                ],
+                '4': [ // Neostim Biologics
+                    { id: 11, name: 'Neostim TL', price: 1750.26, sku: 'Q4265', category: 'Biological' },
+                    { id: 12, name: 'Neostim DL', price: 274.60, sku: 'Q4267', category: 'Biological' },
+                    { id: 13, name: 'Neostim SL', price: 989.67, sku: 'Q4266', category: 'Biological' }
+                ],
+                '5': [ // Regenerative Wound Solutions
+                    { id: 14, name: 'Restorigin', price: 940.15, sku: 'Q4191', category: 'Biological' },
+                    { id: 15, name: 'Wound Fix', price: 273.51, sku: 'Q4217', category: 'Biological' },
+                    { id: 17, name: 'Procenta', price: 2213.13, sku: 'Q4310', category: 'Biological' },
+                    { id: 18, name: 'Revoshield+ Amnio', price: 1602.22, sku: 'Q4289', category: 'Biological' }
+                ],
+                '6': [ // AmnioCare Technologies
+                    { id: 19, name: 'AmnioBand', price: 136.47, sku: 'Q4151', category: 'Biological' },
+                    { id: 20, name: 'Amnio AMP', price: 2863.13, sku: 'Q4250', category: 'Biological' },
+                    { id: 26, name: 'Amnio-Maxx', price: 2349.92, sku: 'Q4239', category: 'Biological' },
+                    { id: 28, name: 'Amniocore Pro', price: 2279.00, sku: 'Q4298', category: 'Biological' },
+                    { id: 29, name: 'Amniocore Pro +', price: 2597.00, sku: 'Q4299', category: 'Biological' },
+                    { id: 30, name: 'Amnio quad-core', price: 2650.00, sku: 'Q4294', category: 'Biological' },
+                    { id: 31, name: 'Amnio tri-core', price: 2332.00, sku: 'Q4295', category: 'Biological' },
+                    { id: 32, name: 'AmnioCore', price: 1192.50, sku: 'Q4227', category: 'Biological' }
+                ],
+                '7': [ // XCell Medical
+                    { id: 23, name: 'Xcellerate', price: 247.91, sku: 'Q4234', category: 'Biological' },
+                    { id: 37, name: 'Xcell Amnio Matrix', price: 3246.50, sku: 'Q4280', category: 'Biological' }
+                ],
+                '8': [ // EpiHealing Products
+                    { id: 24, name: 'Epifix', price: 158.34, sku: 'Q4186', category: 'Biological' },
+                    { id: 25, name: 'Epicord', price: 247.02, sku: 'Q4187', category: 'Biological' }
+                ],
+                '9': [ // SURGraft Solutions
+                    { id: 27, name: 'SURGraft XT', price: 2862.00, sku: 'Q4268', category: 'Biological' },
+                    { id: 36, name: 'Surgraft TL', price: 1712.99, sku: 'Q4263', category: 'Biological' }
+                ],
+                '10': [ // Advanced Derm Products
+                    { id: 33, name: 'Coll-e-derm', price: 1608.27, sku: 'Q4193', category: 'Biological' },
+                    { id: 34, name: 'Xwrap', price: 2929.01, sku: 'Q4204', category: 'Biological' },
+                    { id: 35, name: 'Derm-maxx', price: 1644.99, sku: 'Q4238', category: 'Biological' }
+                ],
+                '11': [ // Redbook Specialty Products
+                    { id: 38, name: 'Rampart T.M. DL Matrix', price: 2850.00, sku: 'Q4347', category: 'Redbook' },
+                    { id: 39, name: 'Microlyte', price: 239.00, sku: 'A2005', category: 'Redbook' }
+                ]
+            };
+            
+            return mockProducts[manufacturerId] || [];
         }
     }
-
+    
     async fetchSalesReps() {
         try {
             const response = await fetch('/api/sales-representatives');

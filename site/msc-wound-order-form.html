@@ -401,91 +401,53 @@
                             <div class="form-section">
                                 <div class="form-section-title">Product Information</div>
                                 
-                                <div id="productContainer">
-                                    <!-- Product items will be added here dynamically -->
-                                    <div class="product-item" data-product-index="0">
-                                        <button type="button" class="remove-product-btn" aria-label="Remove product">×</button>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="manufacturer-0">Manufacturer <span class="text-danger">*</span></label>
-                                                    <select id="manufacturer-0" name="products[0].manufacturer" class="form-control" required>
-                                                        <option value="">Select Manufacturer</option>
-                                                        <option value="ACZ_Distribution">ACZ Distribution</option>
-                                                        <option value="Advanced_Solution">Advanced Solution</option>
-                                                        <option value="MedLife_Solutions">MedLife Solutions</option>
-                                                        <option value="BioWerX">BioWerX</option>
-                                                        <option value="Imbed_Biosciences">Imbed Biosciences</option>
-                                                        <option value="Stability_Biologics">Stability Biologics</option>
-                                                        <option value="Legacy_Medical_Consultants">Legacy Medical Consultants</option>
-                                                        <option value="BioWound_Solutions">BioWound Solutions</option>
-                                                    </select>
-                                                    <div class="form-text">Company that makes the product</div>
-                                                    <div class="invalid-feedback">Please select a manufacturer</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="productCode-0">Product Code <span class="text-danger">*</span></label>
-                                                    <input type="text" id="productCode-0" name="products[0].productCode" class="form-control" required>
-                                                    <div class="form-text">SKU or item number</div>
-                                                    <div class="invalid-feedback">Please enter a product code</div>
-                                                </div>
-                                            </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="manufacturer">Manufacturer <span class="text-danger">*</span></label>
+                                            <select id="manufacturer" name="manufacturer" class="form-control" required>
+                                                <option value="">Select a manufacturer</option>
+                                                <!-- Options populated by JavaScript -->
+                                            </select>
+                                            <div class="invalid-feedback">Please select a manufacturer</div>
                                         </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="description-0">Description <span class="text-danger">*</span></label>
-                                                    <input type="text" id="description-0" name="products[0].description" class="form-control" required>
-                                                    <div class="form-text">Product name and details</div>
-                                                    <div class="invalid-feedback">Please enter a product description</div>
-                                                </div>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="product_select">Product <span class="text-danger">*</span></label>
+                                            <select id="product_select" name="product_select" class="form-control" required>
+                                                <option value="">Select a product</option>
+                                                <!-- Options populated by JavaScript based on manufacturer -->
+                                            </select>
+                                            <div class="invalid-feedback">Please select a product</div>
                                         </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="size-0">Size <span class="text-danger">*</span></label>
-                                                    <input type="text" id="size-0" name="products[0].size" class="form-control" required>
-                                                    <div class="form-text">Dimensions of the product</div>
-                                                    <div class="invalid-feedback">Please enter the product size</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="quantity-0">Quantity <span class="text-danger">*</span></label>
-                                                    <input type="number" id="quantity-0" name="products[0].quantity" class="form-control" required min="1" value="1">
-                                                    <div class="invalid-feedback">Please enter a quantity</div>
-                                                </div>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="product_quantity">Quantity <span class="text-danger">*</span></label>
+                                            <input type="number" id="product_quantity" name="product_quantity" class="form-control" min="1" value="1" required>
+                                            <div class="invalid-feedback">Please enter a quantity</div>
                                         </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="unitPrice-0">Unit Price <span class="text-danger">*</span></label>
-                                                    <input type="number" id="unitPrice-0" name="products[0].unitPrice" class="form-control" required step="0.01">
-                                                    <div class="form-text">Price per unit</div>
-                                                    <div class="invalid-feedback">Please enter a unit price</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="totalPrice-0">Total Price</label>
-                                                    <input type="number" id="totalPrice-0" name="products[0].totalPrice" class="form-control" readonly>
-                                                    <div class="form-text">Automatically calculated</div>
-                                                </div>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>&nbsp;</label>
+                                            <button type="button" class="btn btn-primary w-100" data-action="add-product">
+                                                Add Product
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <button type="button" class="btn btn-secondary add-product-btn" id="addProductBtn">
-                                    + Add Another Product
-                                </button>
+                                <div id="product_list" class="mb-4">
+                                    <!-- Product list will be dynamically generated by JavaScript -->
+                                    <div id="no_products_message" class="alert alert-info">
+                                        No products added yet. Please select a manufacturer and product to add items to your order.
+                                    </div>
+                                </div>
+                                
+                                <!-- Hidden input to store order items for submission -->
+                                <input type="hidden" id="order_items" name="orderItems" value="[]">
                             </div>
                             
                             <div class="row mt-4">
