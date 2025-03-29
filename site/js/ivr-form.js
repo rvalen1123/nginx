@@ -1,306 +1,306 @@
 /**
- * Insurance Verification Request Form Functionality
+ * MSC Wound Care Portal - IVR Form Specific Functionality
+ * Extends the core form-handler.js with IVR-specific features
+ * Version 1.0.0
  */
 
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize IVR form specific functionality
+  initIVRForm();
+});
+
+/**
+ * Initialize IVR form specific functionality
+ */
 function initIVRForm() {
-    // Load form dependencies
-    loadFormData();
-    
-    // Initialize multi-step form
-    const formSteps = [
-        {
-            id: 'step1',
-            validate: validateStep1
-        },
-        {
-            id: 'step2',
-            validate: validateStep2
-        },
-        {
-            id: 'step3',
-            validate: validateStep3
-        },
-        {
-            id: 'step4',
-            validate: validateStep4
-        },
-        {
-            id: 'step5',
-            validate: validateStep5
-        }
-    ];
-    
-    const multiStepForm = initMultiStepForm({
-        formId: 'ivrForm',
-        steps: formSteps,
-        onStepChange: handleStepChange,
-        onSubmit: handleFormSubmit
+  // Get the IVR form
+  const ivrForm = document.getElementById('ivrForm');
+  if (!ivrForm) return;
+  
+  // Fetch manufacturers for dropdown
+  fetchManufacturers();
+  
+  // Fetch sales reps for dropdown
+  fetchSalesReps();
+  
+  // Add steps 3 and 4 that were not included in the HTML
+  addMissingSteps();
+  
+  // Set up any IVR-specific validation rules
+  setupIVRValidation();
+}
+
+/**
+ * Fetch manufacturers for the dropdown
+ */
+function fetchManufacturers() {
+  fetch('api/manufacturers')
+    .then(response => response.json())
+    .then(data => {
+      const select = document.getElementById('manufacturer');
+      if (!select) return;
+      
+      // Clear existing options except the first one
+      while (select.options.length > 1) {
+        select.remove(1);
+      }
+      
+      // Add new options
+      data.forEach(manufacturer => {
+        const option = document.createElement('option');
+        option.value = manufacturer.manufacturerId;
+        option.textContent = manufacturer.name;
+        select.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error loading manufacturers:', error);
+      showAlert('Failed to load manufacturers. Please try again later.', 'danger');
     });
+}
+
+/**
+ * Fetch sales reps for the dropdown
+ */
+function fetchSalesReps() {
+  fetch('api/users?role=REP')
+    .then(response => response.json())
+    .then(data => {
+      const select = document.getElementById('sales_rep');
+      if (!select) return;
+      
+      // Clear existing options except the first one
+      while (select.options.length > 1) {
+        select.remove(1);
+      }
+      
+      // Add new options
+      data.forEach(rep => {
+        const option = document.createElement('option');
+        option.value = rep.userId;
+        option.textContent = rep.name;
+        select.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error loading sales reps:', error);
+      showAlert('Failed to load sales representatives. Please try again later.', 'danger');
+    });
+}
+
+/**
+ * Add missing steps 3 and 4 to the form
+ */
+function addMissingSteps() {
+  const ivrForm = document.getElementById('ivrForm');
+  if (!ivrForm) return;
+  
+  // Check if steps 3 and 4 already exist
+  if (ivrForm.querySelector('.form-step[data-step="3"]') && 
+      ivrForm.querySelector('.form-step[data-step="4"]')) {
+    return;
+  }
+  
+  // Get step 2 to insert after
+  const step2 = ivrForm.querySelector('.form-step[data-step="2"]');
+  if (!step2) return;
+  
+  // Create step 3: Provider & Facility Information
+  const step3 = document.createElement('div');
+  step3.className = 'form-step';
+  step3.dataset.step = '3';
+  
+  step3.innerHTML = `
+    <div class="form-section">
+      <div class="form-section-title">Provider Information</div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="provider_name">Provider Name <span class="text-danger">*</span></label>
+            <input type="text" id="provider_name" name="providerInfo.providerName" class="form-control" required>
+            <div class="invalid-feedback">Please enter the provider's name</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="provider_npi">Provider NPI <span class="text-danger">*</span></label>
+            <input type="text" id="provider_npi" name="providerInfo.providerNPI" class="form-control" required>
+            <div class="invalid-feedback">Please enter the provider's NPI</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="provider_specialty">Provider Specialty</label>
+            <input type="text" id="provider_specialty" name="providerInfo.providerSpecialty" class="form-control">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="provider_phone">Provider Phone <span class="text-danger">*</span></label>
+            <input type="tel" id="provider_phone" name="providerInfo.providerPhone" class="form-control" required>
+            <div class="invalid-feedback">Please enter the provider's phone number</div>
+          </div>
+        </div>
+      </div>
+    </div>
     
-    // Initialize conditional fields
-    setupConditionalFields();
+    <div class="form-section">
+      <div class="form-section-title">Facility Information</div>
+      
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label for="facility_name">Facility Name <span class="text-danger">*</span></label>
+            <input type="text" id="facility_name" name="facilityInfo.facilityName" class="form-control" required>
+            <div class="invalid-feedback">Please enter the facility name</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label for="facility_address">Facility Address <span class="text-danger">*</span></label>
+            <input type="text" id="facility_address" name="facilityInfo.facilityAddress" class="form-control" required>
+            <div class="invalid-feedback">Please enter the facility address</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="facility_city">City <span class="text-danger">*</span></label>
+            <input type="text" id="facility_city" name="facilityInfo.facilityCity" class="form-control" required>
+            <div class="invalid-feedback">Please enter the city</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="facility_state">State <span class="text-danger">*</span></label>
+            <input type="text" id="facility_state" name="facilityInfo.facilityState" class="form-control" required>
+            <div class="invalid-feedback">Please enter the state</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="facility_zip">ZIP Code <span class="text-danger">*</span></label>
+            <input type="text" id="facility_zip" name="facilityInfo.facilityZip" class="form-control" required>
+            <div class="invalid-feedback">Please enter the ZIP code</div>
+          </div>
+        </div>
+      </div>
+    </div>
     
-    // Initialize file uploads
-    initFileUpload('demographicFile', 'demographicPreview');
-    initFileUpload('insuranceCardsFile', 'insuranceCardsPreview');
-    initFileUpload('clinicalNotesFile', 'clinicalNotesPreview');
-    
-    // Initialize signature pad
-    initSignaturePad('signaturePad', 'signature');
-    
-    // Set default dates
-    const today = new Date().toISOString().split('T')[0];
-    const requestDateEl = document.getElementById('request_date');
-    const signatureDateEl = document.getElementById('signatureDate');
-    
-    if (requestDateEl) requestDateEl.value = today;
-    if (signatureDateEl) signatureDateEl.value = today;
-    
-    // Load data from APIs for dropdowns
-    async function loadFormData() {
-        try {
-            // Load manufacturers
-            await populateSelectFromApi(
-                'manufacturer',
-                '/api/manufacturers',
-                'manufacturerId',
-                'name'
-            );
-            
-            // Load sales reps
-            await populateSelectFromApi(
-                'sales_rep',
-                '/api/users?role=REP',
-                'userId',
-                'name'
-            );
-            
-            // Load practices if we have a practice selector
-            const practiceSelector = document.getElementById('practice');
-            if (practiceSelector) {
-                await populateSelectFromApi(
-                    'practice',
-                    '/api/practices',
-                    'practiceId',
-                    'name'
-                );
-            }
-        } catch (error) {
-            console.error('Error loading form data:', error);
-            showAlert('Error loading form data. Please try again later.', 'error');
-        }
-    }
-    
-    // Handle conditional field visibility
-    function setupConditionalFields() {
-        // Show secondary insurance fields when "Yes" is selected
-        const hasSecondaryInsurance = document.querySelectorAll('input[name="hasSecondaryIns"]');
-        const secondaryInsContainer = document.getElementById('secondaryInsContainer');
-        
-        hasSecondaryInsurance.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (secondaryInsContainer) {
-                    secondaryInsContainer.style.display = this.value === 'yes' ? 'block' : 'none';
-                }
-            });
-        });
-        
-        // Show surgical period fields when "Yes" is selected
-        const surgicalPeriod = document.querySelectorAll('input[name="surgicalPeriod"]');
-        const surgicalInfoContainer = document.getElementById('surgicalInfoContainer');
-        
-        surgicalPeriod.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (surgicalInfoContainer) {
-                    surgicalInfoContainer.style.display = this.value === 'yes' ? 'block' : 'none';
-                }
-            });
-        });
-        
-        // Show SNF fields when "Yes" is selected
-        const snfStatus = document.querySelectorAll('input[name="snfStatus"]');
-        const snfDetailsContainer = document.getElementById('snfDetailsGroup');
-        
-        snfStatus.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (snfDetailsContainer) {
-                    snfDetailsContainer.style.display = this.value === 'yes' ? 'block' : 'none';
-                }
-            });
-        });
-    }
-    
-    // When step changes, handle any special cases
-    function handleStepChange(stepIndex, stepId) {
-        // If we're on the review step, populate the review content
-        if (stepId === 'step5') {
-            updateReviewSection();
-        }
-    }
-    
-    // Validate Step 1: Form Setup
-    function validateStep1() {
-        let isValid = true;
-        
-        isValid = validateField('manufacturer', Validators.required) && isValid;
-        isValid = validateField('request_type', Validators.required) && isValid;
-        isValid = validateField('request_date', Validators.required) && isValid;
-        isValid = validateField('sales_rep', Validators.required) && isValid;
-        
-        return isValid;
-    }
-    
-    // Validate Step 2: Patient & Insurance
-    function validateStep2() {
-        let isValid = true;
-        
-        isValid = validateField('patientName', Validators.required) && isValid;
-        isValid = validateField('patientDob', Validators.required) && isValid;
-        isValid = validateField('patientPhone', Validators.phone) && isValid;
-        
-        // Primary insurance validation
-        isValid = validateField('primaryInsName', Validators.required) && isValid;
-        isValid = validateField('primaryInsPolicyNumber', Validators.required) && isValid;
-        isValid = validateField('primaryInsPhone', Validators.required) && isValid;
-        
-        // Secondary insurance validation if applicable
-        const hasSecondary = document.querySelector('input[name="hasSecondaryIns"]:checked')?.value === 'yes';
-        if (hasSecondary) {
-            isValid = validateField('secondaryInsName', Validators.required) && isValid;
-            isValid = validateField('secondaryInsPolicyNumber', Validators.required) && isValid;
-        }
-        
-        return isValid;
-    }
-    
-    // Validate Step 3: Provider & Facility
-    function validateStep3() {
-        let isValid = true;
-        
-        isValid = validateField('physicianName', Validators.required) && isValid;
-        isValid = validateField('physicianNpi', Validators.required) && isValid;
-        isValid = validateField('physicianTaxID', Validators.required) && isValid;
-        
-        isValid = validateField('facilityName', Validators.required) && isValid;
-        isValid = validateField('facilityAddressLine1', Validators.required) && isValid;
-        isValid = validateField('facilityCity', Validators.required) && isValid;
-        isValid = validateField('facilityState', Validators.required) && isValid;
-        isValid = validateField('facilityZipCode', Validators.required) && isValid;
-        
-        isValid = validateField('placeOfService', Validators.required) && isValid;
-        
-        return isValid;
-    }
-    
-   // Validate Step 4: Wound & Product (continued)
-    function validateStep4() {
-        let isValid = true;
-        
-        // Ensure at least one wound type is selected
-        const woundTypeSelected = document.querySelector('input[name="woundInfo.woundType"]:checked');
-        if (!woundTypeSelected) {
-            const woundTypeError = document.getElementById('woundType-error') || 
-                document.createElement('div');
-            
-            woundTypeError.id = 'woundType-error';
-            woundTypeError.className = 'error-text';
-            woundTypeError.textContent = 'Please select at least one wound type';
-            
-            const woundTypeContainer = document.getElementById('woundTypeMultiselect');
-            if (woundTypeContainer && !document.getElementById('woundType-error')) {
-                woundTypeContainer.appendChild(woundTypeError);
-            }
-            
-            isValid = false;
-        } else if (document.getElementById('woundType-error')) {
-            document.getElementById('woundType-error').remove();
-        }
-        
-        isValid = validateField('woundSizeTotal', Validators.required) && isValid;
-        isValid = validateField('woundLocation', Validators.required) && isValid;
-        isValid = validateField('diagnosisCodes', Validators.required) && isValid;
-        isValid = validateField('productInfo', Validators.required) && isValid;
-        
-        return isValid;
-    }
-    
-    // Validate Step 5: Review & Submit
-    function validateStep5() {
-        let isValid = true;
-        
-        // Validate signature
-        const signatureValue = document.getElementById('signature').value;
-        if (!signatureValue) {
-            const signatureError = document.getElementById('signature-error') || 
-                document.createElement('div');
-            
-            signatureError.id = 'signature-error';
-            signatureError.className = 'error-text';
-            signatureError.textContent = 'Signature is required';
-            
-            const signatureContainer = document.querySelector('.signature-pad-container');
-            if (signatureContainer && !document.getElementById('signature-error')) {
-                signatureContainer.parentNode.appendChild(signatureError);
-            }
-            
-            isValid = false;
-        } else if (document.getElementById('signature-error')) {
-            document.getElementById('signature-error').remove();
-        }
-        
-        isValid = validateField('signatureDate', Validators.required) && isValid;
-        
-        return isValid;
-    }
-    
-    // Sanitize HTML to prevent XSS attacks
-    function sanitizeHTML(str) {
-        if (!str) return 'N/A';
-        
-        const temp = document.createElement('div');
-        temp.textContent = str;
-        return temp.innerHTML;
-    }
-    
-    // Update review section content
-    function updateReviewSection() {
-        // Patient Information Review
-        const patientInfoReview = document.getElementById('patientInfoReview');
-        if (patientInfoReview) {
-            patientInfoReview.innerHTML = `
-                <p><strong>Name:</strong> ${sanitizeHTML(document.getElementById('patientName')?.value)}</p>
-                <p><strong>DOB:</strong> ${sanitizeHTML(document.getElementById('patientDob')?.value)}</p>
-                <p><strong>Phone:</strong> ${sanitizeHTML(document.getElementById('patientPhone')?.value)}</p>
-                <p><strong>Contact Permission:</strong> ${sanitizeHTML(getRadioValue('contactPermission'))}</p>
-                <p><strong>In Nursing Facility:</strong> ${sanitizeHTML(getRadioValue('nursingFacility'))}</p>
-            `;
-        }
-        
-        // Insurance Information Review
-        const insuranceInfoReview = document.getElementById('insuranceInfoReview');
-        if (insuranceInfoReview) {
-            let html = `
-                <p><strong>Primary Insurance:</strong> ${sanitizeHTML(document.getElementById('primaryInsName')?.value)}</p>
-                <p><strong>Policy Number:</strong> ${sanitizeHTML(document.getElementById('primaryInsPolicyNumber')?.value)}</p>
-                <p><strong>Phone:</strong> ${sanitizeHTML(document.getElementById('primaryInsPhone')?.value)}</p>
-            `;
-            
-            // Add secondary insurance if applicable
-            if (getRadioValue('hasSecondaryIns') === 'yes') {
-                html += `
-                    <div class="mt-3">
-                        <p><strong>Secondary Insurance:</strong> ${sanitizeHTML(document.getElementById('secondaryInsName')?.value)}</p>
-                        <p><strong>Policy Number:</strong> ${sanitizeHTML(document.getElementById('secondaryInsPolicyNumber')?.value)}</p>
-                    </div>
-                `;
-            }
-            
-            insuranceInfoReview.innerHTML = html;
-        }
-        
-        // Provider & Facility Review
-        const providerInfoReview = document.getElementById('providerInfoReview');
-        if (providerInfoReview) {
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+      </div>
+      <div class="col-md-6">
+        <button type="button" class="btn btn-primary" data-action="next">Continue to Wound & Product</button>
+      </div>
+    </div>
+  `;
+  
+  // Create step 4: Wound & Product Information
+  const step4 = document.createElement('div');
+  step4.className = 'form-step';
+  step4.dataset.step = '4';
+  
+  step4.innerHTML = `
+    <div class="form-section">
+      <div class="form-section-title">Wound Information</div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="wound_location">Wound Location <span class="text-danger">*</span></label>
+            <input type="text" id="wound_location" name="woundInfo.woundLocation" class="form-control" required>
+            <div class="invalid-feedback">Please enter the wound location</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="wound_type">Wound Type <span class="text-danger">*</span></label>
+            <select id="wound_type" name="woundInfo.woundType" class="form-control" required>
+              <option value="">Select Wound Type</option>
+              <option value="diabetic_ulcer">Diabetic Ulcer</option>
+              <option value="pressure_ulcer">Pressure Ulcer</option>
+              <option value="venous_ulcer">Venous Ulcer</option>
+              <option value="arterial_ulcer">Arterial Ulcer</option>
+              <option value="surgical_wound">Surgical Wound</option>
+              <option value="traumatic_wound">Traumatic Wound</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="invalid-feedback">Please select a wound type</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="wound_length">Length (cm) <span class="text-danger">*</span></label>
+            <input type="number" id="wound_length" name="woundInfo.woundLength" class="form-control" step="0.1" min="0" required>
+            <div class="invalid-feedback">Please enter the wound length</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="wound_width">Width (cm) <span class="text-danger">*</span></label>
+            <input type="number" id="wound_width" name="woundInfo.woundWidth" class="form-control" step="0.1" min="0" required>
+            <div class="invalid-feedback">Please enter the wound width</div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="wound_depth">Depth (cm)</label>
+            <input type="number" id="wound_depth" name="woundInfo.woundDepth" class="form-control" step="0.1" min="0">
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="wound_duration">Duration <span class="text-danger">*</span></label>
+            <div class="row">
+              <div class="col-6">
+                <input type="number" id="wound_duration" name="woundInfo.woundDuration" class="form-control" min="1" required>
+                <div class="invalid-feedback">Please enter the duration</div>
+              </div>
+              <div class="col-6">
+                <select id="wound_duration_unit" name="woundInfo.woundDurationUnit" class="form-control" required>
+                  <option value="days">Days</option>
+                  <option value="weeks">Weeks</option>
+                  <option value="months">Months</option>
+                  <option value="years">Years</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="wound_stage">Wound Stage/Grade</label>
+            <select id="wound_stage" name="woundInfo.woundStage" class="form-control">
+              <option value="">Select Stage/Grade (if applicable)</option>
+              <option value="stage_1">Stage I</option>
+              <option value="stage_2">Stage II</option>
+              <option value="stage_3">Stage III</option>
+              <option value="stage_4">Stage IV</option>
+              <option value="unstageable">Unstageable</option>
+              <option value="suspected_dti">Suspected Deep Tissue Injury</option>
+              <option value="not_applicable">Not Applicable</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
             providerInfoReview.innerHTML = `
                 <p><strong>Physician:</strong> ${sanitizeHTML(document.getElementById('physicianName')?.value)}</p>
                 <p><strong>NPI:</strong> ${sanitizeHTML(document.getElementById('physicianNpi')?.value)}</p>

@@ -46,485 +46,264 @@
                             </div>
                             <div class="progress-step" data-step="4">
                                 <div class="progress-step-number">4</div>
-                                <div class="progress-step-number bg-gray-300 text-gray-700">2</div>
-                                <div class="progress-step-label">Patient & Insurance</div>
-                            </div>
-                            <div class="progress-step" data-step="3">
-                                <div class="progress-step-number bg-gray-300 text-gray-700">3</div>
-                                <div class="progress-step-label">Provider & Facility</div>
-                            </div>
-                            <div class="progress-step" data-step="4">
-                                <div class="progress-step-number bg-gray-300 text-gray-700">4</div>
                                 <div class="progress-step-label">Wound & Product</div>
                             </div>
                             <div class="progress-step" data-step="5">
-                                <div class="progress-step-number bg-gray-300 text-gray-700">5</div>
+                                <div class="progress-step-number">5</div>
                                 <div class="progress-step-label">Review & Submit</div>
                             </div>
-                            <!-- Progress Line -->
-                            <div class="absolute h-1 bg-gray-300 top-4 left-0 right-0 z-0">
-                                <div class="h-full bg-green-500" style="width: 20%;"></div>
-                            </div>
                         </div>
-                        <div class="flex justify-between mt-2 text-sm text-gray-600">
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill"></div>
+                        </div>
+                        <div class="progress-text">
                             <span>Step <span id="currentStep">1</span> of 5</span>
-                            <span><span id="completionPercentage">20</span>% Complete</span>
+                            <span><span id="completionPercentage">0</span>% Complete</span>
                         </div>
                     </div>
 
                     <form id="ivrForm" action="api/submit-ivr" method="POST" enctype="multipart/form-data">
                         <!-- Step 1: Form Setup -->
-                        <div id="step1" class="form-step active">
-                            <div class="form-section mb-6">
-                                <h3 class="text-xl font-semibold mb-2">Form Setup</h3>
+                        <div class="form-step" data-step="1">
+                            <div class="form-section">
+                                <div class="form-section-title">Form Setup</div>
                                 
-                                <div class="form-section-content border p-4 rounded-md bg-white shadow-sm">
-                                    <div class="form-group mb-4">
-                                        <label for="manufacturer" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Manufacturer <span class="text-red-500">*</span>
-                                        </label>
-                                        <select id="manufacturer" name="manufacturerId" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                                            <option value="">Select Manufacturer</option>
-                                            <!-- Manufacturer options would be populated from database -->
-                                        </select>
-                                        <div class="mt-1 text-xs text-gray-500">Select the manufacturer for the product being requested</div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="manufacturer">Manufacturer <span class="text-danger">*</span></label>
+                                            <select id="manufacturer" name="manufacturerId" class="form-control" required>
+                                                <option value="">Select Manufacturer</option>
+                                                <!-- Manufacturer options would be populated from database -->
+                                            </select>
+                                            <div class="form-text">Select the manufacturer for the product being requested</div>
+                                            <div class="invalid-feedback">Please select a manufacturer</div>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group mb-4">
-                                        <label for="request_type" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Request Type <span class="text-red-500">*</span>
-                                        </label>
-                                        <select id="request_type" name="requestType" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                                            <option value="">Select Request Type</option>
-                                            <option value="new_request">New Request</option>
-                                            <option value="reverification">Re-verification</option>
-                                            <option value="additional_applications">Additional Applications</option>
-                                            <option value="new_insurance">New Insurance</option>
-                                        </select>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="request_type">Request Type <span class="text-danger">*</span></label>
+                                            <select id="request_type" name="requestType" class="form-control" required>
+                                                <option value="">Select Request Type</option>
+                                                <option value="new_request">New Request</option>
+                                                <option value="reverification">Re-verification</option>
+                                                <option value="additional_applications">Additional Applications</option>
+                                                <option value="new_insurance">New Insurance</option>
+                                            </select>
+                                            <div class="invalid-feedback">Please select a request type</div>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group mb-4">
-                                        <label for="request_date" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Request Date <span class="text-red-500">*</span>
-                                        </label>
-                                        <input type="date" id="request_date" name="requestDate" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="request_date">Request Date <span class="text-danger">*</span></label>
+                                            <input type="date" id="request_date" name="requestDate" class="form-control" required>
+                                            <div class="invalid-feedback">Please select a request date</div>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group mb-4">
-                                        <label for="sales_rep" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Sales Representative <span class="text-red-500">*</span>
-                                        </label>
-                                        <select id="sales_rep" name="repId" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                                            <option value="">Select Sales Representative</option>
-                                            <!-- Rep options would be populated from database -->
-                                        </select>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="sales_rep">Sales Representative <span class="text-danger">*</span></label>
+                                            <select id="sales_rep" name="repId" class="form-control" required>
+                                                <option value="">Select Sales Representative</option>
+                                                <!-- Rep options would be populated from database -->
+                                            </select>
+                                            <div class="invalid-feedback">Please select a sales representative</div>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group mb-4">
-                                        <label for="additional_emails" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Additional Notification Emails
-                                        </label>
-                                        <input type="text" id="additional_emails" name="additionalEmails" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                        <div class="mt-1 text-xs text-gray-500">Separate multiple emails with commas</div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="additional_emails">Additional Notification Emails</label>
+                                            <input type="text" id="additional_emails" name="additionalEmails" class="form-control">
+                                            <div class="form-text">Separate multiple emails with commas</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="form-navigation flex justify-end mt-8">
-                                <button type="button" id="nextToStep2" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                                    Continue to Patient Information
-                                </button>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary btn-block" data-action="next">Continue to Patient Information</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2: Patient & Insurance Information -->
+                        <div class="form-step" data-step="2">
+                            <div class="form-section">
+                                <div class="form-section-title">Patient Information</div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="patient_first_name">First Name <span class="text-danger">*</span></label>
+                                            <input type="text" id="patient_first_name" name="patientFirstName" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the patient's first name</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="patient_last_name">Last Name <span class="text-danger">*</span></label>
+                                            <input type="text" id="patient_last_name" name="patientLastName" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the patient's last name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="patient_dob">Date of Birth <span class="text-danger">*</span></label>
+                                            <input type="date" id="patient_dob" name="patientDOB" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the patient's date of birth</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="patient_phone">Phone Number</label>
+                                            <input type="tel" id="patient_phone" name="patientPhone" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-section">
+                                <div class="form-section-title">Insurance Information</div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="primary_insurance">Primary Insurance <span class="text-danger">*</span></label>
+                                            <input type="text" id="primary_insurance" name="primaryInsurance" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the primary insurance</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="policy_number">Policy Number <span class="text-danger">*</span></label>
+                                            <input type="text" id="policy_number" name="policyNumber" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the policy number</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="secondary_insurance">Secondary Insurance</label>
+                                            <input type="text" id="secondary_insurance" name="secondaryInsurance" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="secondary_policy_number">Secondary Policy Number</label>
+                                            <input type="text" id="secondary_policy_number" name="secondaryPolicyNumber" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary" data-action="next">Continue to Provider Information</button>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Step 5: Required Documents -->
-                        <div id="step5" class="form-step" style="display: none;">
-                            <div class="form-section mb-6">
-                                <h3 class="text-xl font-semibold mb-2">Required Documents</h3>
-                                <p class="text-gray-600 mb-4">Please upload the following documents if available</p>
+                        <div class="form-step" data-step="5">
+                            <div class="form-section">
+                                <div class="form-section-title">Required Documents</div>
                                 
-                                <div class="form-section-content border p-4 rounded-md bg-white shadow-sm">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="patientDemographicSheet" class="block text-sm font-medium text-gray-700 mb-1">
-                                                Patient Demographic Sheet
-                                            </label>
-                                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                                <div class="space-y-1 text-center">
-                                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                                    </svg>
-                                                    <div class="flex text-sm text-gray-600">
-                                                        <label for="demographic-file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                                            <span>Upload a file</span>
-                                                            <input id="demographic-file-upload" name="patientDemographicSheet" type="file" class="sr-only">
-                                                        </label>
-                                                        <p class="pl-1">or drag and drop</p>
-                                                    </div>
-                                                    <p class="text-xs text-gray-500">
-                                                        PDF, PNG, JPG up to 10MB
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <p class="mt-1 text-xs text-gray-500">Whether patient demographic sheet is attached</p>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="insuranceCards" class="block text-sm font-medium text-gray-700 mb-1">
-                                                Front and Back of Insurance Cards
-                                            </label>
-                                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                                <div class="space-y-1 text-center">
-                                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                                    </svg>
-                                                    <div class="flex text-sm text-gray-600">
-                                                        <label for="insurance-file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                                            <span>Upload a file</span>
-                                                            <input id="insurance-file-upload" name="insuranceCards" type="file" class="sr-only" multiple>
-                                                        </label>
-                                                        <p class="pl-1">or drag and drop</p>
-                                                    </div>
-                                                    <p class="text-xs text-gray-500">
-                                                        PDF, PNG, JPG up to 10MB
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <p class="mt-1 text-xs text-gray-500">Whether copies of insurance cards are attached</p>
+                                            <label for="demographic-file-upload">Patient Demographic Sheet</label>
+                                            <input type="file" id="demographic-file-upload" name="patientDemographicSheet" class="form-control">
+                                            <div class="form-text">Upload patient demographic information (PDF, PNG, JPG up to 10MB)</div>
                                         </div>
                                     </div>
-
-                                    <div class="form-group mt-6">
-                                        <label for="clinicalNotes" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Clinical Notes
-                                        </label>
-                                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                            <div class="space-y-1 text-center">
-                                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                <div class="flex text-sm text-gray-600">
-                                                    <label for="clinical-notes-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                                        <span>Upload a file</span>
-                                                        <input id="clinical-notes-upload" name="clinicalNotes" type="file" class="sr-only">
-                                                    </label>
-                                                    <p class="pl-1">or drag and drop</p>
-                                                </div>
-                                                <p class="text-xs text-gray-500">
-                                                    PDF, PNG, JPG up to 10MB
-                                                </p>
-                                            </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="insurance-file-upload">Front and Back of Insurance Cards</label>
+                                            <input type="file" id="insurance-file-upload" name="insuranceCards" class="form-control" multiple>
+                                            <div class="form-text">Upload images of insurance cards (PDF, PNG, JPG up to 10MB)</div>
                                         </div>
-                                        <p class="mt-1 text-xs text-gray-500">Whether clinical notes are attached</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="clinical-notes-upload">Clinical Notes</label>
+                                            <input type="file" id="clinical-notes-upload" name="clinicalNotes" class="form-control">
+                                            <div class="form-text">Upload any relevant clinical notes (PDF, PNG, JPG up to 10MB)</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="form-section mb-6">
-                                <h3 class="text-xl font-semibold mb-2">Authorization</h3>
-                                <div class="form-section-content border p-4 rounded-md bg-white shadow-sm">
-                                    <div class="form-group mb-4">
-                                        <label for="signature" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Authorized Signature <span class="text-red-500">*</span>
-                                        </label>
-                                        <div class="signature-pad-container border border-gray-300 rounded-md overflow-hidden">
-                                            <canvas id="signaturePad" class="signature-pad w-full h-36 bg-white"></canvas>
+                            <div class="form-section">
+                                <div class="form-section-title">Authorization</div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="signature">Authorized Signature <span class="text-danger">*</span></label>
+                                            <div class="signature-pad-container">
+                                                <canvas id="signaturePad" class="signature-pad"></canvas>
+                                            </div>
+                                            <div class="text-right mt-2">
+                                                <button type="button" class="btn btn-sm btn-secondary" id="clearSignature">Clear Signature</button>
+                                            </div>
+                                            <input type="hidden" id="signature" name="signature" required>
+                                            <div class="invalid-feedback">Please provide a signature</div>
                                         </div>
-                                        <div class="flex justify-end mt-2">
-                                            <button type="button" class="text-sm text-blue-600 hover:text-blue-800" id="clearSignature">
-                                                Clear Signature
-                                            </button>
-                                        </div>
-                                        <input type="hidden" id="signature" name="signature" required>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="signatureDate" class="block text-sm font-medium text-gray-700 mb-1">
-                                            Date <span class="text-red-500">*</span>
-                                        </label>
-                                        <input type="date" id="signatureDate" name="signatureDate" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="signatureDate">Date <span class="text-danger">*</span></label>
+                                            <input type="date" id="signatureDate" name="signatureDate" class="form-control" required>
+                                            <div class="invalid-feedback">Please enter the date</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Form Navigation -->
-                            <div class="form-navigation flex justify-between mt-8">
-                                <button type="button" id="backToStep4" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                    Back
-                                </button>
-                                <button type="submit" id="submitForm" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                                    Submit Request
-                                </button>
+                            <div id="responseContainer"></div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-secondary" data-action="back">Back</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
+                
+                <div class="card-footer">
+                    <p class="text-center">MSC Wound Care &copy; 2025 | Need help? Contact support at (555) 123-4567</p>
+                </div>
             </div>
-            
-            <!-- Other forms would go here -->
         </div>
     </main>
-
-    <footer class="bg-gray-100 py-4 mt-8">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-sm text-gray-600">
-                    &copy; 2025 MSC Wound Care. All rights reserved.
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <ul class="flex space-x-4 text-sm">
-                        <li><a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></li>
-                        <li><a href="#" class="text-blue-600 hover:underline">Terms of Service</a></li>
-                        <li><a href="#" class="text-blue-600 hover:underline">Contact Us</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Load required scripts -->
-    <script src="components/form-utils.js"></script>
-    <script src="components/form-validation.js"></script>
-    <script src="components/multi-step-form.js"></script>
-    <script src="components/signature-pad.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/integrations.js"></script>
-    <script src="js/ivr-form.js"></script>
     
-    <script>
-        // Display an alert message
-        function showAlert(message, type = 'info') {
-            const alertsContainer = document.createElement('div');
-            alertsContainer.className = 'fixed top-4 right-4 z-50';
-            document.body.appendChild(alertsContainer);
-            
-            const alert = document.createElement('div');
-            alert.className = `p-4 mb-4 rounded shadow-md transition-all duration-300 ease-in-out transform translate-x-0 ${
-                type === 'success' ? 'bg-green-100 border-l-4 border-green-500 text-green-700' :
-                type === 'error' ? 'bg-red-100 border-l-4 border-red-500 text-red-700' :
-                type === 'warning' ? 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700' :
-                'bg-blue-100 border-l-4 border-blue-500 text-blue-700'
-            }`;
-            
-            alert.textContent = message;
-            alertsContainer.appendChild(alert);
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                alert.classList.add('opacity-0', 'translate-x-full');
-                setTimeout(() => {
-                    alert.remove();
-                    if (alertsContainer.children.length === 0) {
-                        alertsContainer.remove();
-                    }
-                }, 300);
-            }, 5000);
-            
-            return alert;
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the IVR form
-            initIVRForm();
-            
-            // Tab navigation
-            const tabs = [
-                { id: 'ivr-tab', formId: 'ivr-form' },
-                { id: 'product-education-tab', formId: 'product-education-form' },
-                { id: 'order-tab', formId: 'order-form' },
-                { id: 'onboarding-tab', formId: 'onboarding-form' }
-            ];
-            
-            tabs.forEach(tab => {
-                const tabElement = document.getElementById(tab.id);
-                if (tabElement) {
-                    tabElement.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        
-                        // Hide all forms
-                        tabs.forEach(t => {
-                            const formElement = document.getElementById(t.formId);
-                            const tabElement = document.getElementById(t.id);
-                            if (formElement && tabElement) {
-                                formElement.classList.add('hidden');
-                                tabElement.classList.remove('text-blue-800', 'border-b-2', 'border-blue-800');
-                                tabElement.classList.add('text-gray-600');
-                            }
-                        });
-                        
-                        // Show the selected form
-                        const formElement = document.getElementById(tab.formId);
-                        if (formElement) {
-                            formElement.classList.remove('hidden');
-                            this.classList.add('text-blue-800', 'border-b-2', 'border-blue-800');
-                        }
-                    });
-                }
-            });
-            
-            // Multi-step form navigation
-            function goToStep(stepNumber) {
-                // Hide all steps
-                document.querySelectorAll('.form-step').forEach(step => {
-                    step.style.display = 'none';
-                });
-                
-                // Show the target step
-                const targetStep = document.getElementById(`step${stepNumber}`);
-                if (targetStep) {
-                    targetStep.style.display = 'block';
-                }
-                
-                // Update progress bar
-                const progressPercentage = ((stepNumber - 1) / 4) * 100;
-                document.querySelector('.progress-bar-fill').style.width = `${progressPercentage}%`;
-                document.getElementById('currentStep').textContent = stepNumber;
-                document.getElementById('completionPercentage').textContent = Math.round(progressPercentage);
-                
-                // Update step indicators
-                document.querySelectorAll('.progress-step').forEach((step, index) => {
-                    step.classList.remove('active');
-                    if (index + 1 < stepNumber) {
-                        step.classList.add('completed');
-                    } else if (index + 1 === stepNumber) {
-                        step.classList.add('active');
-                    }
-                });
-            }
-            
-            // Navigation buttons
-            document.getElementById('nextToStep2').addEventListener('click', function() {
-                goToStep(2);
-            });
-            
-            document.getElementById('backToStep4').addEventListener('click', function() {
-                goToStep(4);
-            });
-            
-            // Initialize Signature Pad
-            const canvas = document.getElementById('signaturePad');
-            if (canvas) {
-                const signaturePad = new SignaturePad(canvas);
-                
-                // Clear signature
-                document.getElementById('clearSignature').addEventListener('click', function() {
-                    signaturePad.clear();
-                    document.getElementById('signature').value = '';
-                });
-                
-                // Save signature on end
-                canvas.addEventListener('mouseup', function() {
-                    if (!signaturePad.isEmpty()) {
-                        document.getElementById('signature').value = signaturePad.toDataURL();
-                    }
-                });
-                
-                canvas.addEventListener('touchend', function() {
-                    if (!signaturePad.isEmpty()) {
-                        document.getElementById('signature').value = signaturePad.toDataURL();
-                    }
-                });
-            }
-            
-            // Form submission
-            document.getElementById('ivrForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Create FormData
-                const formData = new FormData(this);
-                
-                // Show loading state
-                const submitButton = document.getElementById('submitForm');
-                const originalButtonText = submitButton.innerHTML;
-                submitButton.disabled = true;
-                submitButton.innerHTML = `
-                    <span class="loading-spinner mr-2"></span>
-                    Submitting...
-                `;
-                
-                try {
-                    // Use the integrations module if available
-                    if (window.Integrations && typeof window.Integrations.handleFormSubmissionWithIntegration === 'function') {
-                        try {
-                            const result = await window.Integrations.handleFormSubmissionWithIntegration('ivr', formData);
-                            
-                            // Show success message
-                            showAlert('Insurance verification request submitted successfully!', 'success');
-                            
-                            // Optionally redirect or reset form
-                            setTimeout(() => {
-                                window.location.href = '/dashboard';
-                            }, 2000);
-                            
-                            return;
-                        } catch (integrationError) {
-                            console.error('Integration error:', integrationError);
-                            // Fall back to standard submission if integration fails
-                        }
-                    }
-                    
-                    // Standard form submission if integration is not available or fails
-                    const response = await fetch('/api/submit-ivr', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        // Show success message
-                        showAlert('Insurance verification request submitted successfully!', 'success');
-                        
-                        // Optionally redirect or reset form
-                        setTimeout(() => {
-                            window.location.href = '/dashboard';
-                        }, 2000);
-                    } else {
-                        // Show error message
-                        showAlert(`Error: ${result.message || 'Unknown error'}`, 'error');
-                        
-                        // Re-enable submit button
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = originalButtonText;
-                    }
-                } catch (error) {
-                    console.error('Form submission error:', error);
-                    showAlert('An error occurred. Please try again.', 'error');
-                    
-                    // Re-enable submit button
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalButtonText;
-                }
-            });
-            
-            // Fetch manufacturers for dropdown (example)
-            fetch('api/manufacturers')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('manufacturer');
-                    data.forEach(manufacturer => {
-                        const option = document.createElement('option');
-                        option.value = manufacturer.manufacturerId;
-                        option.textContent = manufacturer.name;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error loading manufacturers:', error));
-                
-            // Fetch sales reps for dropdown (example)
-            fetch('api/users?role=REP')
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('sales_rep');
-                    data.forEach(rep => {
-                        const option = document.createElement('option');
-                        option.value = rep.userId;
-                        option.textContent = rep.name;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error loading sales reps:', error));
-        });
-    </script>
+    <!-- Include the new form handler script -->
+    <script src="js/form-handler.js"></script>
+    <script src="js/ivr-form.js"></script>
 </body>
 </html>

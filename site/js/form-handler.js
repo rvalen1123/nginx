@@ -1,793 +1,909 @@
 /**
- * Modern Form Handler for MSC Wound Care Portal
- * This script handles multi-step form navigation, validation, and submission
+ * MSC Wound Care Portal Form Handler
+ * A comprehensive JavaScript library for handling multi-step forms
+ * Version 1.0.0
  */
 
-class FormHandler {
-  constructor(formId, options = {}) {
-    // Main elements
-    this.form = document.getElementById(formId);
-    if (!this.form) {
-      console.error(`Form with ID "${formId}" not found.`);
-      return;
-    }
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize all forms
+  initForms();
+  
+  // Initialize signature pad if present
+  initSignaturePad();
+});
 
-    // Options with defaults
-    this.options = {
-      steps: 5,
-      validateOnStepChange: true,
-      scrollToTop: true,
-      scrollOffset: 20,
-      ...options
-    };
-
-    // State
-    this.currentStep = 1;
-    this.formData = new FormData();
-    this.isSubmitting = false;
-
-    // Initialize
-    this.init();
-  }
-
-  /**
-   * Initialize the form handler
-   */
-  init() {
-    // Find all form steps
-    this.formSteps = Array.from(this.form.querySelectorAll('.form-step'));
+/**
+ * Initialize all forms on the page
+ */
+function initForms() {
+  const forms = document.querySelectorAll('form');
+  
+  forms.forEach(form => {
+    // Set up form validation
+    setupFormValidation(form);
     
-    // Set up navigation buttons
-    this.setupNavigation();
+    // Set up multi-step navigation
+    setupMultiStepNavigation(form);
     
     // Set up conditional fields
-    this.setupConditionalFields();
+    setupConditionalFields(form);
     
-    // Set up product calculations and controls
-    this.setupProductFunctionality();
+    // Set up product management (for order forms)
+    setupProductManagement(form);
     
     // Set up form submission
-    this.setupFormSubmission();
-    
-    // Show the first step
-    this.goToStep(1);
-    
-    console.log('Form handler initialized successfully.');
-  }
+    setupFormSubmission(form);
+  });
+}
 
-  /**
-   * Set up navigation buttons
-   */
-  setupNavigation() {
-    // Next buttons
-    const nextButtons = this.form.querySelectorAll('[data-action="next"]');
-    nextButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.goToNextStep();
-      });
-    });
-
-    // Back buttons
-    const backButtons = this.form.querySelectorAll('[data-action="back"]');
-    backButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.goToPreviousStep();
-      });
-    });
-
-    // Step indicators (for direct navigation if enabled)
-    const stepIndicators = document.querySelectorAll('.progress-step');
-    if (this.options.allowDirectNavigation) {
-      stepIndicators.forEach(indicator => {
-        indicator.addEventListener('click', () => {
-          const step = parseInt(indicator.dataset.step);
-          if (step < this.currentStep || this.validateCurrentStep()) {
-            this.goToStep(step);
-          }
-        });
-      });
-    }
-  }
-
-  /**
-   * Navigate to a specific step
-   * @param {number} step - The step number to navigate to
-   */
-  goToStep(step) {
-    if (step < 1 || step > this.formSteps.length) {
-      console.error(`Invalid step number: ${step}`);
-      return;
-    }
-
-    // Hide all steps
-    this.formSteps.forEach(stepEl => {
-      stepEl.classList.remove('active');
-      stepEl.style.display = 'none';
-    });
-
-    // Show the target step
-    const targetStep = this.formSteps[step - 1];
-    if (targetStep) {
-      targetStep.classList.add('active');
-      targetStep.style.display = 'block';
-    }
-
-    // Update progress indicators
-    this.updateProgress(step);
-
-    // Update current step
-    this.currentStep = step;
-
-    // Scroll to top if enabled
-    if (this.options.scrollToTop) {
-      window.scrollTo({
-        top: this.form.offsetTop - this.options.scrollOffset,
-        behavior: 'smooth'
-      });
-    }
-
-    // If this is the review step, generate the summary
-    if (step === this.formSteps.length) {
-      this.generateSummary();
-    }
-
-    // Trigger step change event
-    this.triggerEvent('stepChange', { step });
-  }
-
-  /**
-   * Go to the next step
-   */
-  goToNextStep() {
-    // Validate current step if enabled
-    if (this.options.validateOnStepChange && !this.validateCurrentStep()) {
-      return;
-    }
-
-    // Go to next step if not on the last step
-    if (this.currentStep < this.formSteps.length) {
-      this.goToStep(this.currentStep + 1);
-    }
-  }
-
-  /**
-   * Go to the previous step
-   */
-  goToPreviousStep() {
-    // Go to previous step if not on the first step
-    if (this.currentStep > 1) {
-      this.goToStep(this.currentStep - 1);
-    }
-  }
-
-  /**
-   * Update progress indicators
-   * @param {number} step - The current step
-   */
-  updateProgress(step) {
-    // Update progress bar
-    const progressBar = document.querySelector('.progress-bar-fill');
-    if (progressBar) {
-      const progress = ((step - 1) / (this.formSteps.length - 1)) * 100;
-      progressBar.style.width = `${progress}%`;
-    }
-
-    // Update step text
-    const currentStepEl = document.getElementById('currentStep');
-    if (currentStepEl) {
-      currentStepEl.textContent = step;
-    }
-
-    // Update completion percentage
-    const percentageEl = document.getElementById('completionPercentage');
-    if (percentageEl) {
-      const percentage = Math.round(((step - 1) / (this.formSteps.length - 1)) * 100);
-      percentageEl.textContent = percentage;
-    }
-
-    // Update step indicators
-    const stepIndicators = document.querySelectorAll('.progress-step');
-    stepIndicators.forEach((indicator, index) => {
-      // Remove all classes first
-      indicator.classList.remove('active', 'completed');
-
-      // Add appropriate class based on current step
-      if (index + 1 === step) {
-        indicator.classList.add('active');
-      } else if (index + 1 < step) {
-        indicator.classList.add('completed');
-      }
-    });
-  }
-
-  /**
-   * Validate the current step
-   * @returns {boolean} - Whether the step is valid
-   */
-  validateCurrentStep() {
-    const currentStepEl = this.formSteps[this.currentStep - 1];
-    if (!currentStepEl) return true;
-
-    // Get all required fields in the current step
-    const requiredFields = currentStepEl.querySelectorAll('[required]');
-    let isValid = true;
-
-    // Check each required field
-    requiredFields.forEach(field => {
-      // Remove existing validation styling
-      field.classList.remove('is-invalid');
-      const feedbackEl = field.nextElementSibling;
-      if (feedbackEl && feedbackEl.classList.contains('invalid-feedback')) {
-        feedbackEl.style.display = 'none';
-      }
-
-      // Validate the field
-      if (!field.value.trim()) {
-        isValid = false;
-        field.classList.add('is-invalid');
-        
-        // Show feedback message
-        if (feedbackEl && feedbackEl.classList.contains('invalid-feedback')) {
-          feedbackEl.style.display = 'block';
-        } else {
-          // Create feedback element if it doesn't exist
-          const newFeedback = document.createElement('div');
-          newFeedback.className = 'invalid-feedback';
-          newFeedback.textContent = 'This field is required';
-          newFeedback.style.display = 'block';
-          field.parentNode.insertBefore(newFeedback, field.nextSibling);
-        }
-      }
-    });
-
-    // Custom validation for specific fields
-    // Add any custom validation logic here
-
-    return isValid;
-  }
-
-  /**
-   * Set up conditional fields
-   */
-  setupConditionalFields() {
-    // Example: Billing address same as shipping
-    const sameAsShippingCheckbox = document.getElementById('sameAsShipping');
-    const billingFields = document.getElementById('billingFields');
-    
-    if (sameAsShippingCheckbox && billingFields) {
-      sameAsShippingCheckbox.addEventListener('change', function() {
-        billingFields.style.display = this.checked ? 'none' : 'block';
-      });
-      
-      // Initial state
-      billingFields.style.display = sameAsShippingCheckbox.checked ? 'none' : 'block';
-    }
-    
-    // Example: Payment method conditional fields
-    const paymentMethodSelect = document.getElementById('paymentMethod');
-    const paymentTermsGroup = document.getElementById('paymentTerms')?.closest('.form-group');
-    
-    if (paymentMethodSelect && paymentTermsGroup) {
-      paymentMethodSelect.addEventListener('change', function() {
-        paymentTermsGroup.style.display = this.value === 'terms' ? 'block' : 'none';
-      });
-      
-      // Initial state
-      if (paymentMethodSelect.value) {
-        paymentTermsGroup.style.display = paymentMethodSelect.value === 'terms' ? 'block' : 'none';
-      }
-    }
-  }
-
-  /**
-   * Set up product functionality (calculations and controls)
-   */
-  setupProductFunctionality() {
-    this.setupProductCalculations();
-    this.setupProductControls();
-  }
-
-  /**
-   * Set up product calculations
-   */
-  setupProductCalculations() {
-    // Function to recalculate product totals
-    const recalculateTotal = (index) => {
-      const quantityInput = document.getElementById(`quantity-${index}`);
-      const unitPriceInput = document.getElementById(`unitPrice-${index}`);
-      const totalPriceInput = document.getElementById(`totalPrice-${index}`);
-      
-      if (quantityInput && unitPriceInput && totalPriceInput) {
-        const quantity = parseFloat(quantityInput.value) || 0;
-        const unitPrice = parseFloat(unitPriceInput.value) || 0;
-        const total = quantity * unitPrice;
-        
-        totalPriceInput.value = total.toFixed(2);
-      }
-    };
-    
-    // Set up event listeners for all products
-    const setupProductEvents = (index) => {
-      const quantityInput = document.getElementById(`quantity-${index}`);
-      const unitPriceInput = document.getElementById(`unitPrice-${index}`);
-      
-      if (quantityInput && unitPriceInput) {
-        quantityInput.addEventListener('input', () => recalculateTotal(index));
-        unitPriceInput.addEventListener('input', () => recalculateTotal(index));
-        
-        // Initial calculation
-        recalculateTotal(index);
-      }
-    };
-    
-    // Set up initial product
-    setupProductEvents(0);
-    
-    // Make functions available globally for dynamic products
-    window.setupProductEvents = setupProductEvents;
-    window.recalculateTotal = recalculateTotal;
-  }
-
-  /**
-   * Set up product controls (add/remove)
-   */
-  setupProductControls() {
-    const productContainer = document.getElementById('productContainer');
-    const addProductBtn = document.getElementById('addProductBtn');
-    
-    if (!productContainer || !addProductBtn) return;
-    
-    // Add product button
-    addProductBtn.addEventListener('click', () => {
-      const products = productContainer.querySelectorAll('.product-item');
-      const newIndex = products.length;
-      
-      const productTemplate = `
-        <div class="product-item" data-product-index="${newIndex}">
-          <button type="button" class="remove-product-btn" aria-label="Remove product">×</button>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="manufacturer-${newIndex}">Manufacturer <span class="text-danger">*</span></label>
-                <select id="manufacturer-${newIndex}" name="products[${newIndex}].manufacturer" class="form-control" required>
-                  <option value="">Select Manufacturer</option>
-                  <option value="ACZ_Distribution">ACZ Distribution</option>
-                  <option value="Advanced_Solution">Advanced Solution</option>
-                  <option value="MedLife_Solutions">MedLife Solutions</option>
-                  <option value="BioWerX">BioWerX</option>
-                  <option value="Imbed_Biosciences">Imbed Biosciences</option>
-                  <option value="Stability_Biologics">Stability Biologics</option>
-                  <option value="Legacy_Medical_Consultants">Legacy Medical Consultants</option>
-                  <option value="BioWound_Solutions">BioWound Solutions</option>
-                </select>
-                <div class="form-text">Company that makes the product</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="productCode-${newIndex}">Product Code <span class="text-danger">*</span></label>
-                <input type="text" id="productCode-${newIndex}" name="products[${newIndex}].productCode" class="form-control" required>
-                <div class="form-text">SKU or item number</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="description-${newIndex}">Description <span class="text-danger">*</span></label>
-            <input type="text" id="description-${newIndex}" name="products[${newIndex}].description" class="form-control" required>
-            <div class="form-text">Product name and details</div>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="size-${newIndex}">Size <span class="text-danger">*</span></label>
-                <input type="text" id="size-${newIndex}" name="products[${newIndex}].size" class="form-control" required>
-                <div class="form-text">Dimensions of the product</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="quantity-${newIndex}">Quantity <span class="text-danger">*</span></label>
-                <input type="number" id="quantity-${newIndex}" name="products[${newIndex}].quantity" class="form-control" required min="1" value="1">
-              </div>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="unitPrice-${newIndex}">Unit Price <span class="text-danger">*</span></label>
-                <input type="number" id="unitPrice-${newIndex}" name="products[${newIndex}].unitPrice" class="form-control" required step="0.01">
-                <div class="form-text">Price per unit</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="totalPrice-${newIndex}">Total Price</label>
-                <input type="number" id="totalPrice-${newIndex}" name="products[${newIndex}].totalPrice" class="form-control" readonly>
-                <div class="form-text">Automatically calculated</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Append the new product item
-      productContainer.insertAdjacentHTML('beforeend', productTemplate);
-      
-      // Setup events for the new product
-      window.setupProductEvents(newIndex);
-      
-      // Add remove event listener
-      const newProduct = productContainer.lastElementChild;
-      const removeBtn = newProduct.querySelector('.remove-product-btn');
-      
-      removeBtn.addEventListener('click', () => {
-        newProduct.remove();
-        this.renumberProducts();
-      });
+/**
+ * Set up form validation
+ * @param {HTMLFormElement} form - The form element
+ */
+function setupFormValidation(form) {
+  // Add validation on input change
+  const inputs = form.querySelectorAll('input, select, textarea');
+  
+  inputs.forEach(input => {
+    input.addEventListener('blur', function() {
+      validateInput(this);
     });
     
-    // Set up remove button for the initial product
-    const initialRemoveBtn = document.querySelector('.product-item .remove-product-btn');
-    if (initialRemoveBtn) {
-      initialRemoveBtn.addEventListener('click', () => {
-        const products = productContainer.querySelectorAll('.product-item');
-        
-        // Don't remove if it's the only product
-        if (products.length === 1) {
-          this.showAlert("You need at least one product in your order.", "warning");
-          return;
-        }
-        
-        // Remove the product
-        initialRemoveBtn.closest('.product-item').remove();
-        this.renumberProducts();
+    // For select elements, also validate on change
+    if (input.tagName === 'SELECT') {
+      input.addEventListener('change', function() {
+        validateInput(this);
       });
     }
-  }
+  });
+}
 
-  /**
-   * Renumber products after deletion
-   */
-  renumberProducts() {
-    const productContainer = document.getElementById('productContainer');
-    if (!productContainer) return;
-    
-    const products = productContainer.querySelectorAll('.product-item');
-    
-    products.forEach((product, idx) => {
-      // Update data attribute
-      product.dataset.productIndex = idx;
-      
-      // Update all field IDs and names
-      const fields = product.querySelectorAll('input, select');
-      fields.forEach(field => {
-        const fieldName = field.name.replace(/products\[\d+\]/, `products[${idx}]`);
-        field.name = fieldName;
-        
-        const fieldId = field.id.replace(/\-\d+$/, `-${idx}`);
-        field.id = fieldId;
-      });
-      
-      // Update labels
-      const labels = product.querySelectorAll('label');
-      labels.forEach(label => {
-        const forAttr = label.getAttribute('for').replace(/\-\d+$/, `-${idx}`);
-        label.setAttribute('for', forAttr);
-      });
-    });
+/**
+ * Validate a single input field
+ * @param {HTMLElement} input - The input element to validate
+ * @returns {boolean} - Whether the input is valid
+ */
+function validateInput(input) {
+  // Skip validation for non-required fields that are empty
+  if (!input.hasAttribute('required') && !input.value) {
+    input.classList.remove('is-invalid');
+    return true;
   }
-
-  /**
-   * Generate order summary for review step
-   */
-  generateSummary() {
-    const orderSummary = document.getElementById('orderSummary');
-    if (!orderSummary) return;
-    
-    // Get form data
-    const formData = new FormData(this.form);
-    
-    let summaryHTML = '<div class="summary-section">';
-    
-    // Order Info Summary
-    summaryHTML += `
-      <h3 class="mb-3">Order Information</h3>
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <p><strong>Order Number:</strong> ${formData.get('orderInfo.orderNumber') || 'N/A'}</p>
-              <p><strong>Order Date:</strong> ${formData.get('orderInfo.orderDate') || 'N/A'}</p>
-            </div>
-            <div class="col-md-6">
-              <p><strong>PO Number:</strong> ${formData.get('orderInfo.poNumber') || 'N/A'}</p>
-              <p><strong>Status:</strong> ${
-                document.getElementById('status')?.options[
-                  document.getElementById('status')?.selectedIndex
-                ]?.text || 'N/A'
-              }</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    // Facility Info Summary
-    summaryHTML += `
-      <h3 class="mb-3">Facility Information</h3>
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <p><strong>Facility Name:</strong> ${formData.get('facilityInfo.facilityName') || 'N/A'}</p>
-              <p><strong>Contact Name:</strong> ${formData.get('facilityInfo.contactName') || 'N/A'}</p>
-            </div>
-            <div class="col-md-6">
-              <p><strong>Contact Phone:</strong> ${formData.get('facilityInfo.contactPhone') || 'N/A'}</p>
-              <p><strong>Contact Email:</strong> ${formData.get('facilityInfo.contactEmail') || 'N/A'}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    // Shipping Info Summary
-    summaryHTML += `
-      <h3 class="mb-3">Shipping Information</h3>
-      <div class="card mb-4">
-        <div class="card-body">
-          <p><strong>Address:</strong> ${formData.get('shippingInfo.shippingAddressLine1') || 'N/A'}, 
-            ${formData.get('shippingInfo.shippingCity') || ''}, 
-            ${formData.get('shippingInfo.shippingState') || ''} 
-            ${formData.get('shippingInfo.shippingZipCode') || ''}</p>
-          <p><strong>Shipping Method:</strong> ${
-            document.getElementById('shippingMethod')?.options[
-              document.getElementById('shippingMethod')?.selectedIndex
-            ]?.text || 'N/A'
-          }</p>
-        </div>
-      </div>
-    `;
-    
-    // Product Summary
-    summaryHTML += `
-      <h3 class="mb-3">Products</h3>
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Size</th>
-                  <th>Qty</th>
-                  <th class="text-right">Unit Price</th>
-                  <th class="text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-    `;
-    
-    // Collect product data
-    const products = document.querySelectorAll('.product-item');
-    let orderTotal = 0;
-    
-    products.forEach((product, idx) => {
-      const description = formData.get(`products[${idx}].description`);
-      const size = formData.get(`products[${idx}].size`);
-      const quantity = formData.get(`products[${idx}].quantity`);
-      const unitPrice = formData.get(`products[${idx}].unitPrice`);
-      const totalPrice = formData.get(`products[${idx}].totalPrice`) || 
-                         (parseFloat(quantity || 0) * parseFloat(unitPrice || 0)).toFixed(2);
-      
-      orderTotal += parseFloat(totalPrice || 0);
-      
-      summaryHTML += `
-        <tr>
-          <td>${description || 'N/A'}</td>
-          <td>${size || 'N/A'}</td>
-          <td>${quantity || '0'}</td>
-          <td class="text-right">$${parseFloat(unitPrice || 0).toFixed(2)}</td>
-          <td class="text-right">$${parseFloat(totalPrice || 0).toFixed(2)}</td>
-        </tr>
-      `;
-    });
-    
-    summaryHTML += `
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="4" class="text-right"><strong>Order Total:</strong></td>
-                  <td class="text-right"><strong>$${orderTotal.toFixed(2)}</strong></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    summaryHTML += '</div>';
-    
-    orderSummary.innerHTML = summaryHTML;
+  
+  let isValid = true;
+  
+  // Check validity based on input type
+  if (input.type === 'email') {
+    isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+  } else if (input.type === 'tel') {
+    // Basic phone validation (can be enhanced for specific formats)
+    isValid = /^[0-9\-\+\(\)\s]{10,15}$/.test(input.value);
+  } else if (input.type === 'date') {
+    isValid = input.value !== '';
+  } else if (input.tagName === 'SELECT') {
+    isValid = input.value !== '';
+  } else {
+    isValid = input.value.trim() !== '';
   }
+  
+  // Update UI based on validation result
+  if (isValid) {
+    input.classList.remove('is-invalid');
+  } else {
+    input.classList.add('is-invalid');
+  }
+  
+  return isValid;
+}
 
-  /**
-   * Set up form submission
-   */
-  setupFormSubmission() {
-    this.form.addEventListener('submit', (e) => {
-      e.preventDefault();
+/**
+ * Validate all inputs in a specific form step
+ * @param {HTMLElement} formStep - The form step element
+ * @returns {boolean} - Whether all inputs in the step are valid
+ */
+function validateFormStep(formStep) {
+  const inputs = formStep.querySelectorAll('input, select, textarea');
+  let isValid = true;
+  
+  inputs.forEach(input => {
+    // Only validate required fields or fields with values
+    if (input.hasAttribute('required') || input.value.trim() !== '') {
+      const inputValid = validateInput(input);
+      isValid = isValid && inputValid;
+    }
+  });
+  
+  return isValid;
+}
+
+/**
+ * Set up multi-step form navigation
+ * @param {HTMLFormElement} form - The form element
+ */
+function setupMultiStepNavigation(form) {
+  // Get all steps in the form
+  const steps = form.querySelectorAll('.form-step');
+  if (steps.length === 0) return;
+  
+  // Set the first step as active
+  steps[0].classList.add('active');
+  updateProgressBar(1, steps.length);
+  
+  // Set up next buttons
+  const nextButtons = form.querySelectorAll('[data-action="next"]');
+  nextButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const currentStep = this.closest('.form-step');
+      const currentStepNumber = parseInt(currentStep.dataset.step);
       
-      // Validate final step
-      if (!this.validateCurrentStep()) {
+      // Validate current step before proceeding
+      if (!validateFormStep(currentStep)) {
+        showAlert('Please fill in all required fields correctly before proceeding.', 'danger');
         return;
       }
       
-      // Prevent double submission
-      if (this.isSubmitting) {
-        return;
+      // Find the next step
+      const nextStep = form.querySelector(`.form-step[data-step="${currentStepNumber + 1}"]`);
+      if (nextStep) {
+        // Hide current step
+        currentStep.classList.remove('active');
+        
+        // Show next step
+        nextStep.classList.add('active');
+        
+        // Update progress bar
+        updateProgressBar(currentStepNumber + 1, steps.length);
+        
+        // Scroll to top of form
+        form.scrollIntoView({ behavior: 'smooth' });
       }
+    });
+  });
+  
+  // Set up back buttons
+  const backButtons = form.querySelectorAll('[data-action="back"]');
+  backButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const currentStep = this.closest('.form-step');
+      const currentStepNumber = parseInt(currentStep.dataset.step);
       
-      this.isSubmitting = true;
-      
-      // Show loading state
-      const submitBtn = this.form.querySelector('[type="submit"]');
-      if (submitBtn) {
-        submitBtn.classList.add('btn-loading');
-        submitBtn.disabled = true;
+      // Find the previous step
+      const prevStep = form.querySelector(`.form-step[data-step="${currentStepNumber - 1}"]`);
+      if (prevStep) {
+        // Hide current step
+        currentStep.classList.remove('active');
+        
+        // Show previous step
+        prevStep.classList.add('active');
+        
+        // Update progress bar
+        updateProgressBar(currentStepNumber - 1, steps.length);
+        
+        // Scroll to top of form
+        form.scrollIntoView({ behavior: 'smooth' });
       }
-      
-      // Get form data
-      const formData = new FormData(this.form);
-      const formObject = {};
-      
-      formData.forEach((value, key) => {
-        // Handle nested properties (e.g., 'orderInfo.orderNumber')
-        if (key.includes('.')) {
-          const [parent, child] = key.split('.');
-          formObject[parent] = formObject[parent] || {};
-          formObject[parent][child] = value;
-        } else if (key.includes('[')) {
-          // Handle array properties (e.g., 'products[0].quantity')
-          const matches = key.match(/([^\[]+)\[(\d+)\]\.(.+)/);
-          if (matches) {
-            const [, arrayName, index, property] = matches;
-            formObject[arrayName] = formObject[arrayName] || [];
-            formObject[arrayName][index] = formObject[arrayName][index] || {};
-            formObject[arrayName][index][property] = value;
-          }
-        } else {
-          formObject[key] = value;
-        }
+    });
+  });
+}
+
+/**
+ * Update the progress bar and step indicators
+ * @param {number} currentStep - The current step number
+ * @param {number} totalSteps - The total number of steps
+ */
+function updateProgressBar(currentStep, totalSteps) {
+  // Update progress bar fill
+  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+  const progressBarFill = document.querySelector('.progress-bar-fill');
+  if (progressBarFill) {
+    progressBarFill.style.width = `${progressPercentage}%`;
+  }
+  
+  // Update step text
+  const currentStepElement = document.getElementById('currentStep');
+  if (currentStepElement) {
+    currentStepElement.textContent = currentStep;
+  }
+  
+  // Update completion percentage
+  const completionPercentageElement = document.getElementById('completionPercentage');
+  if (completionPercentageElement) {
+    completionPercentageElement.textContent = Math.round(progressPercentage);
+  }
+  
+  // Update step indicators
+  const stepIndicators = document.querySelectorAll('.progress-step');
+  stepIndicators.forEach((indicator, index) => {
+    // Remove all status classes
+    indicator.classList.remove('active', 'completed');
+    
+    // Add appropriate class based on current step
+    if (index + 1 === currentStep) {
+      indicator.classList.add('active');
+    } else if (index + 1 < currentStep) {
+      indicator.classList.add('completed');
+    }
+  });
+}
+
+/**
+ * Set up conditional fields that show/hide based on other field values
+ * @param {HTMLFormElement} form - The form element
+ */
+function setupConditionalFields(form) {
+  // Example: Toggle billing fields based on "Same as Shipping" checkbox
+  const sameAsShippingCheckbox = form.querySelector('#sameAsShipping');
+  const billingFields = form.querySelector('#billingFields');
+  
+  if (sameAsShippingCheckbox && billingFields) {
+    // Initial state
+    billingFields.style.display = sameAsShippingCheckbox.checked ? 'none' : 'block';
+    
+    // Toggle on change
+    sameAsShippingCheckbox.addEventListener('change', function() {
+      billingFields.style.display = this.checked ? 'none' : 'block';
+    });
+  }
+  
+  // Add more conditional field logic as needed
+}
+
+/**
+ * Set up product management for order forms
+ * @param {HTMLFormElement} form - The form element
+ */
+function setupProductManagement(form) {
+  // Add product button
+  const addProductBtn = form.querySelector('#addProductBtn');
+  if (!addProductBtn) return;
+  
+  addProductBtn.addEventListener('click', function() {
+    addNewProduct(form);
+  });
+  
+  // Set up existing product items
+  setupExistingProducts(form);
+  
+  // Set up price calculation
+  setupPriceCalculation(form);
+}
+
+/**
+ * Set up existing product items
+ * @param {HTMLFormElement} form - The form element
+ */
+function setupExistingProducts(form) {
+  const productItems = form.querySelectorAll('.product-item');
+  
+  productItems.forEach(item => {
+    // Set up remove button
+    const removeBtn = item.querySelector('.remove-product-btn');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', function() {
+        removeProduct(item);
+      });
+    }
+    
+    // Set up price calculation
+    const quantityInput = item.querySelector('[name$=".quantity"]');
+    const unitPriceInput = item.querySelector('[name$=".unitPrice"]');
+    
+    if (quantityInput && unitPriceInput) {
+      quantityInput.addEventListener('input', function() {
+        calculateProductTotal(item);
       });
       
-      // In a real application, you would send this data to a server
-      // For demo purposes, we'll simulate a server response
-      setTimeout(() => {
-        // Simulate successful submission
-        const success = true;
-        const responseContainer = document.getElementById('responseContainer');
-        
-        if (responseContainer) {
-          if (success) {
-            responseContainer.className = 'alert alert-success';
-            responseContainer.innerHTML = `
-              <h4>Order Submitted Successfully</h4>
-              <p>Your order #${formObject.orderInfo?.orderNumber || 'WC-' + new Date().getTime()} has been received. A confirmation email will be sent shortly.</p>
-              <p>Tracking Number: MSC-${Math.floor(Math.random() * 10000000)}</p>
-            `;
-          } else {
-            responseContainer.className = 'alert alert-danger';
-            responseContainer.innerHTML = `
-              <h4>Error Submitting Order</h4>
-              <p>There was a problem processing your order. Please try again or contact customer support.</p>
-            `;
-          }
-          
-          responseContainer.style.display = 'block';
-          
-          // Scroll to response
-          responseContainer.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Reset loading state
-        if (submitBtn) {
-          submitBtn.classList.remove('btn-loading');
-          submitBtn.disabled = false;
-        }
-        
-        this.isSubmitting = false;
-        
-        // Trigger submit event
-        this.triggerEvent('formSubmit', { success, data: formObject });
-      }, 2000); // Simulate network delay
-    });
-  }
+      unitPriceInput.addEventListener('input', function() {
+        calculateProductTotal(item);
+      });
+      
+      // Calculate initial total
+      calculateProductTotal(item);
+    }
+  });
+}
 
-  /**
-   * Show an alert message
-   * @param {string} message - The message to display
-   * @param {string} type - The type of alert (success, danger, warning, info)
-   * @param {string} containerId - The ID of the container to append the alert to
-   * @param {boolean} autoHide - Whether to automatically hide the alert after a delay
-   * @returns {HTMLElement} - The alert element
-   */
-  showAlert(message, type = 'info', containerId = 'alertsContainer', autoHide = true) {
-    // Create alerts container if it doesn't exist
-    let alertsContainer = document.getElementById(containerId);
-    if (!alertsContainer) {
-      alertsContainer = document.createElement('div');
-      alertsContainer.id = containerId;
-      alertsContainer.className = 'alerts-container';
-      this.form.prepend(alertsContainer);
+/**
+ * Add a new product item to the form
+ * @param {HTMLFormElement} form - The form element
+ */
+function addNewProduct(form) {
+  const productContainer = form.querySelector('#productContainer');
+  if (!productContainer) return;
+  
+  // Get existing products to determine the new index
+  const existingProducts = productContainer.querySelectorAll('.product-item');
+  const newIndex = existingProducts.length;
+  
+  // Clone the first product item as a template
+  const template = existingProducts[0].cloneNode(true);
+  
+  // Update IDs and names with the new index
+  template.dataset.productIndex = newIndex;
+  
+  const inputs = template.querySelectorAll('input, select');
+  inputs.forEach(input => {
+    const namePattern = /products\[\d+\]/;
+    const idPattern = /-\d+$/;
+    
+    // Update name attribute
+    if (input.name && namePattern.test(input.name)) {
+      input.name = input.name.replace(namePattern, `products[${newIndex}]`);
     }
     
-    // Create alert element
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type} fade-in`;
-    alert.innerHTML = message;
-    
-    // Add close button
-    const closeButton = document.createElement('button');
-    closeButton.type = 'button';
-    closeButton.className = 'close';
-    closeButton.innerHTML = '&times;';
-    closeButton.addEventListener('click', () => alert.remove());
-    alert.appendChild(closeButton);
-    
-    // Add to container
-    alertsContainer.appendChild(alert);
-    
-    // Auto-hide if enabled
-    if (autoHide) {
-      setTimeout(() => {
-        alert.style.opacity = '0';
-        setTimeout(() => alert.remove(), 300);
-      }, 5000);
+    // Update id attribute
+    if (input.id && idPattern.test(input.id)) {
+      input.id = input.id.replace(idPattern, `-${newIndex}`);
     }
     
-    return alert;
+    // Clear values
+    input.value = '';
+  });
+  
+  // Update labels to point to the new input IDs
+  const labels = template.querySelectorAll('label');
+  labels.forEach(label => {
+    const forPattern = /-\d+$/;
+    if (label.htmlFor && forPattern.test(label.htmlFor)) {
+      label.htmlFor = label.htmlFor.replace(forPattern, `-${newIndex}`);
+    }
+  });
+  
+  // Add the new product item to the container
+  productContainer.appendChild(template);
+  
+  // Set up the new product item
+  const newItem = productContainer.lastElementChild;
+  
+  // Set up remove button
+  const removeBtn = newItem.querySelector('.remove-product-btn');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', function() {
+      removeProduct(newItem);
+    });
   }
-
-  /**
-   * Trigger a custom event
-   * @param {string} eventName - The name of the event
-   * @param {object} detail - The event detail object
-   */
-  triggerEvent(eventName, detail = {}) {
-    const event = new CustomEvent(`formHandler:${eventName}`, {
-      bubbles: true,
-      detail: {
-        formId: this.form.id,
-        ...detail
-      }
+  
+  // Set up price calculation
+  const quantityInput = newItem.querySelector('[name$=".quantity"]');
+  const unitPriceInput = newItem.querySelector('[name$=".unitPrice"]');
+  
+  if (quantityInput && unitPriceInput) {
+    quantityInput.addEventListener('input', function() {
+      calculateProductTotal(newItem);
     });
     
-    this.form.dispatchEvent(event);
+    unitPriceInput.addEventListener('input', function() {
+      calculateProductTotal(newItem);
+    });
   }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialize form handlers for each form
-  const orderForm = new FormHandler('universalOrderForm', {
-    validateOnStepChange: true,
-    scrollToTop: true
+/**
+ * Remove a product item from the form
+ * @param {HTMLElement} productItem - The product item element
+ */
+function removeProduct(productItem) {
+  const productContainer = productItem.parentElement;
+  
+  // Don't remove if it's the only product
+  if (productContainer.querySelectorAll('.product-item').length <= 1) {
+    showAlert('At least one product is required.', 'warning');
+    return;
+  }
+  
+  // Remove the product item
+  productItem.remove();
+  
+  // Reindex remaining products
+  reindexProducts(productContainer);
+}
+
+/**
+ * Reindex product items after removal
+ * @param {HTMLElement} productContainer - The container of product items
+ */
+function reindexProducts(productContainer) {
+  const productItems = productContainer.querySelectorAll('.product-item');
+  
+  productItems.forEach((item, index) => {
+    // Update data attribute
+    item.dataset.productIndex = index;
+    
+    // Update input names and IDs
+    const inputs = item.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      const namePattern = /products\[\d+\]/;
+      const idPattern = /-\d+$/;
+      
+      // Update name attribute
+      if (input.name && namePattern.test(input.name)) {
+        input.name = input.name.replace(namePattern, `products[${index}]`);
+      }
+      
+      // Update id attribute
+      if (input.id && idPattern.test(input.id)) {
+        input.id = input.id.replace(idPattern, `-${index}`);
+      }
+    });
+    
+    // Update labels
+    const labels = item.querySelectorAll('label');
+    labels.forEach(label => {
+      const forPattern = /-\d+$/;
+      if (label.htmlFor && forPattern.test(label.htmlFor)) {
+        label.htmlFor = label.htmlFor.replace(forPattern, `-${index}`);
+      }
+    });
   });
+}
+
+/**
+ * Calculate the total price for a product item
+ * @param {HTMLElement} productItem - The product item element
+ */
+function calculateProductTotal(productItem) {
+  const quantityInput = productItem.querySelector('[name$=".quantity"]');
+  const unitPriceInput = productItem.querySelector('[name$=".unitPrice"]');
+  const totalPriceInput = productItem.querySelector('[name$=".totalPrice"]');
   
-  // Set default date to today for date fields
-  const dateInputs = document.querySelectorAll('input[type="date"]');
-  const today = new Date().toISOString().split('T')[0];
+  if (quantityInput && unitPriceInput && totalPriceInput) {
+    const quantity = parseFloat(quantityInput.value) || 0;
+    const unitPrice = parseFloat(unitPriceInput.value) || 0;
+    const totalPrice = quantity * unitPrice;
+    
+    totalPriceInput.value = totalPrice.toFixed(2);
+  }
+}
+
+/**
+ * Set up price calculation for the entire form
+ * @param {HTMLFormElement} form - The form element
+ */
+function setupPriceCalculation(form) {
+  // This could be expanded to calculate subtotals, taxes, shipping, etc.
+  // For now, we'll just make sure all product totals are calculated
+  const productItems = form.querySelectorAll('.product-item');
   
-  dateInputs.forEach(input => {
-    if (!input.value) {
-      input.value = today;
+  productItems.forEach(item => {
+    calculateProductTotal(item);
+  });
+}
+
+/**
+ * Set up form submission
+ * @param {HTMLFormElement} form - The form element
+ */
+function setupFormSubmission(form) {
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Validate all fields before submission
+    const isValid = validateForm(form);
+    
+    if (!isValid) {
+      showAlert('Please fill in all required fields correctly before submitting.', 'danger');
+      return;
+    }
+    
+    // Show loading state
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = `
+      <span class="loading-spinner"></span>
+      Submitting...
+    `;
+    
+    try {
+      // Create FormData
+      const formData = new FormData(form);
+      
+      // Add any additional data
+      // For example, if using a signature pad
+      const signatureInput = form.querySelector('#signature');
+      const signaturePad = document.getElementById('signaturePad');
+      if (signatureInput && signaturePad && typeof SignaturePad !== 'undefined') {
+        const signaturePadInstance = new SignaturePad(signaturePad);
+        if (!signaturePadInstance.isEmpty()) {
+          signatureInput.value = signaturePadInstance.toDataURL();
+        }
+      }
+      
+      // Prepare order summary for review step
+      if (form.id === 'universalOrderForm') {
+        updateOrderSummary(form);
+      }
+      
+      // Submit the form
+      const response = await fetch(form.action, {
+        method: form.method || 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Show success message
+        showAlert('Form submitted successfully!', 'success');
+        
+        // Display response in the response container
+        const responseContainer = form.querySelector('#responseContainer');
+        if (responseContainer) {
+          responseContainer.innerHTML = `
+            <div class="alert alert-success">
+              <h4>Submission Successful!</h4>
+              <p>${result.message || 'Your form has been submitted successfully.'}</p>
+              <p>Reference ID: ${result.documentId || 'N/A'}</p>
+            </div>
+          `;
+        }
+        
+        // Disable form fields
+        const inputs = form.querySelectorAll('input, select, textarea, button');
+        inputs.forEach(input => {
+          if (input.type !== 'submit') {
+            input.disabled = true;
+          }
+        });
+        
+        // Reset submit button
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Submitted ✓';
+        
+        // Optionally redirect after a delay
+        // setTimeout(() => {
+        //   window.location.href = '/dashboard';
+        // }, 3000);
+      } else {
+        // Show error message
+        showAlert(`Error: ${result.message || 'An error occurred during submission.'}`, 'danger');
+        
+        // Reset submit button
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showAlert('An error occurred. Please try again.', 'danger');
+      
+      // Reset submit button
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonText;
     }
   });
-});
+}
+
+/**
+ * Validate the entire form
+ * @param {HTMLFormElement} form - The form element
+ * @returns {boolean} - Whether the form is valid
+ */
+function validateForm(form) {
+  const inputs = form.querySelectorAll('input, select, textarea');
+  let isValid = true;
+  
+  inputs.forEach(input => {
+    // Only validate required fields or fields with values
+    if (input.hasAttribute('required') || input.value.trim() !== '') {
+      const inputValid = validateInput(input);
+      isValid = isValid && inputValid;
+    }
+  });
+  
+  return isValid;
+}
+
+/**
+ * Update the order summary for review
+ * @param {HTMLFormElement} form - The form element
+ */
+function updateOrderSummary(form) {
+  const orderSummary = form.querySelector('#orderSummary');
+  if (!orderSummary) return;
+  
+  // Get form data
+  const formData = new FormData(form);
+  const formDataObj = {};
+  
+  for (const [key, value] of formData.entries()) {
+    // Handle nested objects (e.g., orderInfo.orderNumber)
+    if (key.includes('.')) {
+      const [parent, child] = key.split('.');
+      formDataObj[parent] = formDataObj[parent] || {};
+      formDataObj[parent][child] = value;
+    } else {
+      formDataObj[key] = value;
+    }
+  }
+  
+  // Build summary HTML
+  let summaryHTML = `
+    <div class="summary-section">
+      <h4>Order Information</h4>
+      <div class="summary-row">
+        <div class="summary-label">Order Number:</div>
+        <div class="summary-value">${formDataObj.orderInfo?.orderNumber || 'N/A'}</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Order Date:</div>
+        <div class="summary-value">${formDataObj.orderInfo?.orderDate || 'N/A'}</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Status:</div>
+        <div class="summary-value">${formDataObj.orderInfo?.status || 'N/A'}</div>
+      </div>
+    </div>
+    
+    <div class="summary-section">
+      <h4>Facility Information</h4>
+      <div class="summary-row">
+        <div class="summary-label">Facility Name:</div>
+        <div class="summary-value">${formDataObj.facilityInfo?.facilityName || 'N/A'}</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Contact:</div>
+        <div class="summary-value">${formDataObj.facilityInfo?.contactName || 'N/A'}</div>
+      </div>
+    </div>
+    
+    <div class="summary-section">
+      <h4>Shipping Information</h4>
+      <div class="summary-row">
+        <div class="summary-label">Address:</div>
+        <div class="summary-value">
+          ${formDataObj.shippingInfo?.shippingAddressLine1 || 'N/A'}<br>
+          ${formDataObj.shippingInfo?.shippingCity || ''}, 
+          ${formDataObj.shippingInfo?.shippingState || ''} 
+          ${formDataObj.shippingInfo?.shippingZipCode || ''}
+        </div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Shipping Method:</div>
+        <div class="summary-value">${formDataObj.shippingInfo?.shippingMethod || 'N/A'}</div>
+      </div>
+    </div>
+  `;
+  
+  // Add products section
+  summaryHTML += `
+    <div class="summary-section">
+      <h4>Products</h4>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Size</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  // Get products
+  const productItems = form.querySelectorAll('.product-item');
+  let orderTotal = 0;
+  
+  productItems.forEach((item, index) => {
+    const manufacturer = item.querySelector(`[name="products[${index}].manufacturer"]`)?.value || 'N/A';
+    const description = item.querySelector(`[name="products[${index}].description"]`)?.value || 'N/A';
+    const size = item.querySelector(`[name="products[${index}].size"]`)?.value || 'N/A';
+    const quantity = item.querySelector(`[name="products[${index}].quantity"]`)?.value || '0';
+    const unitPrice = item.querySelector(`[name="products[${index}].unitPrice"]`)?.value || '0';
+    const totalPrice = item.querySelector(`[name="products[${index}].totalPrice"]`)?.value || '0';
+    
+    orderTotal += parseFloat(totalPrice);
+    
+    summaryHTML += `
+      <tr>
+        <td>${manufacturer} - ${description}</td>
+        <td>${size}</td>
+        <td>${quantity}</td>
+        <td>$${parseFloat(unitPrice).toFixed(2)}</td>
+        <td>$${parseFloat(totalPrice).toFixed(2)}</td>
+      </tr>
+    `;
+  });
+  
+  summaryHTML += `
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-right"><strong>Order Total:</strong></td>
+            <td><strong>$${orderTotal.toFixed(2)}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  `;
+  
+  // Add special instructions
+  summaryHTML += `
+    <div class="summary-section">
+      <h4>Special Instructions</h4>
+      <p>${formDataObj.additionalInfo?.specialInstructions || 'None'}</p>
+    </div>
+  `;
+  
+  // Update the summary container
+  orderSummary.innerHTML = summaryHTML;
+}
+
+/**
+ * Initialize signature pad if present
+ */
+function initSignaturePad() {
+  const canvas = document.getElementById('signaturePad');
+  if (!canvas) return;
+  
+  // Check if SignaturePad library is available
+  if (typeof SignaturePad === 'undefined') {
+    // Create a simple fallback
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+    
+    canvas.addEventListener('mousedown', function(e) {
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+    
+    canvas.addEventListener('mousemove', function(e) {
+      if (!isDrawing) return;
+      
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+    
+    canvas.addEventListener('mouseup', function() {
+      isDrawing = false;
+      
+      // Save signature data
+      const signatureInput = document.getElementById('signature');
+      if (signatureInput) {
+        signatureInput.value = canvas.toDataURL();
+      }
+    });
+    
+    canvas.addEventListener('mouseleave', function() {
+      isDrawing = false;
+    });
+    
+    // Touch events
+    canvas.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
+      isDrawing = true;
+    });
+    
+    canvas.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      if (!isDrawing) return;
+      
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      const offsetX = touch.clientX - rect.left;
+      const offsetY = touch.clientY - rect.top;
+      
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(offsetX, offsetY);
+      ctx.stroke();
+      
+      [lastX, lastY] = [offsetX, offsetY];
+    });
+    
+    canvas.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      isDrawing = false;
+      
+      // Save signature data
+      const signatureInput = document.getElementById('signature');
+      if (signatureInput) {
+        signatureInput.value = canvas.toDataURL();
+      }
+    });
+    
+    // Clear signature button
+    const clearButton = document.getElementById('clearSignature');
+    if (clearButton) {
+      clearButton.addEventListener('click', function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Clear signature data
+        const signatureInput = document.getElementById('signature');
+        if (signatureInput) {
+          signatureInput.value = '';
+        }
+      });
+    }
+  } else {
+    // Use SignaturePad library
+    const signaturePad = new SignaturePad(canvas);
+    
+    // Clear signature button
+    const clearButton = document.getElementById('clearSignature');
+    if (clearButton) {
+      clearButton.addEventListener('click', function() {
+        signaturePad.clear();
+        
+        // Clear signature data
+        const signatureInput = document.getElementById('signature');
+        if (signatureInput) {
+          signatureInput.value = '';
+        }
+      });
+    }
+    
+    // Save signature data on end
+    signaturePad.addEventListener('endStroke', function() {
+      const signatureInput = document.getElementById('signature');
+      if (signatureInput && !signaturePad.isEmpty()) {
+        signatureInput.value = signaturePad.toDataURL();
+      }
+    });
+  }
+}
+
+/**
+ * Show an alert message
+ * @param {string} message - The message to display
+ * @param {string} type - The type of alert (success, danger, warning, info)
+ */
+function showAlert(message, type = 'info') {
+  const alertsContainer = document.getElementById('alertsContainer');
+  if (!alertsContainer) return;
+  
+  // Create alert element
+  const alert = document.createElement('div');
+  alert.className = `alert alert-${type}`;
+  alert.innerHTML = message;
+  
+  // Add close button
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'close';
+  closeButton.innerHTML = '&times;';
+  closeButton.style.float = 'right';
+  closeButton.style.cursor = 'pointer';
+  closeButton.style.border = 'none';
+  closeButton.style.background = 'none';
+  closeButton.style.fontSize = '1.25rem';
+  closeButton.style.fontWeight = 'bold';
+  closeButton.style.lineHeight = '1';
+  closeButton.style.opacity = '0.5';
+  closeButton.addEventListener('click', function() {
+    alert.remove();
+  });
+  
+  alert.prepend(closeButton);
+  
+  // Add to container
+  alertsContainer.appendChild(alert);
+  
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    alert.style.opacity = '0';
+    alert.style.transition = 'opacity 0.5s';
+    
+    setTimeout(() => {
+      alert.remove();
+    }, 500);
+  }, 5000);
+}
