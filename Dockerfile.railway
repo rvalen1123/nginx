@@ -4,19 +4,21 @@ WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
-RUN npm install
+# Add more explicit error handling for npm install
+RUN npm install || (echo "npm install failed" && exit 1)
 
 # Copy application code
 COPY prisma ./prisma/
 COPY index.js ./
 COPY server ./server/
 COPY site ./site/
-COPY .env* ./
+# We'll handle .env files separately, not copying all of them
 
-# Generate Prisma client
-# Ensure DATABASE_URL is set for Prisma
-RUN if [ ! -f .env ]; then echo "DATABASE_URL=dummy" > .env; fi
-RUN npx prisma generate --schema=prisma/schema.prisma
+# Create a specific .env file for build if needed
+RUN echo "DATABASE_URL=postgresql://user:password@localhost:5432/mydb?schema=public" > .env.build
+
+# Generate Prisma client with explicit schema reference
+RUN npx prisma generate --schema=./prisma/schema.prisma || (echo "Prisma generate failed" && exit 1)
 
 # Create uploads directory
 RUN mkdir -p uploads && chmod 755 uploads
@@ -28,5 +30,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3001/healthcheck || exit 1
 
-# Start application
-CMD ["npm", "start"]
+# Start application - use a conditional to check for environment
+CMD ["sh", "-c", "[ -f .env ] && npm start || (echo 'No .env file found' && exit 1)"]
